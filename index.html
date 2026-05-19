@@ -1,7 +1,579 @@
-```html
 <!DOCTYPE html>
-<html lang="ko">
-<head>
+<html lang="ko"><head><script>(function(firebaseConfig, initialAuthToken, appId) {
+        window.__firebase_config = firebaseConfig;
+        window.__initial_auth_token = initialAuthToken;
+        window.__app_id = appId;
+            })("\n{\n  \"apiKey\": \"AIzaSyCqyCcs2R2e7AegGjvFAwG98wlamtbHvZY\",\n  \"authDomain\": \"bard-frontend.firebaseapp.com\",\n  \"projectId\": \"bard-frontend\",\n  \"storageBucket\": \"bard-frontend.firebasestorage.app\",\n  \"messagingSenderId\": \"175205271074\",\n  \"appId\": \"1:175205271074:web:2b7bd4d34d33bf38e6ec7b\"\n}\n","eyJhbGciOiJSUzI1NiIsImtpZCI6ImE1MTMzNTUyZGIzZmQ1ZWM5NjdlZWFkNjk3ZjNhZTgwYjliNzk1ZjQiLCJ0eXAiOiJKV1QifQ.eyJzdWIiOiJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BiYXJkLWZyb250ZW5kLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwiYXVkIjoiaHR0cHM6Ly9pZGVudGl0eXRvb2xraXQuZ29vZ2xlYXBpcy5jb20vZ29vZ2xlLmlkZW50aXR5LmlkZW50aXR5dG9vbGtpdC52MS5JZGVudGl0eVRvb2xraXQiLCJ1aWQiOiIxODMyNjU0OTczMTkzMzA0MDk4NiIsImlzcyI6ImZpcmViYXNlLWFkbWluc2RrLWZic3ZjQGJhcmQtZnJvbnRlbmQuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJjbGFpbXMiOnsiYXBwSWQiOiJjXzQ2N2I2N2UxMGM5ZDYwNTJfaW5kZXguaHRtbC02MDAifSwiZXhwIjoxNzc5MjA0Mjg0LCJpYXQiOjE3NzkyMDA2ODQsImFsZyI6IlJTMjU2In0.N1yVcGOWZ1gf7OoREb8zKb-PIWxoVB_etiUbIiDPkw9942bQXK5RIjlVN0NHFsRan94fxvqGcYCdDbv1A_NYNDMm-g3zNoV9NF40QObuvA_NfNbX_scoeepldWkF13kpxGIUHs-Q7yV1TWGRlZ5vgTw4DLdWC5PK_EGUgDlAstcEq-kCszCPNs9vQ21gIKGYdZ8k_57mYfscnQYDwXhqOIh6rRHTSupFvGmvPVoZ9tfT1aYXkYdcEmF9bSNPhzTelYXmmuRyocRE_OH0MW45614e-VNMeokuOjjVimrpj5n-wlwoiK447Osg3lULGZqN37CZ26E-X5u0AmVEKLJxSg","c_467b67e10c9d6052_index.html-600")</script><script>(function(){'use strict';var h=typeof Object.defineProperties=="function"?Object.defineProperty:function(a,b,d){if(a==Array.prototype||a==Object.prototype)return a;a[b]=d.value;return a};function l(a){a=["object"==typeof globalThis&&globalThis,a,"object"==typeof window&&window,"object"==typeof self&&self,"object"==typeof global&&global];for(var b=0;b<a.length;++b){var d=a[b];if(d&&d.Math==Math)return d}throw Error("Cannot find global object");}var n=l(this);
+function p(a,b){if(b)a:{var d=n;a=a.split(".");for(var c=0;c<a.length-1;c++){var e=a[c];if(!(e in d))break a;d=d[e]}a=a[a.length-1];c=d[a];b=b(c);b!=c&&b!=null&&h(d,a,{configurable:!0,writable:!0,value:b})}}function r(a){function b(c){return a.next(c)}function d(c){return a.throw(c)}return new Promise(function(c,e){function f(g){g.done?c(g.value):Promise.resolve(g.value).then(b,d).then(f,e)}f(a.next())})}function t(a){return r(a())}
+p("Object.values",function(a){return a?a:function(b){var d=[],c;for(c in b)Object.prototype.hasOwnProperty.call(b,c)&&d.push(b[c]);return d}});p("Array.prototype.includes",function(a){return a?a:function(b,d){var c=this;c instanceof String&&(c=String(c));var e=c.length;d=d||0;for(d<0&&(d=Math.max(d+e,0));d<e;d++){var f=c[d];if(f===b||Object.is(f,b))return!0}return!1}});/*
+
+ MIT License
+
+ Copyright (c) 2017-2023 W.Y.
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+
+*/
+function u(a,b){var d=a.style;b.backgroundColor&&(d.backgroundColor=b.backgroundColor);b.width&&(d.width=`${b.width}px`);b.height&&(d.height=`${b.height}px`);var c=b.style;c!=null&&Object.keys(c).forEach(e=>{d[e]=c[e]})};var v=(()=>{var a=0;return()=>{a+=1;return`u${`0000${(Math.random()*1679616<<0).toString(36)}`.slice(-4)}${a}`}})();function w(a){var b=[];for(let d=0,c=a.length;d<c;d++)b.push(a[d]);return b}let x=null;function y(a={}){return x?x:a.l?x=a.l:x=w(window.getComputedStyle(document.documentElement))}function z(a,b){return(a=(a.ownerDocument.defaultView||window).getComputedStyle(a).getPropertyValue(b))?parseFloat(a.replace("px","")):0}
+function A(a,b={}){var d;if(!(d=b.width)){d=z(a,"border-left-width");var c=z(a,"border-right-width");d=a.clientWidth+d+c}(b=b.height)||(b=z(a,"border-top-width"),c=z(a,"border-bottom-width"),b=a.clientHeight+b+c);return{width:d,height:b}}function B(a){return new Promise((b,d)=>{var c=new Image;c.onload=()=>{c.decode().then(()=>{requestAnimationFrame(()=>b(c))})};c.onerror=d;c.crossOrigin="anonymous";c.decoding="async";c.src=a})}
+function C(a){return t(function*(){return Promise.resolve().then(()=>(new XMLSerializer).serializeToString(a)).then(encodeURIComponent).then(b=>`data:image/svg+xml;charset=utf-8,${b}`)})}
+function D(a,b,d){return t(function*(){var c=document.createElementNS("http://www.w3.org/2000/svg","svg"),e=document.createElementNS("http://www.w3.org/2000/svg","foreignObject");c.setAttribute("width",`${b}`);c.setAttribute("height",`${d}`);c.setAttribute("viewBox",`0 0 ${b} ${d}`);e.setAttribute("width","100%");e.setAttribute("height","100%");e.setAttribute("x","0");e.setAttribute("y","0");e.setAttribute("externalResourcesRequired","true");c.appendChild(e);e.appendChild(a);return C(c)})}
+var E=(a,b)=>{if(a instanceof b)return!0;a=Object.getPrototypeOf(a);return a===null?!1:a.constructor.name===b.name||E(a,b)};function F(a,b){return y(b).map(d=>{var c=a.getPropertyValue(d),e=a.getPropertyPriority(d);return`${d}: ${c}${e?" !important":""};`}).join(" ")}
+function G(a,b,d,c){a=window.getComputedStyle(a,d);var e=a.getPropertyValue("content");if(e!==""&&e!=="none"){var f=v();try{b.className=`${b.className} ${f}`}catch(k){return}e=document.createElement("style");var g=e.appendChild;d=`.${f}:${d}`;a.cssText?(c=a.getPropertyValue("content"),c=`${a.cssText} content: '${c.replace(/'|"/g,"")}';`):c=F(a,c);g.call(e,document.createTextNode(`${d}{${c}}`));b.appendChild(e)}};function H(a){return a.search(/^(data:)/)!==-1}function I(a,b,d){return t(function*(){var c=yield fetch(a,b);if(c.status===404)throw Error(`Resource "${c.url}" not found`);var e=yield c.blob();return new Promise((f,g)=>{var k=new FileReader;k.onerror=g;k.onloadend=()=>{try{f(d({o:c,result:k.result}))}catch(m){g(m)}};k.readAsDataURL(e)})})}const J={};function K(a,b,d){var c=a.replace(/\?.*/,"");d&&(c=a);/ttf|otf|eot|woff2?/i.test(c)&&(c=c.replace(/.*\//,""));return b?`[${b}]${c}`:c}
+function L(a,b,d){return t(function*(){var c=K(a,b,d.C);if(J[c]!=null)return J[c];d.u&&(a+=(/\?/.test(a)?"&":"?")+(new Date).getTime());try{let f=yield I(a,d.i,({o:g,result:k})=>{b||(b=g.headers.get("Content-Type")||"");return k.split(/,/)[1]});var e=`data:${b};base64,${f}`}catch(f){e=d.B||""}return J[c]=e})};const M={P:"application/font-woff",R:"application/font-woff",N:"application/font-truetype",v:"application/vnd.ms-fontobject",H:"image/png",F:"image/jpeg",D:"image/jpeg",A:"image/gif",M:"image/tiff",L:"image/svg+xml",O:"image/webp"};function N(a){return(a=/\.([^./]*?)$/g.exec(a))?a[1]:""};function O(a){return t(function*(){var b=a.toDataURL();return b==="data:,"?a.cloneNode(!1):B(b)})}function aa(a,b){return t(function*(){if(a.currentSrc){var d=document.createElement("canvas");let c=d.getContext("2d");d.width=a.clientWidth;d.height=a.clientHeight;c==null||c.drawImage(a,0,0,d.width,d.height);d=d.toDataURL();return B(d)}d=a.poster;d=yield L(d,M[N(d).toLowerCase()]||"",b);return B(d)})}
+function ba(a,b){return t(function*(){try{let d;if(a==null?0:(d=a.contentDocument)==null?0:d.body)return yield P(a.contentDocument.body,b,!0)}catch(d){}return a.cloneNode(!1)})}function ca(a,b){return t(function*(){return E(a,HTMLCanvasElement)?O(a):E(a,HTMLVideoElement)?aa(a,b):E(a,HTMLIFrameElement)?ba(a,b):a.cloneNode(a.tagName!=null&&a.tagName.toUpperCase()==="SVG")})}
+function da(a,b,d){return t(function*(){if(b.tagName!=null&&b.tagName.toUpperCase()==="SVG")return b;var c=[];if(a.tagName!=null&&a.tagName.toUpperCase()==="SLOT"&&a.assignedNodes)c=w(a.assignedNodes());else{let e;if(E(a,HTMLIFrameElement)&&((e=a.contentDocument)==null?0:e.body))c=w(a.contentDocument.body.childNodes);else{let f;c=w(((f=a.shadowRoot)!=null?f:a).childNodes)}}if(c.length===0||E(a,HTMLVideoElement))return b;yield c.reduce((e,f)=>e.then(()=>P(f,d)).then(g=>{g&&b.appendChild(g)}),Promise.resolve());
+return b})}function ea(a,b,d){var c=b.style;if(c){var e=window.getComputedStyle(a);e.cssText?(c.cssText=e.cssText,c.transformOrigin=e.transformOrigin):y(d).forEach(f=>{var g=e.getPropertyValue(f);f==="font-size"&&g.endsWith("px")&&(g=`${Math.floor(parseFloat(g.substring(0,g.length-2)))-.1}px`);E(a,HTMLIFrameElement)&&f==="display"&&g==="inline"&&(g="block");f==="d"&&b.getAttribute("d")&&(g=`path(${b.getAttribute("d")})`);c.setProperty(f,g,e.getPropertyPriority(f))})}}
+function fa(a,b){E(a,HTMLSelectElement)&&(b=Array.from(b.children).find(d=>a.value===d.getAttribute("value")))&&b.setAttribute("selected","")}
+function ha(a,b){return t(function*(){var d=a.querySelectorAll?a.querySelectorAll("use"):[];if(d.length===0)return a;var c={};for(var e=0;e<d.length;e++){var f=d[e].getAttribute("xlink:href");if(f){let g=document.querySelector(f);a.querySelector(f)||!g||c[f]||(c[f]=yield P(g,b,!0))}}d=Object.values(c);if(d.length){c=document.createElementNS("http://www.w3.org/1999/xhtml","svg");c.setAttribute("xmlns","http://www.w3.org/1999/xhtml");c.style.position="absolute";c.style.width="0";c.style.height="0";
+c.style.overflow="hidden";c.style.display="none";e=document.createElementNS("http://www.w3.org/1999/xhtml","defs");c.appendChild(e);for(f=0;f<d.length;f++)e.appendChild(d[f]);a.appendChild(c)}return a})}
+function P(a,b,d){return t(function*(){return d||!b.filter||b.filter(a)?Promise.resolve(a).then(c=>ca(c,b)).then(c=>da(a,c,b)).then(c=>{E(c,Element)&&(ea(a,c,b),G(a,c,":before",b),G(a,c,":after",b),E(a,HTMLTextAreaElement)&&(c.textContent=a.value),E(a,HTMLInputElement)&&c.setAttribute("value",a.value),fa(a,c));return c}).then(c=>ha(c,b)):null})};const Q=/url\((['"]?)([^'"]+?)\1\)/g,ia=/url\([^)]+\)\s*format\((["']?)([^"']+)\1\)/g,ja=/src:\s*(?:url\([^)]+\)\s*format\([^)]+\)[,;]\s*)+/g;function ka(a){var b=[];a.replace(Q,(d,c,e)=>{b.push(e);return d});return b.filter(d=>!H(d))}
+function la(a,b,d,c){return t(function*(){try{let e=d?(new URL(b,d||void 0)).toString():b,f;f=yield L(e,M[N(b).toLowerCase()]||"",c);return a.replace(new RegExp(`(url\\(['"]?)(${b.replace(/([.*+?^${}()|\[\]\/\\])/g,"\\$1")})(['"]?\\))`,"g"),`$1${f}$3`)}catch(e){}return a})}function ma(a,{I:b}){return b?a.replace(ja,d=>{for(;;){let [c,,e]=ia.exec(d)||[];if(!e)return"";if(e===b)return`src: ${c};`}}):a}
+function R(a,b,d){return t(function*(){if(a.search(Q)===-1)return a;var c=ma(a,d);return ka(c).reduce((e,f)=>e.then(g=>la(g,f,b,d)),Promise.resolve(c))})};function S(a,b,d){return t(function*(){var c,e=(c=b.style)==null?void 0:c.getPropertyValue(a);return e?(c=yield R(e,null,d),b.style.setProperty(a,c,b.style.getPropertyPriority(a)),!0):!1})}function na(a,b){return t(function*(){(yield S("background",a,b))||(yield S("background-image",a,b));(yield S("mask",a,b))||(yield S("-webkit-mask",a,b))||(yield S("mask-image",a,b))||(yield S("-webkit-mask-image",a,b))})}
+function oa(a,b){return t(function*(){var d=E(a,HTMLImageElement);if(d&&!H(a.src)||E(a,SVGImageElement)&&!H(a.href.baseVal)){var c=d?a.src:a.href.baseVal,e=yield L(c,M[N(c).toLowerCase()]||"",b);yield new Promise((f,g)=>{a.onload=f;a.onerror=b.m?(...k)=>{try{f(b.m(...k))}catch(m){g(m)}}:g;a.decode&&(a.decode=f);a.loading==="lazy"&&(a.loading="eager");d?(a.srcset="",a.src=e):a.href.baseVal=e})}})}
+function pa(a,b){return t(function*(){var d=w(a.childNodes).map(c=>T(c,b));yield Promise.all(d).then(()=>a)})}function T(a,b){return t(function*(){E(a,Element)&&(yield na(a,b),yield oa(a,b),yield pa(a,b))})};const U={};function V(a){return t(function*(){var b=U[a];if(b!=null)return b;b=yield(yield fetch(a)).text();b={url:a,cssText:b};return U[a]=b})}function W(a,b){return t(function*(){var d=a.cssText,c=/url\(["']?([^"')]+)["']?\)/g,e=(d.match(/url\([^)]+\)/g)||[]).map(f=>t(function*(){var g=f.replace(c,"$1");g.startsWith("https://")||(g=(new URL(g,a.url)).href);return I(g,b.i,({result:k})=>{d=d.replace(f,`url(${k})`);return[f,k]})}));return Promise.all(e).then(()=>d)})}
+function X(a){if(a==null)return[];var b=[];a=a.replace(/(\/\*[\s\S]*?\*\/)/gi,"");for(var d=RegExp("((@.*?keyframes [\\s\\S]*?){([\\s\\S]*?}\\s*?)})","gi");;){var c=d.exec(a);if(c===null)break;b.push(c[0])}a=a.replace(d,"");d=/@import[\s\S]*?url\([^)]*\)[\s\S]*?;/gi;for(c=RegExp("((\\s*?(?:\\/\\*[\\s\\S]*?\\*\\/)?\\s*?@media[\\s\\S]*?){([\\s\\S]*?)}\\s*?})|(([\\s\\S]*?){([\\s\\S]*?)})","gi");;){let e=d.exec(a);if(e===null)if(e=c.exec(a),e===null)break;else d.lastIndex=c.lastIndex;else c.lastIndex=
+d.lastIndex;b.push(e[0])}return b}
+function qa(a,b){return t(function*(){var d=[],c=[];a.forEach(e=>{if("cssRules"in e)try{w(e.cssRules||[]).forEach((f,g)=>{if(f.type===CSSRule.IMPORT_RULE){let k=g+1;f=V(f.href).then(m=>W(m,b)).then(m=>X(m).forEach(q=>{try{e.insertRule(q,q.startsWith("@import")?k+=1:e.cssRules.length)}catch(Da){}})).catch(()=>{});c.push(f)}})}catch(f){let g=a.find(k=>k.href==null)||document.styleSheets[0];e.href!=null&&c.push(V(e.href).then(k=>W(k,b)).then(k=>X(k).forEach(m=>{g.insertRule(m,g.cssRules.length)})).catch(()=>
+{}))}});return Promise.all(c).then(()=>{a.forEach(e=>{if("cssRules"in e)try{w(e.cssRules||[]).forEach(f=>{d.push(f)})}catch(f){}});return d})})}function ra(a){return a.filter(b=>b.type===CSSRule.FONT_FACE_RULE).filter(b=>b.style.getPropertyValue("src").search(Q)!==-1)}function sa(a,b){return t(function*(){if(a.ownerDocument==null)throw Error("Provided element is not within a Document");var d=w(a.ownerDocument.styleSheets);d=yield qa(d,b);return ra(d)})}
+function ta(a){function b(c){(c.style.fontFamily||getComputedStyle(c).fontFamily).split(",").forEach(e=>{d.add(e.trim().replace(/["']/g,""))});Array.from(c.children).forEach(e=>{e instanceof HTMLElement&&b(e)})}var d=new Set;b(a);return d}function ua(a,b){return t(function*(){var d=yield sa(a,b),c=ta(a);return(yield Promise.all(d.filter(e=>c.has(e.style.fontFamily.trim().replace(/["']/g,""))).map(e=>R(e.cssText,e.parentStyleSheet?e.parentStyleSheet.href:null,b)))).join("\n")})}
+function va(a,b){return t(function*(){var d=b.j!=null?b.j:b.K?null:yield ua(a,b);if(d){let c=document.createElement("style");c.appendChild(document.createTextNode(d));a.firstChild?a.insertBefore(c,a.firstChild):a.appendChild(c)}})};function wa(a,b={}){return t(function*(){var {width:d,height:c}=A(a,b),e=yield P(a,b,!0);yield va(e,b);yield T(e,b);u(e,b);return yield D(e,d,c)})}
+function xa(a,b={}){return t(function*(){var {width:d,height:c}=A(a,b),e=yield wa(a,b);e=yield B(e);var f=document.createElement("canvas"),g=f.getContext("2d"),k=b.G||window.devicePixelRatio||1,m=b.h||d,q=b.g||c;f.width=m*k;f.height=q*k;!b.J&&(f.width>16384||f.height>16384)&&(f.width>16384&&f.height>16384?f.width>f.height?(f.height*=16384/f.width,f.width=16384):(f.width*=16384/f.height,f.height=16384):f.width>16384?(f.height*=16384/f.width,f.width=16384):(f.width*=16384/f.height,f.height=16384));
+f.style.width=`${m}`;f.style.height=`${q}`;b.backgroundColor&&(g.fillStyle=b.backgroundColor,g.fillRect(0,0,f.width,f.height));g.drawImage(e,0,0,f.width,f.height);return f})}function ya(a,b={}){return t(function*(){return(yield xa(a,b)).toDataURL()})};const za=["gemini.google.com","corp.google.com","proxy.googlers.com"];function Y(){return document.body.querySelectorAll('[class*="animate"]').length>0}function Z(a){return t(function*(){try{return yield ya(a,{h:a.offsetWidth,g:a.offsetHeight})}catch(d){var b=a.offsetHeight;let c=document.createElement("canvas");c.width=a.offsetWidth;c.height=b;return c.toDataURL("image/png")}})}
+function Aa(){return t(function*(){var a=document.body.offsetWidth,b=document.body.offsetHeight,d=document.body.cloneNode(!0);d.querySelectorAll('[class*="animate"]').forEach(c=>{c.classList.remove(...Array.from(c.classList).filter(e=>e.startsWith("animate")))});d.style.width=`${a}px`;d.style.height=`${b}px`;return d})}
+function Ba(a){return t(function*(){var b=document.body;if(Y()){var d=yield Aa();b=d;document.body.appendChild(d)}d=yield Z(b);Y()&&document.body.removeChild(b);window.parent.postMessage({type:"SEND_SCREENSHOT",image:d,topOffset:document.documentElement.scrollTop},a.origin)})}function Ca(a){return t(function*(){var b={type:"SEND_SCREENSHOT_FOR_DATA_VISUALIZATION",image:yield Z(document.body),topOffset:0};window.parent.postMessage(b,a.origin)})}
+window.addEventListener("message",a=>t(function*(){if(za.some(d=>a.origin.includes(d))){var b=a.data;b&&(b.type==="MAKE_SCREENSHOT"&&(yield Ba(a)),b.type==="MAKE_SCREENSHOT_FOR_DATA_VISUALIZATION"&&(yield Ca(a)))}}));
+})();</script><script>(function() {
+  // Ensure this script is executed only once
+  if (window.firebaseAuthBridgeScriptLoaded) {
+    return;
+  }
+  window.firebaseAuthBridgeScriptLoaded = true;
+
+  let nextTokenPromiseId = 0;
+
+  // Stores { resolve, reject } for ongoing token requests
+  const pendingTokenPromises = {};
+
+  // Listen for messages from the Host Application
+  window.addEventListener('message', function(event) {
+
+    const messageData = event.data;
+
+  if (messageData && messageData.type === 'RESOLVE_NEW_FIREBASE_TOKEN') {
+      const { success, token, error, promiseId } = messageData ?? {};
+      if (pendingTokenPromises[promiseId]) {
+        if (success) {
+          pendingTokenPromises[promiseId].resolve(token);
+        } else {
+          pendingTokenPromises[promiseId].reject(new Error(error || 'Token refresh failed from host.'));
+        }
+        delete pendingTokenPromises[promiseId];
+      }
+    }
+  });
+
+  // Expose a function for the Generated App to request a new Firebase token
+  window.requestNewFirebaseToken = function() {
+    const currentPromiseId = nextTokenPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingTokenPromises[currentPromiseId] = { resolve, reject };
+    });
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({
+        type: 'REQUEST_NEW_FIREBASE_TOKEN',
+        promiseId: currentPromiseId
+      }, '*');
+    } else {
+      pendingTokenPromises[currentPromiseId].reject(new Error('No parent window to request token from.'));
+      delete pendingTokenPromises[currentPromiseId];
+    }
+    return promise;
+  };
+})();</script><script>
+let realOriginalGetUserMedia = null;
+if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+  realOriginalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+}
+
+(function() {
+  if (navigator.mediaDevices && navigator.mediaDevices.__proto__) {
+    try {
+      Object.defineProperty(navigator.mediaDevices.__proto__, 'getUserMedia', {
+        get: function() {
+          return undefined; // Or throw an error
+        },
+        configurable: false
+      });
+    } catch (error) {
+      console.error("Error defining prototype getter:", error);
+    }
+  }
+})();
+
+(function() {
+  const pendingMediaResolvers = {};
+  let nextMediaPromiseId = 0;
+
+  function requestMediaPermissions(constraints) {
+    const mediaPromiseId = nextMediaPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingMediaResolvers[mediaPromiseId] = (granted) => {
+        delete pendingMediaResolvers[mediaPromiseId];
+        resolve(granted);
+      };
+    });
+
+    window.parent.postMessage({
+      type: 'requestMediaPermission',
+      constraints: constraints,
+      promiseId: mediaPromiseId,
+    }, '*');
+
+    return promise;
+  }
+
+  let originalGetUserMedia = realOriginalGetUserMedia;
+
+  function interceptGetUserMedia() {
+    if (navigator.mediaDevices) {
+      Object.defineProperty(navigator.mediaDevices, 'getUserMedia', {
+        value: function(constraints) {
+          return requestMediaPermissions(constraints).then((granted) => {
+            if (granted) {
+              if (originalGetUserMedia) {
+                return originalGetUserMedia(constraints);
+              } else {
+                throw new Error("Original getUserMedia not available.");
+              }
+            } else {
+              throw new DOMException('Permission denied', 'NotAllowedError');
+            }
+          });
+        },
+        writable: false,
+        configurable: false
+      });
+    }
+  }
+
+  interceptGetUserMedia();
+
+  const observer = new MutationObserver(function(mutationsList, observer) {
+    for (const mutation of mutationsList) {
+      if (mutation.type === 'reconfigured' && mutation.name === 'getUserMedia' && mutation.object === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'attributes' && mutation.attributeName === 'getUserMedia' && mutation.target === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'childList' && mutation.addedNodes) {
+        mutation.addedNodes.forEach(node => {
+          if (node === navigator.mediaDevices) {
+            interceptGetUserMedia();
+          }
+        });
+      }
+    }
+  });
+
+  function interceptSpeechRecognition() {
+    if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
+      return;
+    }
+
+    const OriginalSpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    const SpeechRecognitionWrapper = function(...args) {
+      const recognizer = new OriginalSpeechRecognition(...args);
+      const originalStart = recognizer.start.bind(recognizer);
+
+      recognizer.start = function() {
+        requestMediaPermissions({ audio: true }).then(granted => {
+          if (granted) {
+            originalStart();
+          } else {
+            const errorEvent = new SpeechRecognitionErrorEvent('error');
+            errorEvent.error = 'not-allowed'; // This is the standard error for permission denial.
+            recognizer.dispatchEvent(errorEvent);
+          }
+        });
+      };
+
+      return recognizer;
+    };
+
+    SpeechRecognitionWrapper.prototype = OriginalSpeechRecognition.prototype;
+    SpeechRecognitionWrapper.prototype.constructor = SpeechRecognitionWrapper;
+
+    if (window.SpeechRecognition) {
+      window.SpeechRecognition = SpeechRecognitionWrapper;
+    }
+    if (window.webkitSpeechRecognition) {
+      window.webkitSpeechRecognition = SpeechRecognitionWrapper;
+    }
+  }
+
+  interceptSpeechRecognition();
+
+  window.addEventListener('message', function(event) {
+    if (event.data) {
+      if (event.data.type === 'resolveMediaPermission') {
+        const { promiseId, granted } = event.data;
+        if (pendingMediaResolvers[promiseId]) {
+          pendingMediaResolvers[promiseId](granted);
+        }
+      }
+    }
+  });
+
+})();</script><script ws-interception-config="{&quot;parentOrigin&quot;:&quot;https://gemini.google.com&quot;,&quot;proxiedDomains&quot;:[]}">(function(){'use strict';var u=typeof Object.defineProperties=="function"?Object.defineProperty:function(b,d,e){if(b==Array.prototype||b==Object.prototype)return b;b[d]=e.value;return b};function v(b){b=["object"==typeof globalThis&&globalThis,b,"object"==typeof window&&window,"object"==typeof self&&self,"object"==typeof global&&global];for(var d=0;d<b.length;++d){var e=b[d];if(e&&e.Math==Math)return e}throw Error("Cannot find global object");}var w=v(this);
+function y(b,d){if(d)a:{var e=w;b=b.split(".");for(var h=0;h<b.length-1;h++){var k=b[h];if(!(k in e))break a;e=e[k]}b=b[b.length-1];h=e[b];d=d(h);d!=h&&d!=null&&u(e,b,{configurable:!0,writable:!0,value:d})}}function z(b){function d(h){return b.next(h)}function e(h){return b.throw(h)}return new Promise(function(h,k){function m(n){n.done?h(n.value):Promise.resolve(n.value).then(d,e).then(m,k)}m(b.next())})}y("globalThis",function(b){return b||w});/*
+
+ Copyright The Closure Library Authors.
+ SPDX-License-Identifier: Apache-2.0
+*/
+function A(b,d){function e(){}e.prototype=d.prototype;b.i=d.prototype;b.prototype=new e;b.prototype.constructor=b;b.g=function(h,k,m){for(var n=Array(arguments.length-2),p=2;p<arguments.length;p++)n[p-2]=arguments[p];return d.prototype[k].apply(h,n)}};function B(b,d,e="*"){function h(a){if(typeof a==="string")return F.encode(a).buffer;if(a instanceof ArrayBuffer)return a.slice(0);if(ArrayBuffer.isView(a))return a.buffer.slice(a.byteOffset,a.byteOffset+a.byteLength);throw Error("Invalid data type");}function k(a){a=h(a);var f={type:"send",data:new Uint8Array(a)},g;(g=r)==null||g.postMessage(f,[a])}function m(){if(!r)throw Error("Data port not captured yet.");r.onmessage=a=>{if(a.data.type==="message"){a=new MessageEvent("message",{data:G.decode(a.data.data)});
+let f;(f=c.onmessage)==null||f.call(c,a);c.dispatchEvent(a)}}}function n(){if(!t)throw Error("Control port not captured yet.");t.onmessage=a=>{switch(a.data.type){case "open":l=1;var f=new Event("open"),g;(g=c.onopen)==null||g.call(c,f);c.dispatchEvent(f);q.forEach(H=>{k(H)});q=[];break;case "close":g=a.data;l=3;g=new CloseEvent("close",{code:g.code,reason:g.reason,wasClean:g.wasClean});(f=c.onclose)==null||f.call(c,g);c.dispatchEvent(g);break;case "error":l=3;f=new Event("error");let x;(x=c.onerror)==
+null||x.call(c,f);c.dispatchEvent(f)}}}function p(a){return z(function*(){var f=new MessageChannel;t=f.port1;var g=new MessageChannel;r=g.port1;n();m();window.parent.postMessage({type:"websocket_open",portOrdering:["control","data"],url:b,protocols:a||[],connectionId:I},e,[f.port2,g.port2])}())}var c=Reflect.construct(EventTarget,[],new.target);c.CONNECTING=0;c.OPEN=1;c.CLOSING=2;c.CLOSED=3;c.url=b;c.binaryType="arraybuffer";c.protocol="";c.h="";var l=0,t=null,r=null,q=[],F=new TextEncoder,G=new TextDecoder;
+c.onopen=null;c.onmessage=null;c.onclose=null;c.onerror=null;Object.defineProperty(c,"readyState",{get:()=>l,enumerable:!0,configurable:!0});Object.defineProperty(c,"bufferedAmount",{get:()=>{var a=0;q.forEach(f=>{a+=typeof f==="string"?f.length:f.byteLength});return a},enumerable:!0,configurable:!0});var I=function(){var a;return((a=globalThis.crypto)==null?0:a.randomUUID)?globalThis.crypto.randomUUID():"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,f=>{var g=Math.random()*16|0;return(f===
+"x"?g:g&3|8).toString(16)})}();c.send=a=>{if(l===1)a instanceof Blob?a.arrayBuffer().then(f=>{k(f)}):k(a);else if(l===0)if(typeof a==="string")q.push(a);else if(a instanceof ArrayBuffer||ArrayBuffer.isView(a))q.push(h(a));else throw Error("Sending Blob is not supported before the connection is open.");else console.debug("WebSocket send called in CLOSING or CLOSED state; ignored.")};c.close=(a=1E3,f="")=>{if(l!==2&&l!==3){l=2;a={type:"close",code:a,reason:f,wasClean:a===1E3};var g;(g=t)==null||g.postMessage(a)}};
+Promise.resolve().then(()=>p(d));return c}A(B,EventTarget);var C=document.currentScript,D=C==null?void 0:C.getAttribute("ws-interception-config");if(!D)throw Error("WebSocket Interceptor: Missing ws-interception-config attribute in the script tag.");var E=JSON.parse(D);if(!E.parentOrigin||typeof E.parentOrigin!=="string")throw Error("WebSocket Interceptor: Invalid parentOrigin in ws-interception-config");
+(function(b){var d=Object.getOwnPropertyDescriptor(window,"WebSocket");if(!d||d.writable||d.configurable)d=Object.assign(function(e,h){try{let k=(new URL(e)).hostname;if(b.proxiedDomains.some(m=>k===m||k.endsWith(`.${m}`)))return new B(e,h,b.parentOrigin)}catch(k){throw window.parent.postMessage({type:"websocket_blocked",url:e,reason:"blocked_invalid_url"},b.parentOrigin),new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");}window.parent.postMessage({type:"websocket_blocked",
+url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");},{CONNECTING:0,OPEN:1,CLOSING:2,CLOSED:3}),Object.defineProperty(window,"WebSocket",{value:d,writable:!1,configurable:!1})})({proxiedDomains:E.proxiedDomains||[],parentOrigin:E.parentOrigin});}).call(this);
+</script><script>((function(modelInformation) {
+  const originalFetch = window.fetch;
+  // TODO: b/421908508 - Move these out of the script and match all generative AI model calls.
+  let googleLlmBaseApiUrls = [
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':streamGenerateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageEditModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageTransformModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.ttsModelName + ':generateContent',
+  ];
+  modelInformation.deprecatedTextModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+    );
+  });
+  modelInformation.deprecatedImageModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predict',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predictLongRunning',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+  modelInformation.deprecatedGenerateImageModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+
+  const pendingFetchResolvers = {};
+  let nextPromiseId = 0;
+
+  function handleStringInput(input, optionsArgument) {
+    const actualUrl = input;
+    const fetchCallArgs = [actualUrl, optionsArgument];
+    const effectiveOptions = optionsArgument || {};
+    const bodyForApiKeyCheck = effectiveOptions.body;
+    const bodyForPostMessage = effectiveOptions.body;
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  function handleRequestInput(input, optionsArgument) {
+    const actualUrl = input.url;
+    const fetchCallArgs = [input, optionsArgument];
+    const effectiveOptions = { method: input.method, headers: new Headers(input.headers) };
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (optionsArgument) {
+      if (optionsArgument.method) effectiveOptions.method = optionsArgument.method;
+      if (optionsArgument.headers) effectiveOptions.headers = new Headers(optionsArgument.headers);
+      if ('body' in optionsArgument) {
+        bodyForApiKeyCheck = optionsArgument.body;
+        bodyForPostMessage = optionsArgument.body;
+      } else {
+        bodyForApiKeyCheck = undefined;
+        bodyForPostMessage = input.body;
+      }
+    } else {
+      bodyForApiKeyCheck = undefined;
+      bodyForPostMessage = input.body;
+    }
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  window.fetch = function(input, optionsArgument) {
+    let actualUrl;
+    let fetchCallArgs;
+    let effectiveOptions = {};
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (typeof input === 'string') {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleStringInput(input, optionsArgument));
+    } else if (input instanceof Request) {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleRequestInput(input, optionsArgument));
+    } else {
+      return originalFetch.apply(window, [input, optionsArgument]);
+    }
+
+    effectiveOptions.method = effectiveOptions.method || 'GET';
+    if (!effectiveOptions.headers) {
+      effectiveOptions.headers = new Headers();
+    }
+
+
+    if (typeof actualUrl === 'string' && googleLlmBaseApiUrls.some((url) => actualUrl.startsWith(url))) {
+      let apiKeyIsNull = true;
+
+      const regex = new RegExp("models/([^:]+)");
+      const modelNameMatch = actualUrl.match(regex);
+      const modelName = modelNameMatch ? modelNameMatch[1] : 'unspecified';
+
+
+      try {
+        const urlObject = new URL(actualUrl);  // Use URL object for robust parsing
+        const apiKeyParam = urlObject.searchParams.get('key');
+        if (apiKeyParam) {
+          apiKeyIsNull = false;
+        }
+      } catch (e) {
+        // Continue checks even if URL parsing fails
+      }
+
+      if (apiKeyIsNull && effectiveOptions.headers) {
+        const h = new Headers(effectiveOptions.headers);
+        const apiKeyHeaderValue = h.get('X-API-Key') || h.get('x-api-key');
+        if (apiKeyHeaderValue) {
+          apiKeyIsNull = false;
+          return originalFetch.apply(window, fetchCallArgs);
+        }
+      }
+
+      if (apiKeyIsNull && effectiveOptions.method && ['POST', 'PUT', 'PATCH'].includes(effectiveOptions.method.toUpperCase()) && typeof bodyForApiKeyCheck === 'string') {
+        try {
+          const bodyData = JSON.parse(bodyForApiKeyCheck);
+          if (bodyData && bodyData.apiKey) {
+            apiKeyIsNull = false;
+            return originalFetch.apply(window, fetchCallArgs);
+          }
+        } catch (e) {
+          // Ignore JSON parsing errors
+        }
+      }
+
+      if(apiKeyIsNull) {
+        const promiseId = nextPromiseId++;
+        const promise = new Promise((resolve) => {
+          pendingFetchResolvers[promiseId] = (resolvedResponse) => {
+            delete pendingFetchResolvers[promiseId];
+            resolve(resolvedResponse);
+          };
+        });
+
+        let serializedBodyForPostMessage;
+        if (typeof bodyForPostMessage === 'string' || bodyForPostMessage == null) {
+            serializedBodyForPostMessage = bodyForPostMessage;
+        } else if (bodyForPostMessage instanceof ReadableStream) {
+            serializedBodyForPostMessage = null;
+        } else {
+            try {
+                serializedBodyForPostMessage = JSON.stringify(bodyForPostMessage);
+            } catch (e) {
+                serializedBodyForPostMessage = null;
+            }
+        }
+
+        const messageOptions = {
+            method: effectiveOptions.method,
+            headers: Object.fromEntries(new Headers(effectiveOptions.headers).entries()),
+            body: serializedBodyForPostMessage
+        };
+
+        window.parent.postMessage({
+          type: 'requestFetch',
+          url: actualUrl,
+          modelName: modelName,
+          options: messageOptions,
+          promiseId: promiseId,
+        }, '*');
+
+        return promise;
+      }
+      return originalFetch.apply(window, fetchCallArgs);
+    }
+    return originalFetch.apply(window, fetchCallArgs);
+  };
+
+  window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'resolveFetch') {
+      const { promiseId, response } = event.data;
+      if (pendingFetchResolvers[promiseId]) {
+        try {
+          const reconstructedResponse = new Response(response.body, {
+            status: response.status,
+            statusText: response.statusText,
+            headers: new Headers(response.headers),
+          });
+          pendingFetchResolvers[promiseId](reconstructedResponse);
+        } catch (error) {
+          pendingFetchResolvers[promiseId](new Response(null, { status: 500, statusText: "Interceptor Response Reconstruction Error" }));
+        }
+      }
+    }
+  });
+
+}))({"textModelName":"gemini-3-flash-preview","imageModelName":"imagen-4.0-generate-001","imageEditModelName":"gemini-3.1-flash-image-preview","imageTransformModelName":"gemini-3-pro-image-preview-11-2025","videoModelName":"veo-2.0-generate-001","ttsModelName":"gemini-2.5-flash-preview-tts","deprecatedTextModelNames":["gemini-2.0-flash","gemini-2.5-flash","gemini-2.5-flash-preview-04-17","gemini-2.5-flash-preview-05-20","gemini-2.5-flash-preview-09-2025"],"deprecatedImageModelNames":["imagen-3.0-generate-001","imagen-3.0-generate-002"],"deprecatedGenerateImageModelNames":["gemini-2.5-flash-image-preview","gemini-2.5-flash-image"]})</script><script>(function(){'use strict';function a(){window.parent.postMessage({type:"interaction"},"*")}window.addEventListener("click",a,{capture:!0,passive:!0});window.addEventListener("touchstart",a,{capture:!0,passive:!0});window.addEventListener("keydown",a,{capture:!0,passive:!0});}).call(this);
+</script><script>(function() {
+  const originalConsoleLog = console.log;
+  const originalConsoleError = console.error;
+
+    /**
+   * Normalizes an error event or a promise rejection reason into a structured error object.
+   * @param {*} errorEventOrReason The error object or reason.
+   * @return {object} Structured error data { message, name, stack }.
+   */
+  function getErrorObject(errorEventOrReason) {
+    if (errorEventOrReason instanceof Error) {
+      return {
+        message: errorEventOrReason.message,
+        name: errorEventOrReason.name,
+        stack: errorEventOrReason.stack,
+      };
+    }
+    // Fallback for non-Error objects.
+    try {
+      return {
+        message: JSON.stringify(errorEventOrReason),
+        name: 'UnknownErrorType',
+        stack: null,
+      };
+    } catch (e) {
+      return {
+        message: String(errorEventOrReason),
+        name: 'UnknownErrorTypeNonStringifiable',
+        stack: null,
+      };
+    }
+  }
+
+  /**
+   * Converts an array of arguments (from log/error) into a single string.
+   * Handles Error objects specially to include their message and stack.
+   * @param {Array<*>} args - Arguments passed to console methods.
+   * @return {string} A string representation of the arguments.
+   */
+  function stringifyArgs(args) {
+    return args
+      .map((arg) => {
+        if (arg instanceof Error) {
+          const {message, stack} = arg;
+          return `Error: ${message}${stack ? ('\nStack: ' + stack) : ''}`;
+        }
+        if (typeof arg === 'object' && arg !== null) {
+          try {
+            return JSON.stringify(arg);
+          } catch (error) {
+            return '[Circular Object]';
+          }
+        } else {
+          return String(arg);
+        }
+      })
+      .join(' ');
+  }
+
+  console.log = function(...args) {
+    const logString = stringifyArgs(args);
+    window.parent.postMessage({ type: 'log', message: logString }, '*');
+    originalConsoleLog.apply(console, args);
+  };
+
+  console.error = function(...args) {
+    let errorData;
+    if (args.length > 0 && args[0] instanceof Error) {
+      const err = args[0];
+      // If the first arg is an Error, capture its details.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        ...getErrorObject(err),
+        rawArgsString: stringifyArgs(args.slice(1)),
+        timestamp: new Date().toISOString(),
+      };
+    } else {
+      // If not an Error object, treat all args as a general error message.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        message: stringifyArgs(args),
+        name: 'ConsoleLoggedError',
+        stack: null,
+        timestamp: new Date().toISOString(),
+      };
+    }
+    window.parent.postMessage(errorData, '*');
+    originalConsoleError.apply(console, args);
+  };
+
+  // Listen for global unhandled synchronous errors.
+  window.addEventListener('error', function(event) {
+    const errorDetails = event.error ? getErrorObject(event.error) : {
+      message: event.message,
+      name: 'GlobalError',
+      stack: null,
+      filename: event.filename,
+      lineno: event.lineno,
+      colno: event.colno,
+    };
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'global',
+      ...errorDetails,
+      message: errorDetails.message || event.message,
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+  // Listen for unhandled promise rejections (asynchronous errors).
+  window.addEventListener('unhandledrejection', function(event) {
+    const errorDetails = getErrorObject(event.reason);
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'unhandledrejection',
+      ...errorDetails,
+      message: errorDetails.message || 'Unhandled Promise Rejection',
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+})();</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>최애 아이돌 덕질 시뮬레이터</title>
@@ -93,7 +665,7 @@
             border-radius: 3px;
         }
     </style>
-</head>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0px}.-right-10{right:-2.5rem}.-top-10{top:-2.5rem}.bottom-0{bottom:0px}.bottom-12{bottom:3rem}.bottom-6{bottom:1.5rem}.left-0{left:0px}.left-1\/2{left:50%}.right-0{right:0px}.right-6{right:1.5rem}.top-0{top:0px}.top-1\/2{top:50%}.z-10{z-index:10}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.my-6{margin-top:1.5rem;margin-bottom:1.5rem}.my-auto{margin-top:auto;margin-bottom:auto}.mb-1{margin-bottom:0.25rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mr-1{margin-right:0.25rem}.mr-2{margin-right:0.5rem}.mt-0\.5{margin-top:0.125rem}.mt-1{margin-top:0.25rem}.mt-auto{margin-top:auto}.block{display:block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-0\.5{height:0.125rem}.h-10{height:2.5rem}.h-12{height:3rem}.h-16{height:4rem}.h-24{height:6rem}.h-28{height:7rem}.h-40{height:10rem}.h-64{height:16rem}.h-full{height:100%}.h-48{height:12rem}.max-h-\[250px\]{max-height:250px}.min-h-\[160px\]{min-height:160px}.min-h-\[180px\]{min-height:180px}.min-h-\[320px\]{min-height:320px}.min-h-\[480px\]{min-height:480px}.min-h-screen{min-height:100vh}.w-10{width:2.5rem}.w-16{width:4rem}.w-24{width:6rem}.w-28{width:7rem}.w-40{width:10rem}.w-48{width:12rem}.w-full{width:100%}.min-w-\[100px\]{min-width:100px}.max-w-6xl{max-width:72rem}.max-w-md{max-width:28rem}.flex-1{flex:1 1 0%}.flex-grow{flex-grow:1}.-translate-x-1\/2{--tw-translate-x:-50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-translate-y-1\/2{--tw-translate-y:-50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.transform{transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@keyframes pulse{50%{opacity:.5}}.animate-pulse{animation:pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite}.cursor-not-allowed{cursor:not-allowed}.cursor-pointer{cursor:pointer}.select-none{-webkit-user-select:none;user-select:none}.resize-none{resize:none}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.justify-around{justify-content:space-around}.gap-1{gap:0.25rem}.gap-2{gap:0.5rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.space-x-1 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.25rem * var(--tw-space-x-reverse));margin-left:calc(0.25rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-2 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.5rem * var(--tw-space-x-reverse));margin-left:calc(0.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-3 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.75rem * var(--tw-space-x-reverse));margin-left:calc(0.75rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-4 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.25rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.rounded{border-radius:0.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-0{border-width:0px}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-\[\#ff2a7a\]\/50{border-color:rgb(255 42 122 / 0.5)}.border-gray-700{--tw-border-opacity:1;border-color:rgb(55 65 81 / var(--tw-border-opacity, 1))}.border-gray-800{--tw-border-opacity:1;border-color:rgb(31 41 55 / var(--tw-border-opacity, 1))}.border-gray-800\/60{border-color:rgb(31 41 55 / 0.6)}.border-gray-900{--tw-border-opacity:1;border-color:rgb(17 24 39 / var(--tw-border-opacity, 1))}.border-pink-400{--tw-border-opacity:1;border-color:rgb(244 114 182 / var(--tw-border-opacity, 1))}.border-pink-500{--tw-border-opacity:1;border-color:rgb(236 72 153 / var(--tw-border-opacity, 1))}.border-pink-500\/30{border-color:rgb(236 72 153 / 0.3)}.border-purple-500\/30{border-color:rgb(168 85 247 / 0.3)}.border-yellow-500\/10{border-color:rgb(234 179 8 / 0.1)}.border-yellow-500\/20{border-color:rgb(234 179 8 / 0.2)}.border-gray-800\/80{border-color:rgb(31 41 55 / 0.8)}.bg-\[\#080516\]{--tw-bg-opacity:1;background-color:rgb(8 5 22 / var(--tw-bg-opacity, 1))}.bg-\[\#120a2b\]{--tw-bg-opacity:1;background-color:rgb(18 10 43 / var(--tw-bg-opacity, 1))}.bg-\[\#120a2b\]\/90{background-color:rgb(18 10 43 / 0.9)}.bg-\[\#18113c\]{--tw-bg-opacity:1;background-color:rgb(24 17 60 / var(--tw-bg-opacity, 1))}.bg-\[\#1c1444\]{--tw-bg-opacity:1;background-color:rgb(28 20 68 / var(--tw-bg-opacity, 1))}.bg-\[\#1f164c\]{--tw-bg-opacity:1;background-color:rgb(31 22 76 / var(--tw-bg-opacity, 1))}.bg-\[\#ff2a7a\]\/20{background-color:rgb(255 42 122 / 0.2)}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0 / var(--tw-bg-opacity, 1))}.bg-black\/30{background-color:rgb(0 0 0 / 0.3)}.bg-black\/40{background-color:rgb(0 0 0 / 0.4)}.bg-black\/75{background-color:rgb(0 0 0 / 0.75)}.bg-gray-700{--tw-bg-opacity:1;background-color:rgb(55 65 81 / var(--tw-bg-opacity, 1))}.bg-gray-800{--tw-bg-opacity:1;background-color:rgb(31 41 55 / var(--tw-bg-opacity, 1))}.bg-green-500{--tw-bg-opacity:1;background-color:rgb(34 197 94 / var(--tw-bg-opacity, 1))}.bg-pink-500{--tw-bg-opacity:1;background-color:rgb(236 72 153 / var(--tw-bg-opacity, 1))}.bg-pink-500\/10{background-color:rgb(236 72 153 / 0.1)}.bg-pink-500\/20{background-color:rgb(236 72 153 / 0.2)}.bg-pink-600{--tw-bg-opacity:1;background-color:rgb(219 39 119 / var(--tw-bg-opacity, 1))}.bg-transparent{background-color:transparent}.bg-yellow-400\/10{background-color:rgb(250 204 21 / 0.1)}.bg-yellow-500{--tw-bg-opacity:1;background-color:rgb(234 179 8 / var(--tw-bg-opacity, 1))}.bg-\[\#110d29\]{--tw-bg-opacity:1;background-color:rgb(17 13 41 / var(--tw-bg-opacity, 1))}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-purple-600{--tw-bg-opacity:1;background-color:rgb(147 51 234 / var(--tw-bg-opacity, 1))}.bg-yellow-400{--tw-bg-opacity:1;background-color:rgb(250 204 21 / var(--tw-bg-opacity, 1))}.bg-zinc-600{--tw-bg-opacity:1;background-color:rgb(82 82 91 / var(--tw-bg-opacity, 1))}.bg-\[linear-gradient\(to_right\2c \#808080_1px\2c transparent_1px\)\2c linear-gradient\(to_bottom\2c \#808080_1px\2c transparent_1px\)\]{background-image:linear-gradient(to right,#808080 1px,transparent 1px),linear-gradient(to bottom,#808080 1px,transparent 1px)}.bg-gradient-to-b{background-image:linear-gradient(to bottom, var(--tw-gradient-stops))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.bg-gradient-to-tr{background-image:linear-gradient(to top right, var(--tw-gradient-stops))}.from-\[\#ff2a7a\]\/20{--tw-gradient-from:rgb(255 42 122 / 0.2) var(--tw-gradient-from-position);--tw-gradient-to:rgb(255 42 122 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-emerald-500{--tw-gradient-from:#10b981 var(--tw-gradient-from-position);--tw-gradient-to:rgb(16 185 129 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-pink-500{--tw-gradient-from:#ec4899 var(--tw-gradient-from-position);--tw-gradient-to:rgb(236 72 153 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-purple-600{--tw-gradient-from:#9333ea var(--tw-gradient-from-position);--tw-gradient-to:rgb(147 51 234 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-transparent{--tw-gradient-from:transparent var(--tw-gradient-from-position);--tw-gradient-to:rgb(0 0 0 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.via-pink-500{--tw-gradient-to:rgb(236 72 153 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), #ec4899 var(--tw-gradient-via-position), var(--tw-gradient-to)}.via-purple-600{--tw-gradient-to:rgb(147 51 234 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), #9333ea var(--tw-gradient-via-position), var(--tw-gradient-to)}.to-indigo-500{--tw-gradient-to:#6366f1 var(--tw-gradient-to-position)}.to-pink-500{--tw-gradient-to:#ec4899 var(--tw-gradient-to-position)}.to-purple-600{--tw-gradient-to:#9333ea var(--tw-gradient-to-position)}.to-teal-600{--tw-gradient-to:#0d9488 var(--tw-gradient-to-position)}.to-transparent{--tw-gradient-to:transparent var(--tw-gradient-to-position)}.bg-\[size\:24px_24px\]{background-size:24px 24px}.p-1{padding:0.25rem}.p-1\.5{padding:0.375rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.px-1{padding-left:0.25rem;padding-right:0.25rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.px-1\.5{padding-left:0.375rem;padding-right:0.375rem}.pb-3{padding-bottom:0.75rem}.pr-2{padding-right:0.5rem}.pt-2{padding-top:0.5rem}.pt-3{padding-top:0.75rem}.pt-4{padding-top:1rem}.text-center{text-align:center}.text-right{text-align:right}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-\[9px\]{font-size:9px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-black{font-weight:900}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.italic{font-style:italic}.leading-none{line-height:1}.leading-relaxed{line-height:1.625}.tracking-wider{letter-spacing:0.05em}.tracking-widest{letter-spacing:0.1em}.text-black{--tw-text-opacity:1;color:rgb(0 0 0 / var(--tw-text-opacity, 1))}.text-blue-400{--tw-text-opacity:1;color:rgb(96 165 250 / var(--tw-text-opacity, 1))}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-green-400{--tw-text-opacity:1;color:rgb(74 222 128 / var(--tw-text-opacity, 1))}.text-pink-300{--tw-text-opacity:1;color:rgb(249 168 212 / var(--tw-text-opacity, 1))}.text-pink-400{--tw-text-opacity:1;color:rgb(244 114 182 / var(--tw-text-opacity, 1))}.text-pink-500{--tw-text-opacity:1;color:rgb(236 72 153 / var(--tw-text-opacity, 1))}.text-purple-400{--tw-text-opacity:1;color:rgb(192 132 252 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-yellow-400{--tw-text-opacity:1;color:rgb(250 204 21 / var(--tw-text-opacity, 1))}.text-yellow-500{--tw-text-opacity:1;color:rgb(234 179 8 / var(--tw-text-opacity, 1))}.text-gray-200{--tw-text-opacity:1;color:rgb(229 231 235 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.placeholder-gray-500::placeholder{--tw-placeholder-opacity:1;color:rgb(107 114 128 / var(--tw-placeholder-opacity, 1))}.opacity-10{opacity:0.1}.opacity-40{opacity:0.4}.opacity-90{opacity:0.9}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-inner{--tw-shadow:inset 0 2px 4px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:inset 0 2px 4px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.outline-none{outline:2px solid transparent;outline-offset:2px}.blur-3xl{--tw-blur:blur(64px);filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.blur-xl{--tw-blur:blur(24px);filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.drop-shadow-\[0_0_15px_var\(--theme-color-glow\)\]{--tw-drop-shadow:drop-shadow(0 0 15px var(--theme-color-glow));filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.saturate-50{--tw-saturate:saturate(.5);filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.backdrop-blur-md{--tw-backdrop-blur:blur(12px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-transform{transition-property:transform;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-200{transition-duration:200ms}.duration-300{transition-duration:300ms}.hover\:border-pink-500\/40:hover{border-color:rgb(236 72 153 / 0.4)}.hover\:bg-\[\#ff2a7a\]\/40:hover{background-color:rgb(255 42 122 / 0.4)}.hover\:bg-black\/60:hover{background-color:rgb(0 0 0 / 0.6)}.hover\:bg-gray-600:hover{--tw-bg-opacity:1;background-color:rgb(75 85 99 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-700:hover{--tw-bg-opacity:1;background-color:rgb(55 65 81 / var(--tw-bg-opacity, 1))}.hover\:bg-green-600:hover{--tw-bg-opacity:1;background-color:rgb(22 163 74 / var(--tw-bg-opacity, 1))}.hover\:bg-pink-500\/40:hover{background-color:rgb(236 72 153 / 0.4)}.hover\:bg-pink-600:hover{--tw-bg-opacity:1;background-color:rgb(219 39 119 / var(--tw-bg-opacity, 1))}.hover\:bg-yellow-600:hover{--tw-bg-opacity:1;background-color:rgb(202 138 4 / var(--tw-bg-opacity, 1))}.hover\:from-emerald-600:hover{--tw-gradient-from:#059669 var(--tw-gradient-from-position);--tw-gradient-to:rgb(5 150 105 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.hover\:from-pink-600:hover{--tw-gradient-from:#db2777 var(--tw-gradient-from-position);--tw-gradient-to:rgb(219 39 119 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.hover\:to-purple-700:hover{--tw-gradient-to:#7e22ce var(--tw-gradient-to-position)}.hover\:to-teal-700:hover{--tw-gradient-to:#0f766e var(--tw-gradient-to-position)}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.focus\:border-pink-500:focus{--tw-border-opacity:1;border-color:rgb(236 72 153 / var(--tw-border-opacity, 1))}.active\:scale-95:active{--tw-scale-x:.95;--tw-scale-y:.95;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.group:hover .group-hover\:bg-pink-500\/40{background-color:rgb(236 72 153 / 0.4)}@media (min-width: 640px){.sm\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}}@media (min-width: 768px){.md\:inline{display:inline}.md\:w-2\/3{width:66.666667%}.md\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.md\:flex-nowrap{flex-wrap:nowrap}.md\:space-x-2 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.5rem * var(--tw-space-x-reverse));margin-left:calc(0.5rem * calc(1 - var(--tw-space-x-reverse)))}.md\:space-x-4 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}.md\:px-6{padding-left:1.5rem;padding-right:1.5rem}.md\:text-4xl{font-size:2.25rem;line-height:2.5rem}.md\:text-base{font-size:1rem;line-height:1.5rem}.md\:text-lg{font-size:1.125rem;line-height:1.75rem}.md\:text-sm{font-size:0.875rem;line-height:1.25rem}.md\:text-xl{font-size:1.25rem;line-height:1.75rem}}@media (min-width: 1024px){.lg\:col-span-4{grid-column:span 4 / span 4}.lg\:col-span-8{grid-column:span 8 / span 8}.lg\:grid-cols-12{grid-template-columns:repeat(12, minmax(0, 1fr))}}</style></head>
 <body class="min-h-screen flex flex-col justify-between">
 
     <!-- 상단 헤더 -->
@@ -106,21 +678,21 @@
                 </div>
                 <div>
                     <h1 class="font-black text-lg md:text-xl tracking-wider flex items-center">
-                        <span id="header-idol-name" class="text-pink-400 mr-2">최애</span> 
-                        <span class="text-xs px-2 py-0.5 rounded bg-pink-500/20 text-pink-300 border border-pink-500/30" id="header-group-name">그룹</span>
+                        <span id="header-idol-name" class="text-pink-400 mr-2">장원영</span> 
+                        <span class="text-xs px-2 py-0.5 rounded bg-pink-500/20 text-pink-300 border border-pink-500/30" id="header-group-name">아이브</span>
                     </h1>
-                    <p class="text-xs text-gray-400">공식 팬덤명: <span id="header-fandom-name" class="font-semibold text-gray-300">-</span></p>
+                    <p class="text-xs text-gray-400">공식 팬덤명: <span id="header-fandom-name" class="font-semibold text-gray-300">다이브</span></p>
                 </div>
             </div>
 
             <!-- 재화 및 상태 정보 -->
-            <div class="flex items-center space-x-4 md:space-x-6">
+            <div class="flex items-center space-x-2 md:space-x-4">
                 <!-- 덕력 (Fandom Power) -->
                 <div class="bg-black/30 px-3 py-1.5 rounded-full border border-pink-500/30 flex items-center space-x-2">
                     <span class="text-base">💖</span>
                     <div>
                         <p class="text-[10px] text-gray-400 leading-none">덕력 (Fandom Power)</p>
-                        <p class="font-black text-sm md:text-base text-pink-400" id="stat-fandom-power">0</p>
+                        <p class="font-black text-xs md:text-sm text-pink-400" id="stat-fandom-power">0</p>
                     </div>
                 </div>
 
@@ -129,13 +701,19 @@
                     <span class="text-base">📈</span>
                     <div>
                         <p class="text-[10px] text-gray-400 leading-none">멜론 실시간 순위</p>
-                        <p class="font-black text-sm md:text-base text-purple-400" id="stat-chart-rank">외곽 100위 밖</p>
+                        <p class="font-black text-xs md:text-sm text-purple-400" id="stat-chart-rank">외곽 (100위 밖)</p>
                     </div>
                 </div>
 
                 <!-- BGM 컨트롤러 -->
-                <button id="btn-bgm" class="w-10 h-10 rounded-full bg-[#ff2a7a]/20 hover:bg-[#ff2a7a]/40 border border-[#ff2a7a]/50 flex items-center justify-center text-white transition-all duration-200">
+                <button id="btn-bgm" class="w-10 h-10 rounded-full bg-[#ff2a7a]/20 hover:bg-[#ff2a7a]/40 border border-[#ff2a7a]/50 flex items-center justify-center text-white transition-all duration-200" title="BGM 켜기/끄기">
                     <i class="fas fa-music text-sm" id="bgm-icon"></i>
+                </button>
+
+                <!-- 파일 직접 다운로드 버튼 -->
+                <button onclick="downloadSelf()" class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-bold px-3 py-2.5 rounded-xl flex items-center space-x-1 shadow-lg transition-all" title="이 게임의 전체 HTML 파일 다운로드">
+                    <i class="fas fa-download"></i>
+                    <span class="hidden md:inline">소장하기</span>
                 </button>
             </div>
         </div>
@@ -159,14 +737,12 @@
 
                 <div class="flex items-center space-x-4">
                     <div class="relative">
-                        <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-pink-500 via-purple-600 to-indigo-500 flex items-center justify-center text-3xl shadow-inner border-2 border-pink-400" id="avatar-emoji">
-                            🌟
-                        </div>
+                        <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-pink-500 via-purple-600 to-indigo-500 flex items-center justify-center text-3xl shadow-inner border-2 border-pink-400" id="avatar-emoji">🐰</div>
                         <span class="absolute bottom-0 right-0 bg-green-500 text-white text-[9px] px-1 py-0.5 rounded font-black">ACTIVE</span>
                     </div>
                     <div>
-                        <h3 class="text-xl font-black text-white" id="profile-idol-name">최애</h3>
-                        <p class="text-xs text-gray-400">소속 그룹: <span id="profile-group-name" class="text-gray-300 font-medium">그룹</span></p>
+                        <h3 class="text-xl font-black text-white" id="profile-idol-name">장원영</h3>
+                        <p class="text-xs text-gray-400">소속 그룹: <span id="profile-group-name" class="text-gray-300 font-medium">아이브</span></p>
                         <p class="text-xs text-gray-400 mt-0.5">현재 앨범 판매량: <span id="profile-sales" class="text-pink-400 font-bold">0</span> 장</p>
                     </div>
                 </div>
@@ -186,18 +762,18 @@
                         <!-- 응원봉 그래픽 (SVG) -->
                         <svg class="w-24 h-24 drop-shadow-[0_0_15px_var(--theme-color-glow)]" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <!-- 로고 영역 -->
-                            <circle cx="50" cy="40" r="28" fill="url(#stick-grad)" stroke="#ff2a7a" stroke-width="3"/>
+                            <circle cx="50" cy="40" r="28" fill="url(#stick-grad)" stroke="#ff2a7a" stroke-width="3"></circle>
                             <!-- 별 로고 -->
-                            <path d="M50 22L57 37H73L60 46L65 61L50 51L35 61L40 46L27 37H43L50 22Z" fill="#fff" />
+                            <path d="M50 22L57 37H73L60 46L65 61L50 51L35 61L40 46L27 37H43L50 22Z" fill="#fff"></path>
                             <!-- 손잡이 -->
-                            <rect x="46" y="68" width="8" height="24" rx="4" fill="#ff2a7a"/>
-                            <rect x="46" y="72" width="8" height="3" fill="#fff" opacity="0.6"/>
+                            <rect x="46" y="68" width="8" height="24" rx="4" fill="#ff2a7a"></rect>
+                            <rect x="46" y="72" width="8" height="3" fill="#fff" opacity="0.6"></rect>
                             <!-- 그라데이션 정의 -->
                             <defs>
                                 <radialGradient id="stick-grad" cx="50%" cy="50%" r="50%">
-                                    <stop offset="0%" stop-color="#fff" stop-opacity="0.9"/>
-                                    <stop offset="50%" stop-color="#ff7da7" stop-opacity="0.6"/>
-                                    <stop offset="100%" stop-color="#ff2a7a" stop-opacity="0.2"/>
+                                    <stop offset="0%" stop-color="#fff" stop-opacity="0.9"></stop>
+                                    <stop offset="50%" stop-color="#ff7da7" stop-opacity="0.6"></stop>
+                                    <stop offset="100%" stop-color="#ff2a7a" stop-opacity="0.2"></stop>
                                 </radialGradient>
                             </defs>
                         </svg>
@@ -207,7 +783,7 @@
                 <!-- 클릭당 생산량 정보 -->
                 <div class="text-center w-full border-t border-gray-800/60 pt-4">
                     <p class="text-xs text-gray-400">클릭 당 덕력 수급: <span class="font-bold text-pink-400" id="stat-power-per-click">+1</span></p>
-                    <p class="text-xs text-gray-400">자동 스트리밍 속도: <span class="font-bold text-purple-400" id="stat-power-per-second">0</span>/초</p>
+                    <p class="text-xs text-gray-400">자동 스트리밍 속도: <span class="font-bold text-purple-400" id="stat-power-per-second">0.0</span>/초</p>
                 </div>
             </div>
         </div>
@@ -215,20 +791,20 @@
         <!-- 오른쪽: 탭 및 콘텐츠 영역 (8열) -->
         <div class="lg:col-span-8 flex flex-col space-y-4">
             <!-- 탭 네비게이션 -->
-            <div class="bg-[#120a2b] p-1 rounded-xl border border-gray-800 flex space-x-1">
-                <button class="tab-btn flex-1 py-3 text-sm font-bold rounded-lg transition-all duration-200 bg-pink-600 text-white" data-target="tab-streaming">
-                    <i class="fas fa-headphones mr-1"></i> 스밍 & 육성
+            <div class="bg-[#120a2b] p-1 rounded-xl border border-gray-800 flex flex-wrap md:flex-nowrap gap-1">
+                <button class="tab-btn flex-1 py-3 text-xs md:text-sm font-bold rounded-lg transition-all duration-200 bg-pink-600 text-white" data-target="tab-streaming">
+                    <i class="fas fa-headphones mr-1"></i> 스밍 &amp; 육성
                 </button>
-                <button class="tab-btn flex-1 py-3 text-sm font-bold rounded-lg transition-all duration-200 text-gray-400 hover:text-white" data-target="tab-gacha">
+                <button class="tab-btn flex-1 py-3 text-xs md:text-sm font-bold rounded-lg transition-all duration-200 text-gray-400 hover:text-white" data-target="tab-gacha">
                     <i class="fas fa-id-card mr-1"></i> 포카 수집
                 </button>
-                <button class="tab-btn flex-1 py-3 text-sm font-bold rounded-lg transition-all duration-200 text-gray-400 hover:text-white" data-target="tab-ticketing">
+                <button class="tab-btn flex-1 py-3 text-xs md:text-sm font-bold rounded-lg transition-all duration-200 text-gray-400 hover:text-white" data-target="tab-ticketing">
                     <i class="fas fa-ticket-alt mr-1"></i> 티켓팅 연습
                 </button>
-                <button class="tab-btn flex-1 py-3 text-sm font-bold rounded-lg transition-all duration-200 text-gray-400 hover:text-white" data-target="tab-rhythm">
+                <button class="tab-btn flex-1 py-3 text-xs md:text-sm font-bold rounded-lg transition-all duration-200 text-gray-400 hover:text-white" data-target="tab-rhythm">
                     <i class="fas fa-gamepad mr-1"></i> 리듬 응원
                 </button>
-                <button class="tab-btn flex-1 py-3 text-sm font-bold rounded-lg transition-all duration-200 text-gray-400 hover:text-white" data-target="tab-letter">
+                <button class="tab-btn flex-1 py-3 text-xs md:text-sm font-bold rounded-lg transition-all duration-200 text-gray-400 hover:text-white" data-target="tab-letter">
                     <i class="fas fa-envelope mr-1"></i> 팬레터
                 </button>
             </div>
@@ -239,29 +815,29 @@
                 <!-- 탭 1: 스밍 & 육성 -->
                 <div id="tab-streaming" class="tab-content space-y-6">
                     <div class="flex justify-between items-center">
-                        <h3 class="text-lg font-bold text-white flex items-center">
-                            <i class="fas fa-music text-pink-500 mr-2"></i> 음원 스트리밍 & 홍보 활동
+                        <h3 class="text-base md:text-lg font-bold text-white flex items-center">
+                            <i class="fas fa-music text-pink-500 mr-2"></i> 음원 스트리밍 &amp; 홍보 활동
                         </h3>
-                        <span class="text-xs text-gray-400 bg-black/40 px-3 py-1 rounded-full">스트리밍 장비를 늘려 순위를 올리세요!</span>
+                        <span class="text-xs text-gray-400 bg-black/40 px-3 py-1 rounded-full hidden md:inline">스트리밍 장비를 늘려 순위를 올리세요!</span>
                     </div>
 
                     <!-- 실시간 통계 보드 -->
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div class="bg-black/30 p-3 rounded-xl border border-gray-800 text-center">
                             <p class="text-[11px] text-gray-500">스트리밍 누적수</p>
-                            <p class="font-black text-base text-pink-400" id="stat-stream-count">0</p>
+                            <p class="font-black text-sm md:text-base text-pink-400" id="stat-stream-count">0회</p>
                         </div>
                         <div class="bg-black/30 p-3 rounded-xl border border-gray-800 text-center">
                             <p class="text-[11px] text-gray-500">홍보 파워</p>
-                            <p class="font-black text-base text-purple-400" id="stat-promo-power">0</p>
+                            <p class="font-black text-sm md:text-base text-purple-400" id="stat-promo-power">0 PP</p>
                         </div>
                         <div class="bg-black/30 p-3 rounded-xl border border-gray-800 text-center">
                             <p class="text-[11px] text-gray-500">팬클럽 가입자수</p>
-                            <p class="font-black text-base text-blue-400" id="stat-fan-count">1</p>
+                            <p class="font-black text-sm md:text-base text-blue-400" id="stat-fan-count">1명</p>
                         </div>
                         <div class="bg-black/30 p-3 rounded-xl border border-gray-800 text-center">
                             <p class="text-[11px] text-gray-500">지상파 음악방송</p>
-                            <p class="font-black text-base text-green-400" id="stat-music-show-rank">데뷔 대기중</p>
+                            <p class="font-black text-sm md:text-base text-green-400" id="stat-music-show-rank">🌱 차트 인 목표</p>
                         </div>
                     </div>
 
@@ -269,8 +845,96 @@
                     <div class="space-y-3">
                         <h4 class="text-xs font-bold text-gray-400 tracking-wider">업그레이드 리스트</h4>
                         <div class="space-y-3 overflow-y-auto max-h-[250px] pr-2" id="upgrade-list">
-                            <!-- JS로 렌더링됨 -->
+                    <div class="bg-black/30 p-4 rounded-xl border border-gray-800/80 hover:border-pink-500/40 transition-all flex justify-between items-center gap-4">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2">
+                                <span class="font-bold text-sm text-gray-200">동생 폰으로 스밍</span>
+                                <span class="text-xs bg-pink-500/20 text-pink-300 px-1.5 py-0.5 rounded font-bold">보유: 0</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">몰래 동생 스마트폰을 빌려 무한 스트리밍을 재생합니다.</p>
+                            <p class="text-[10px] text-pink-400 mt-1 font-semibold">+0.2 💖/초 증가 (스밍 공장 속도 증가)</p>
                         </div>
+                        <button onclick="buyUpgrade(0)" class="bg-gray-800 text-gray-500 cursor-not-allowed text-xs font-black px-4 py-2.5 rounded-xl flex flex-col items-center justify-center min-w-[100px] transition-all transform active:scale-95">
+                            <span>구매하기</span>
+                            <span class="text-[10px] opacity-90 mt-0.5">15 💖</span>
+                        </button>
+                    </div>
+                
+                    <div class="bg-black/30 p-4 rounded-xl border border-gray-800/80 hover:border-pink-500/40 transition-all flex justify-between items-center gap-4">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2">
+                                <span class="font-bold text-sm text-gray-200">지역 소모임 결성</span>
+                                <span class="text-xs bg-pink-500/20 text-pink-300 px-1.5 py-0.5 rounded font-bold">보유: 0</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">뜻이 맞는 로컬 팬들과 소모임을 결성해 공동 전선을 이룹니다.</p>
+                            <p class="text-[10px] text-pink-400 mt-1 font-semibold">+1.5 💖/초 증가 (스밍 공장 속도 증가)</p>
+                        </div>
+                        <button onclick="buyUpgrade(1)" class="bg-gray-800 text-gray-500 cursor-not-allowed text-xs font-black px-4 py-2.5 rounded-xl flex flex-col items-center justify-center min-w-[100px] transition-all transform active:scale-95">
+                            <span>구매하기</span>
+                            <span class="text-[10px] opacity-90 mt-0.5">100 💖</span>
+                        </button>
+                    </div>
+                
+                    <div class="bg-black/30 p-4 rounded-xl border border-gray-800/80 hover:border-pink-500/40 transition-all flex justify-between items-center gap-4">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2">
+                                <span class="font-bold text-sm text-gray-200">스밍 전용 PC 구매</span>
+                                <span class="text-xs bg-pink-500/20 text-pink-300 px-1.5 py-0.5 rounded font-bold">보유: 0</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">스트리밍 공장을 풀가동할 고사양 컴퓨터를 방에 맞춥니다.</p>
+                            <p class="text-[10px] text-pink-400 mt-1 font-semibold">+8 💖/초 증가 (스밍 공장 속도 증가)</p>
+                        </div>
+                        <button onclick="buyUpgrade(2)" class="bg-gray-800 text-gray-500 cursor-not-allowed text-xs font-black px-4 py-2.5 rounded-xl flex flex-col items-center justify-center min-w-[100px] transition-all transform active:scale-95">
+                            <span>구매하기</span>
+                            <span class="text-[10px] opacity-90 mt-0.5">800 💖</span>
+                        </button>
+                    </div>
+                
+                    <div class="bg-black/30 p-4 rounded-xl border border-gray-800/80 hover:border-pink-500/40 transition-all flex justify-between items-center gap-4">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2">
+                                <span class="font-bold text-sm text-gray-200">지하철 전광판 광고</span>
+                                <span class="text-xs bg-pink-500/20 text-pink-300 px-1.5 py-0.5 rounded font-bold">보유: 0</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">유동인구가 많은 신도림역에 최애 컴백 축하 지하철 광고를 게시합니다.</p>
+                            <p class="text-[10px] text-pink-400 mt-1 font-semibold">+45 💖/초 증가 (스밍 공장 속도 증가)</p>
+                        </div>
+                        <button onclick="buyUpgrade(3)" class="bg-gray-800 text-gray-500 cursor-not-allowed text-xs font-black px-4 py-2.5 rounded-xl flex flex-col items-center justify-center min-w-[100px] transition-all transform active:scale-95">
+                            <span>구매하기</span>
+                            <span class="text-[10px] opacity-90 mt-0.5">5,000 💖</span>
+                        </button>
+                    </div>
+                
+                    <div class="bg-black/30 p-4 rounded-xl border border-gray-800/80 hover:border-pink-500/40 transition-all flex justify-between items-center gap-4">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2">
+                                <span class="font-bold text-sm text-gray-200">연합 총공 버스 래핑</span>
+                                <span class="text-xs bg-pink-500/20 text-pink-300 px-1.5 py-0.5 rounded font-bold">보유: 0</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">대형 버스 전체를 최애 얼굴로 디자인하여 시내를 하루 종일 주행합니다.</p>
+                            <p class="text-[10px] text-pink-400 mt-1 font-semibold">+260 💖/초 증가 (스밍 공장 속도 증가)</p>
+                        </div>
+                        <button onclick="buyUpgrade(4)" class="bg-gray-800 text-gray-500 cursor-not-allowed text-xs font-black px-4 py-2.5 rounded-xl flex flex-col items-center justify-center min-w-[100px] transition-all transform active:scale-95">
+                            <span>구매하기</span>
+                            <span class="text-[10px] opacity-90 mt-0.5">35,000 💖</span>
+                        </button>
+                    </div>
+                
+                    <div class="bg-black/30 p-4 rounded-xl border border-gray-800/80 hover:border-pink-500/40 transition-all flex justify-between items-center gap-4">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2">
+                                <span class="font-bold text-sm text-gray-200">뉴욕 타임스스퀘어 전광판</span>
+                                <span class="text-xs bg-pink-500/20 text-pink-300 px-1.5 py-0.5 rounded font-bold">보유: 0</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">세계의 중심 뉴욕에 최애 생일 기념 대형 디지털 빌보드를 게재합니다.</p>
+                            <p class="text-[10px] text-pink-400 mt-1 font-semibold">+1800 💖/초 증가 (스밍 공장 속도 증가)</p>
+                        </div>
+                        <button onclick="buyUpgrade(5)" class="bg-gray-800 text-gray-500 cursor-not-allowed text-xs font-black px-4 py-2.5 rounded-xl flex flex-col items-center justify-center min-w-[100px] transition-all transform active:scale-95">
+                            <span>구매하기</span>
+                            <span class="text-[10px] opacity-90 mt-0.5">250,000 💖</span>
+                        </button>
+                    </div>
+                </div>
                     </div>
                 </div>
 
@@ -278,12 +942,12 @@
                 <div id="tab-gacha" class="tab-content hidden space-y-6">
                     <div class="flex justify-between items-center flex-wrap gap-2">
                         <div>
-                            <h3 class="text-lg font-bold text-white flex items-center">
+                            <h3 class="text-base md:text-lg font-bold text-white flex items-center">
                                 <i class="fas fa-id-card text-pink-500 mr-2"></i> 최애 포토카드 뽑기
                             </h3>
                             <p class="text-xs text-gray-400 mt-1">덕력을 소모하여 희귀한 한정판 포카를 수집하고 바인더를 채우세요!</p>
                         </div>
-                        <button id="btn-draw" class="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-black text-sm px-6 py-2.5 rounded-xl shadow-lg transform active:scale-95 transition-all">
+                        <button id="btn-draw" class="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-black text-xs md:text-sm px-4 md:px-6 py-2.5 rounded-xl shadow-lg transform active:scale-95 transition-all">
                             🎁 포카 뽑기 (비용: 100 💖)
                         </button>
                     </div>
@@ -297,8 +961,246 @@
                         
                         <!-- 도감 그리드 -->
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" id="photocard-grid">
-                            <!-- JS로 렌더링됨 -->
+                    <div class="photocard bg-[#110d29] border border-gray-900 filter saturate-50 opacity-40  p-3 rounded-2xl h-48 flex flex-col justify-between shadow-lg relative overflow-hidden group select-none">
+                        <div class="flex justify-between items-center z-10">
+                            <span class="text-[9px] font-black px-2 py-0.5 rounded bg-zinc-600 text-white">Normal</span>
+                            <span class="text-xs text-gray-600">🔒</span>
                         </div>
+
+                        <div class="my-auto text-center z-10">
+                            <i class="fas fa-question text-xl text-gray-700"></i>
+                        </div>
+
+                        <div class="z-10 mt-auto">
+                            <p class="text-[9px] text-gray-700 leading-none">미수집</p>
+                        </div>
+                    </div>
+                
+                    <div class="photocard bg-[#110d29] border border-gray-900 filter saturate-50 opacity-40  p-3 rounded-2xl h-48 flex flex-col justify-between shadow-lg relative overflow-hidden group select-none">
+                        <div class="flex justify-between items-center z-10">
+                            <span class="text-[9px] font-black px-2 py-0.5 rounded bg-zinc-600 text-white">Normal</span>
+                            <span class="text-xs text-gray-600">🔒</span>
+                        </div>
+
+                        <div class="my-auto text-center z-10">
+                            <i class="fas fa-question text-xl text-gray-700"></i>
+                        </div>
+
+                        <div class="z-10 mt-auto">
+                            <p class="text-[9px] text-gray-700 leading-none">미수집</p>
+                        </div>
+                    </div>
+                
+                    <div class="photocard bg-[#110d29] border border-gray-900 filter saturate-50 opacity-40  p-3 rounded-2xl h-48 flex flex-col justify-between shadow-lg relative overflow-hidden group select-none">
+                        <div class="flex justify-between items-center z-10">
+                            <span class="text-[9px] font-black px-2 py-0.5 rounded bg-zinc-600 text-white">Normal</span>
+                            <span class="text-xs text-gray-600">🔒</span>
+                        </div>
+
+                        <div class="my-auto text-center z-10">
+                            <i class="fas fa-question text-xl text-gray-700"></i>
+                        </div>
+
+                        <div class="z-10 mt-auto">
+                            <p class="text-[9px] text-gray-700 leading-none">미수집</p>
+                        </div>
+                    </div>
+                
+                    <div class="photocard bg-[#110d29] border border-gray-900 filter saturate-50 opacity-40  p-3 rounded-2xl h-48 flex flex-col justify-between shadow-lg relative overflow-hidden group select-none">
+                        <div class="flex justify-between items-center z-10">
+                            <span class="text-[9px] font-black px-2 py-0.5 rounded bg-zinc-600 text-white">Normal</span>
+                            <span class="text-xs text-gray-600">🔒</span>
+                        </div>
+
+                        <div class="my-auto text-center z-10">
+                            <i class="fas fa-question text-xl text-gray-700"></i>
+                        </div>
+
+                        <div class="z-10 mt-auto">
+                            <p class="text-[9px] text-gray-700 leading-none">미수집</p>
+                        </div>
+                    </div>
+                
+                    <div class="photocard bg-[#110d29] border border-gray-900 filter saturate-50 opacity-40  p-3 rounded-2xl h-48 flex flex-col justify-between shadow-lg relative overflow-hidden group select-none">
+                        <div class="flex justify-between items-center z-10">
+                            <span class="text-[9px] font-black px-2 py-0.5 rounded bg-blue-600 text-white">Rare</span>
+                            <span class="text-xs text-gray-600">🔒</span>
+                        </div>
+
+                        <div class="my-auto text-center z-10">
+                            <i class="fas fa-question text-xl text-gray-700"></i>
+                        </div>
+
+                        <div class="z-10 mt-auto">
+                            <p class="text-[9px] text-gray-700 leading-none">미수집</p>
+                        </div>
+                    </div>
+                
+                    <div class="photocard bg-[#110d29] border border-gray-900 filter saturate-50 opacity-40  p-3 rounded-2xl h-48 flex flex-col justify-between shadow-lg relative overflow-hidden group select-none">
+                        <div class="flex justify-between items-center z-10">
+                            <span class="text-[9px] font-black px-2 py-0.5 rounded bg-blue-600 text-white">Rare</span>
+                            <span class="text-xs text-gray-600">🔒</span>
+                        </div>
+
+                        <div class="my-auto text-center z-10">
+                            <i class="fas fa-question text-xl text-gray-700"></i>
+                        </div>
+
+                        <div class="z-10 mt-auto">
+                            <p class="text-[9px] text-gray-700 leading-none">미수집</p>
+                        </div>
+                    </div>
+                
+                    <div class="photocard bg-[#110d29] border border-gray-900 filter saturate-50 opacity-40  p-3 rounded-2xl h-48 flex flex-col justify-between shadow-lg relative overflow-hidden group select-none">
+                        <div class="flex justify-between items-center z-10">
+                            <span class="text-[9px] font-black px-2 py-0.5 rounded bg-blue-600 text-white">Rare</span>
+                            <span class="text-xs text-gray-600">🔒</span>
+                        </div>
+
+                        <div class="my-auto text-center z-10">
+                            <i class="fas fa-question text-xl text-gray-700"></i>
+                        </div>
+
+                        <div class="z-10 mt-auto">
+                            <p class="text-[9px] text-gray-700 leading-none">미수집</p>
+                        </div>
+                    </div>
+                
+                    <div class="photocard bg-[#110d29] border border-gray-900 filter saturate-50 opacity-40  p-3 rounded-2xl h-48 flex flex-col justify-between shadow-lg relative overflow-hidden group select-none">
+                        <div class="flex justify-between items-center z-10">
+                            <span class="text-[9px] font-black px-2 py-0.5 rounded bg-blue-600 text-white">Rare</span>
+                            <span class="text-xs text-gray-600">🔒</span>
+                        </div>
+
+                        <div class="my-auto text-center z-10">
+                            <i class="fas fa-question text-xl text-gray-700"></i>
+                        </div>
+
+                        <div class="z-10 mt-auto">
+                            <p class="text-[9px] text-gray-700 leading-none">미수집</p>
+                        </div>
+                    </div>
+                
+                    <div class="photocard bg-[#110d29] border border-gray-900 filter saturate-50 opacity-40  p-3 rounded-2xl h-48 flex flex-col justify-between shadow-lg relative overflow-hidden group select-none">
+                        <div class="flex justify-between items-center z-10">
+                            <span class="text-[9px] font-black px-2 py-0.5 rounded bg-purple-600 text-white">SuperRare</span>
+                            <span class="text-xs text-gray-600">🔒</span>
+                        </div>
+
+                        <div class="my-auto text-center z-10">
+                            <i class="fas fa-question text-xl text-gray-700"></i>
+                        </div>
+
+                        <div class="z-10 mt-auto">
+                            <p class="text-[9px] text-gray-700 leading-none">미수집</p>
+                        </div>
+                    </div>
+                
+                    <div class="photocard bg-[#110d29] border border-gray-900 filter saturate-50 opacity-40  p-3 rounded-2xl h-48 flex flex-col justify-between shadow-lg relative overflow-hidden group select-none">
+                        <div class="flex justify-between items-center z-10">
+                            <span class="text-[9px] font-black px-2 py-0.5 rounded bg-purple-600 text-white">SuperRare</span>
+                            <span class="text-xs text-gray-600">🔒</span>
+                        </div>
+
+                        <div class="my-auto text-center z-10">
+                            <i class="fas fa-question text-xl text-gray-700"></i>
+                        </div>
+
+                        <div class="z-10 mt-auto">
+                            <p class="text-[9px] text-gray-700 leading-none">미수집</p>
+                        </div>
+                    </div>
+                
+                    <div class="photocard bg-[#110d29] border border-gray-900 filter saturate-50 opacity-40  p-3 rounded-2xl h-48 flex flex-col justify-between shadow-lg relative overflow-hidden group select-none">
+                        <div class="flex justify-between items-center z-10">
+                            <span class="text-[9px] font-black px-2 py-0.5 rounded bg-purple-600 text-white">SuperRare</span>
+                            <span class="text-xs text-gray-600">🔒</span>
+                        </div>
+
+                        <div class="my-auto text-center z-10">
+                            <i class="fas fa-question text-xl text-gray-700"></i>
+                        </div>
+
+                        <div class="z-10 mt-auto">
+                            <p class="text-[9px] text-gray-700 leading-none">미수집</p>
+                        </div>
+                    </div>
+                
+                    <div class="photocard bg-[#110d29] border border-gray-900 filter saturate-50 opacity-40  p-3 rounded-2xl h-48 flex flex-col justify-between shadow-lg relative overflow-hidden group select-none">
+                        <div class="flex justify-between items-center z-10">
+                            <span class="text-[9px] font-black px-2 py-0.5 rounded bg-purple-600 text-white">SuperRare</span>
+                            <span class="text-xs text-gray-600">🔒</span>
+                        </div>
+
+                        <div class="my-auto text-center z-10">
+                            <i class="fas fa-question text-xl text-gray-700"></i>
+                        </div>
+
+                        <div class="z-10 mt-auto">
+                            <p class="text-[9px] text-gray-700 leading-none">미수집</p>
+                        </div>
+                    </div>
+                
+                    <div class="photocard bg-[#110d29] border border-gray-900 filter saturate-50 opacity-40  p-3 rounded-2xl h-48 flex flex-col justify-between shadow-lg relative overflow-hidden group select-none">
+                        <div class="flex justify-between items-center z-10">
+                            <span class="text-[9px] font-black px-2 py-0.5 rounded bg-yellow-400 text-black">Legendary</span>
+                            <span class="text-xs text-gray-600">🔒</span>
+                        </div>
+
+                        <div class="my-auto text-center z-10">
+                            <i class="fas fa-question text-xl text-gray-700"></i>
+                        </div>
+
+                        <div class="z-10 mt-auto">
+                            <p class="text-[9px] text-gray-700 leading-none">미수집</p>
+                        </div>
+                    </div>
+                
+                    <div class="photocard bg-[#110d29] border border-gray-900 filter saturate-50 opacity-40  p-3 rounded-2xl h-48 flex flex-col justify-between shadow-lg relative overflow-hidden group select-none">
+                        <div class="flex justify-between items-center z-10">
+                            <span class="text-[9px] font-black px-2 py-0.5 rounded bg-yellow-400 text-black">Legendary</span>
+                            <span class="text-xs text-gray-600">🔒</span>
+                        </div>
+
+                        <div class="my-auto text-center z-10">
+                            <i class="fas fa-question text-xl text-gray-700"></i>
+                        </div>
+
+                        <div class="z-10 mt-auto">
+                            <p class="text-[9px] text-gray-700 leading-none">미수집</p>
+                        </div>
+                    </div>
+                
+                    <div class="photocard bg-[#110d29] border border-gray-900 filter saturate-50 opacity-40  p-3 rounded-2xl h-48 flex flex-col justify-between shadow-lg relative overflow-hidden group select-none">
+                        <div class="flex justify-between items-center z-10">
+                            <span class="text-[9px] font-black px-2 py-0.5 rounded bg-yellow-400 text-black">Legendary</span>
+                            <span class="text-xs text-gray-600">🔒</span>
+                        </div>
+
+                        <div class="my-auto text-center z-10">
+                            <i class="fas fa-question text-xl text-gray-700"></i>
+                        </div>
+
+                        <div class="z-10 mt-auto">
+                            <p class="text-[9px] text-gray-700 leading-none">미수집</p>
+                        </div>
+                    </div>
+                
+                    <div class="photocard bg-[#110d29] border border-gray-900 filter saturate-50 opacity-40  p-3 rounded-2xl h-48 flex flex-col justify-between shadow-lg relative overflow-hidden group select-none">
+                        <div class="flex justify-between items-center z-10">
+                            <span class="text-[9px] font-black px-2 py-0.5 rounded bg-yellow-400 text-black">Legendary</span>
+                            <span class="text-xs text-gray-600">🔒</span>
+                        </div>
+
+                        <div class="my-auto text-center z-10">
+                            <i class="fas fa-question text-xl text-gray-700"></i>
+                        </div>
+
+                        <div class="z-10 mt-auto">
+                            <p class="text-[9px] text-gray-700 leading-none">미수집</p>
+                        </div>
+                    </div>
+                </div>
                     </div>
                 </div>
 
@@ -306,7 +1208,7 @@
                 <div id="tab-ticketing" class="tab-content hidden space-y-6">
                     <div class="flex justify-between items-center">
                         <div>
-                            <h3 class="text-lg font-bold text-white flex items-center">
+                            <h3 class="text-base md:text-lg font-bold text-white flex items-center">
                                 <i class="fas fa-ticket-alt text-yellow-500 mr-2"></i> 실전! 피켓팅 모의훈련
                             </h3>
                             <p class="text-xs text-gray-400 mt-1">포도알을 정밀 타격하세요! 타이밍 조절과 빠른 클릭이 생명입니다.</p>
@@ -317,18 +1219,18 @@
                     <div class="bg-black/40 border border-gray-800 rounded-2xl p-6 text-center space-y-4">
                         <div class="max-w-md mx-auto space-y-3">
                             <div class="text-sm font-semibold text-gray-300">티켓 오픈 카운트다운</div>
-                            <div class="text-4xl font-black text-yellow-400 tracking-widest monospace" id="ticket-timer">00:03.000</div>
+                            <div class="text-3xl md:text-4xl font-black text-yellow-400 tracking-widest monospace" id="ticket-timer">00:03.000</div>
                             <p class="text-xs text-gray-400">오픈 카운트가 <span class="text-pink-400 font-bold">00:00.000</span>이 되는 순간 즉시 버튼을 클릭하세요!</p>
                         </div>
 
                         <div class="flex justify-center py-4">
-                            <button id="btn-ticketing-action" class="w-48 h-16 bg-gray-700 hover:bg-gray-600 text-gray-400 font-black text-lg rounded-2xl transition-all shadow-xl tracking-wider cursor-not-allowed" disabled>
+                            <button id="btn-ticketing-action" class="w-48 h-16 bg-gray-700 hover:bg-gray-600 text-gray-400 font-black text-base md:text-lg rounded-2xl transition-all shadow-xl tracking-wider cursor-not-allowed" disabled="">
                                 대기 중...
                             </button>
                         </div>
 
                         <!-- 상태 및 결과 피드백 -->
-                        <div id="ticketing-feedback" class="text-sm h-12 flex items-center justify-center font-semibold text-gray-400">
+                        <div id="ticketing-feedback" class="text-sm h-12 flex items-center justify-center font-semibold text-gray-400 px-2 text-center">
                             준비 버튼을 눌러 티켓팅을 시작하세요.
                         </div>
 
@@ -352,7 +1254,7 @@
                 <div id="tab-rhythm" class="tab-content hidden space-y-6">
                     <div class="flex justify-between items-center">
                         <div>
-                            <h3 class="text-lg font-bold text-white flex items-center">
+                            <h3 class="text-base md:text-lg font-bold text-white flex items-center">
                                 <i class="fas fa-gamepad text-green-400 mr-2"></i> 응원법 리듬 훈련
                             </h3>
                             <p class="text-xs text-gray-400 mt-1">박자에 맞게 날아오는 응원 혜성(노트)을 클릭하여 오프라인 콘서트 응원을 준비하세요!</p>
@@ -382,8 +1284,8 @@
 
                         <div class="w-full flex justify-around mt-auto z-10">
                             <!-- 판정 버튼들 -->
-                            <button id="btn-rhythm-lane" class="w-2/3 py-3 bg-pink-500/20 hover:bg-pink-500/40 border-2 border-pink-500 text-white font-black rounded-xl text-center shadow-lg active:scale-95 transition-all">
-                                <span class="block text-sm">💖 지금 터치!</span>
+                            <button id="btn-rhythm-lane" class="w-full md:w-2/3 py-3 bg-pink-500/20 hover:bg-pink-500/40 border-2 border-pink-500 text-white font-black rounded-xl text-center shadow-lg active:scale-95 transition-all">
+                                <span class="block text-sm">💖 지금 터치 (또는 스페이스바)!</span>
                                 <span class="text-[9px] text-pink-300">박자에 맞춰 응원 구호 외치기!</span>
                             </button>
                         </div>
@@ -404,7 +1306,7 @@
                 <!-- 탭 5: 팬레터 쓰기 -->
                 <div id="tab-letter" class="tab-content hidden space-y-6">
                     <div>
-                        <h3 class="text-lg font-bold text-white flex items-center">
+                        <h3 class="text-base md:text-lg font-bold text-white flex items-center">
                             <i class="fas fa-envelope text-pink-500 mr-2"></i> 최애에게 보내는 팬레터
                         </h3>
                         <p class="text-xs text-gray-400 mt-1">이쁜 편지지에 진심을 담아 팬레터를 작성하고, 스티커를 붙여 꾸며보세요!</p>
@@ -413,8 +1315,8 @@
                     <!-- 팬레터 캔버스 / 시뮬레이터 -->
                     <div class="bg-[#1f164c] rounded-2xl border border-gray-800 p-6 space-y-4 shadow-inner relative">
                         <div class="flex justify-between items-center border-b border-gray-800 pb-3">
-                            <span class="text-xs font-bold text-gray-400">To. <span class="text-pink-400" id="letter-recipient-name">최애</span></span>
-                            <div class="flex space-x-2">
+                            <span class="text-xs font-bold text-gray-400">To. <span class="text-pink-400" id="letter-recipient-name">장원영</span></span>
+                            <div class="flex space-x-1 md:space-x-2">
                                 <button class="sticker-btn text-base bg-black/40 p-1.5 rounded-lg hover:bg-black/60 transition-colors" data-sticker="❤️">❤️</button>
                                 <button class="sticker-btn text-base bg-black/40 p-1.5 rounded-lg hover:bg-black/60 transition-colors" data-sticker="✨">✨</button>
                                 <button class="sticker-btn text-base bg-black/40 p-1.5 rounded-lg hover:bg-black/60 transition-colors" data-sticker="👑">👑</button>
@@ -497,9 +1399,13 @@
     </div>
 
     <!-- 하단 푸터 -->
-    <footer class="border-t border-gray-900 bg-[#080516] text-center py-4 text-xs text-gray-500">
+    <footer class="border-t border-gray-900 bg-[#080516] text-center py-4 text-xs text-gray-500 flex flex-col items-center justify-center space-y-2">
         <p>© 2026 최애 아이돌 덕질 시뮬레이터. All Rights Reserved.</p>
-        <p class="mt-1">내장된 BGM은 브라우저 Web Audio API로 실시간 자가 생성하는 무손실 레트로 신스 음악입니다.</p>
+        <p>내장된 BGM은 브라우저 Web Audio API로 실시간 생성되는 무손실 레트로 신스 음악입니다.</p>
+        <button onclick="downloadSelf()" class="bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700 text-[11px] px-3 py-1.5 rounded-lg flex items-center space-x-1 transition-all">
+            <i class="fas fa-file-code"></i>
+            <span>내 컴퓨터로 전체 HTML 소스 파일 다운로드 (.html)</span>
+        </button>
     </footer>
 
     <!-- 플로팅 메시지 피드백 (Toast) -->
@@ -600,7 +1506,6 @@
             const now = audioCtx.currentTime;
             
             if (type === 'click') {
-                // 상큼한 버블 터지는 응원음
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.type = 'sine';
@@ -614,13 +1519,9 @@
                 osc.stop(now + 0.1);
             } 
             else if (type === 'upgrade') {
-                // 띠링! 장비 구입 및 랭크업 음
                 const osc1 = audioCtx.createOscillator();
-                const osc2 = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
-                
                 osc1.type = 'triangle';
-                osc2.type = 'sine';
                 
                 osc1.frequency.setValueAtTime(523.25, now); // C5
                 osc1.frequency.setValueAtTime(659.25, now + 0.08); // E5
@@ -636,9 +1537,7 @@
                 osc1.stop(now + 0.5);
             } 
             else if (type === 'gacha') {
-                // 샤라랑~ 고전 포카 뽑기 음
                 const steps = 8;
-                const duration = 0.4;
                 const baseFreq = 600;
                 
                 for(let i = 0; i < steps; i++) {
@@ -657,7 +1556,6 @@
                 }
             }
             else if (type === 'legendary') {
-                // 빰빠카빰! 초대형 한정 레전더리 획득음
                 const notes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99, 1046.50, 1318.51];
                 notes.forEach((freq, idx) => {
                     const osc = audioCtx.createOscillator();
@@ -673,7 +1571,6 @@
                 });
             }
             else if (type === 'ticketing-fail') {
-                // 삐- 이선좌(이미 선택된 좌석입니다) 탈락음
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.type = 'sawtooth';
@@ -687,7 +1584,6 @@
                 osc.stop(now + 0.4);
             }
             else if (type === 'hit') {
-                // 리듬게임 퍼펙트 타격 타악기음
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.type = 'triangle';
@@ -702,50 +1598,46 @@
             }
         }
 
-        // Web Audio API로 만드는 8비트 K-Pop 스타일 레트로 루프 음악 
+        // Web Audio API K-Pop 스타일 레트로 루프 음악 
         function runBgmSequencer() {
             if (!isBgmPlaying) return;
 
             const bpm = 125;
             const quarterNoteDuration = 60 / bpm;
-            const stepDuration = quarterNoteDuration / 2; // 8분 음표 기준 루프
+            const stepDuration = quarterNoteDuration / 2; 
 
-            // K-pop 대중적인 감성 코드 진행: C -> G/B -> Am -> F (마법의 4코드)
             const chords = [
-                [48, 52, 55, 60], // C Major (C3, E3, G3, C4)
-                [47, 50, 55, 59], // G Major (B2, D3, G3, B3)
-                [45, 48, 52, 57], // A Minor (A2, C3, E3, A3)
-                [41, 45, 48, 53]  // F Major (F2, A2, C3, F3)
+                [48, 52, 55, 60], 
+                [47, 50, 55, 59], 
+                [45, 48, 52, 57], 
+                [41, 45, 48, 53]  
             ];
 
             const melodies = [
-                [60, 64, 67, 72, 67, 64, 60, 67], // C멜로디
-                [59, 62, 67, 71, 67, 62, 59, 67], // G멜로디
-                [57, 60, 64, 69, 64, 60, 57, 64], // Am멜로디
-                [53, 57, 60, 65, 60, 57, 53, 60]  // F멜로디
+                [60, 64, 67, 72, 67, 64, 60, 67], 
+                [59, 62, 67, 71, 67, 62, 59, 67], 
+                [57, 60, 64, 69, 64, 60, 57, 64], 
+                [53, 57, 60, 65, 60, 57, 53, 60]  
             ];
 
             const now = audioCtx.currentTime;
 
-            // 1. 드럼 비트 (단순 자작 킥 & 스네어)
+            // 킥 & 스네어 드럼 비트
             const drumOsc = audioCtx.createOscillator();
             const drumGain = audioCtx.createGain();
             drumOsc.type = 'sine';
             
             if (beatCount % 4 === 0) {
-                // 킥 드럼
                 drumOsc.frequency.setValueAtTime(150, now);
                 drumOsc.frequency.exponentialRampToValueAtTime(30, now + 0.1);
                 drumGain.gain.setValueAtTime(0.18, now);
                 drumGain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
             } else if (beatCount % 4 === 2) {
-                // 스네어 드럼 대용 (간단한 고음 노이즈 효과)
                 drumOsc.frequency.setValueAtTime(400, now);
                 drumOsc.frequency.linearRampToValueAtTime(200, now + 0.08);
                 drumGain.gain.setValueAtTime(0.08, now);
                 drumGain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
             } else {
-                // 하이햇 대용
                 drumOsc.frequency.setValueAtTime(8000, now);
                 drumGain.gain.setValueAtTime(0.02, now);
                 drumGain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
@@ -755,14 +1647,14 @@
             drumOsc.start(now);
             drumOsc.stop(now + 0.2);
 
-            // 2. 신스 메인 멜로디 연주
+            // 신스 메인 멜로디
             const chordIndex = Math.floor((beatCount / 8) % 4);
             const noteIndex = beatCount % 8;
             const midNote = melodies[chordIndex][noteIndex];
             
             const synthOsc = audioCtx.createOscillator();
             const synthGain = audioCtx.createGain();
-            synthOsc.type = 'triangle'; // 한층 더 청량하고 둥글둥글한 느낌의 삼각파
+            synthOsc.type = 'triangle'; 
             synthOsc.frequency.setValueAtTime(midiToFreq(midNote), now);
             
             synthGain.gain.setValueAtTime(0.05, now);
@@ -773,13 +1665,13 @@
             synthOsc.start(now);
             synthOsc.stop(now + stepDuration);
 
-            // 3. 베이스 신스 추가로 사운드를 단단하게
+            // 베이스 라인 추가
             if (beatCount % 2 === 0) {
                 const bassOsc = audioCtx.createOscillator();
                 const bassGain = audioCtx.createGain();
                 const rootMidi = chords[chordIndex][0];
                 bassOsc.type = 'sine';
-                bassOsc.frequency.setValueAtTime(midiToFreq(rootMidi - 12), now); // 더 낮은 옥타브 베이스
+                bassOsc.frequency.setValueAtTime(midiToFreq(rootMidi - 12), now); 
                 
                 bassGain.gain.setValueAtTime(0.1, now);
                 bassGain.gain.exponentialRampToValueAtTime(0.001, now + (stepDuration * 2) - 0.04);
@@ -792,7 +1684,6 @@
 
             beatCount++;
             
-            // 다음 비트 예약
             bgmSequencer = setTimeout(() => {
                 runBgmSequencer();
             }, stepDuration * 1000);
@@ -829,33 +1720,26 @@
         // ==========================================
         // 3. 메인 게임 루프 & 스밍 공장 수치 처리
         // ==========================================
-        
-        // 정기적 자동 덕력 누적 및 데이터 갱신 (1초에 10번 실행하여 부드럽게 상승)
         let lastUpdateTime = Date.now();
         setInterval(() => {
             const now = Date.now();
             const deltaTime = (now - lastUpdateTime) / 1000;
             lastUpdateTime = now;
 
-            // 자동 스트리밍 상승
             if (idolState.powerPerSecond > 0) {
                 idolState.fandomPower += idolState.powerPerSecond * deltaTime;
-                idolState.streamCount += Math.floor(idolState.powerPerSecond * deltaTime * 5); // 덕력 1당 대략 5번 스트리밍
+                idolState.streamCount += Math.floor(idolState.powerPerSecond * deltaTime * 5); 
             }
 
-            // 음원 차트 랭킹 계산 로직 (스밍 수 및 기타 스탯 기반)
             calculateChartRank();
 
-            // 앨범 판매량 누적
             if (idolState.fandomPower > 500) {
                 idolState.albumSales = Math.floor(idolState.fandomPower * 1.5 + idolState.fanCount * 12);
             }
 
-            // 프론트엔드 UI 데이터 동기화
             updateUI();
         }, 100);
 
-        // 차트 순위 동적 정밀 계산
         function calculateChartRank() {
             const index = idolState.streamCount + (idolState.fanCount * 10);
             let rank = 101;
@@ -876,7 +1760,6 @@
 
             idolState.chartRank = rank;
 
-            // 지상파 음악방송 등극 여부
             if (rank === 1) {
                 idolState.musicShowRank = "🏆 1위 트리플 크라운!";
             } else if (rank <= 3) {
@@ -890,17 +1773,16 @@
             }
         }
 
-        // 전체 UI 정보 갱신
         function updateUI() {
             document.getElementById('stat-fandom-power').innerText = Math.floor(idolState.fandomPower).toLocaleString();
             
             const rankEl = document.getElementById('stat-chart-rank');
             if (idolState.chartRank <= 100) {
                 rankEl.innerText = `실시간 ${idolState.chartRank}위`;
-                rankEl.className = "font-black text-sm md:text-base text-pink-500 animate-pulse";
+                rankEl.className = "font-black text-xs md:text-sm text-pink-500 animate-pulse";
             } else {
                 rankEl.innerText = "외곽 (100위 밖)";
-                rankEl.className = "font-black text-sm md:text-base text-purple-400";
+                rankEl.className = "font-black text-xs md:text-sm text-purple-400";
             }
 
             document.getElementById('stat-stream-count').innerText = Math.floor(idolState.streamCount).toLocaleString() + "회";
@@ -945,19 +1827,16 @@
             });
         }
 
-        // 글로벌 범위 바인딩을 위해 전역에 함수 매핑
         window.buyUpgrade = function(index) {
             const item = upgrades[index];
             if (idolState.fandomPower >= item.cost) {
                 idolState.fandomPower -= item.cost;
                 item.count++;
                 
-                // 스탯 복리 연산 적용
                 idolState.powerPerSecond += item.pps;
                 idolState.fanCount += Math.ceil(item.pps * 4);
                 idolState.promoPower += Math.ceil(item.cost / 5);
                 
-                // 가격 기하급수적 인상
                 item.cost = Math.floor(item.cost * 1.55);
 
                 playSfx('upgrade');
@@ -969,12 +1848,11 @@
             }
         };
 
-        // 실시간으로 덕력 변화에 맞춰 버튼 스타일 갱신하기 위함
         setInterval(renderUpgrades, 1000);
 
 
         // ==========================================
-        // 5. 응원봉 클릭 이벤트 & 하트 아파트 생성기
+        // 5. 응원봉 클릭 이벤트 & 이펙트 생성기
         // ==========================================
         const cheerStick = document.getElementById('cheer-stick');
         cheerStick.addEventListener('mousedown', (e) => {
@@ -982,7 +1860,6 @@
             idolState.streamCount += 1;
             playSfx('click');
 
-            // 클릭 이펙트 애니메이션
             const stickGlow = document.getElementById('stick-glow');
             stickGlow.classList.remove('blur-3xl');
             stickGlow.classList.add('blur-xl', 'bg-pink-500/50');
@@ -991,11 +1868,9 @@
                 stickGlow.classList.add('blur-3xl');
             }, 100);
 
-            // 마우스 좌표 기준으로 날아가는 하트 및 응원 구호 팝업 생성
             createFloatingEffect(e);
         });
 
-        // 모바일 터치 대응
         cheerStick.addEventListener('touchstart', (e) => {
             e.preventDefault();
             idolState.fandomPower += idolState.powerPerClick;
@@ -1017,7 +1892,6 @@
             const textX = e.clientX || (rect.left + rect.width / 2);
             const textY = e.clientY || (rect.top + rect.height / 2);
 
-            // 1. 하트 요소 생성
             const heart = document.createElement('div');
             heart.className = 'absolute text-xl pointer-events-none z-50 transition-all duration-1000 ease-out select-none';
             heart.innerText = ['❤️', '✨', '💖', '⭐', '🫶'][Math.floor(Math.random() * 5)];
@@ -1025,7 +1899,6 @@
             heart.style.top = `${textY - 20}px`;
             document.body.appendChild(heart);
 
-            // 2. 응원 텍스트 요소 생성
             const slogan = document.createElement('div');
             slogan.className = 'absolute text-xs font-black text-pink-300 pointer-events-none z-50 transition-all duration-1000 ease-out select-none theme-glow';
             slogan.innerText = [
@@ -1039,9 +1912,8 @@
             slogan.style.top = `${textY - 30}px`;
             document.body.appendChild(slogan);
 
-            // 애니메이션 진행 후 자동 소멸
             requestAnimationFrame(() => {
-                const angle = Math.random() * Math.PI - Math.PI; // 위쪽 반원 방향
+                const angle = Math.random() * Math.PI - Math.PI; 
                 const distance = 80 + Math.random() * 50;
                 const destX = textX + Math.cos(angle) * distance;
                 const destY = textY + Math.sin(angle) * distance;
@@ -1074,13 +1946,11 @@
 
                 const cardHtml = `
                     <div class="photocard ${cardClass} ${holoClass} p-3 rounded-2xl h-48 flex flex-col justify-between shadow-lg relative overflow-hidden group select-none">
-                        <!-- 등급 배지 -->
                         <div class="flex justify-between items-center z-10">
                             <span class="text-[9px] font-black px-2 py-0.5 rounded ${getGradeBadgeClass(card.grade)}">${card.grade}</span>
                             ${isCollected ? '<span class="text-xs">📸</span>' : '<span class="text-xs text-gray-600">🔒</span>'}
                         </div>
 
-                        <!-- 중앙 텍스트/실루엣 -->
                         <div class="my-auto text-center z-10">
                             ${isCollected 
                                 ? `<p class="font-extrabold text-xs text-white leading-tight drop-shadow-md px-1">${card.name}</p>`
@@ -1088,7 +1958,6 @@
                             }
                         </div>
 
-                        <!-- 카드 상세 묘사 -->
                         <div class="z-10 mt-auto">
                             ${isCollected 
                                 ? `<p class="text-[9px] text-gray-200/90 leading-none truncate">${card.effect}</p>`
@@ -1100,7 +1969,6 @@
                 grid.innerHTML += cardHtml;
             });
 
-            // 수집 카운트 갱신
             document.getElementById('collected-cards-count').innerText = collectedCards.length;
         }
 
@@ -1119,8 +1987,6 @@
                 idolState.fandomPower -= cost;
                 updateUI();
 
-                // 가차 뽑기 알고리즘
-                // Legendary: 2%, SuperRare: 13%, Rare: 35%, Normal: 50%
                 const rand = Math.random() * 100;
                 let selectedGrade = "Normal";
                 
@@ -1128,24 +1994,20 @@
                 else if (rand < 15) selectedGrade = "SuperRare";
                 else if (rand < 50) selectedGrade = "Rare";
 
-                // 해당 등급 내에서 카드 하나 랜덤 선정
                 const possibleCards = photoCardsPool.filter(c => c.grade === selectedGrade);
                 const drawnCard = possibleCards[Math.floor(Math.random() * possibleCards.length)];
 
-                // 소장 여부 확인 및 추가
                 const isNew = !collectedCards.includes(drawnCard.id);
                 if (isNew) {
                     collectedCards.push(drawnCard.id);
                 }
 
-                // 사운드 이펙트 분기
                 if (selectedGrade === 'Legendary') {
                     playSfx('legendary');
                 } else {
                     playSfx('gacha');
                 }
 
-                // 뽑기 결과 다이얼로그 모달식 효과 (토스트로 크게 노출)
                 showGachaResult(drawnCard, isNew);
                 initBinder();
             } else {
@@ -1154,7 +2016,6 @@
         });
 
         function showGachaResult(card, isNew) {
-            // 커스텀 대형 결과 알림
             const toast = document.createElement('div');
             toast.className = `p-5 rounded-2xl ${card.design} text-white shadow-2xl flex flex-col items-center justify-center space-y-2 border-2 border-white/20 animate-bounce max-w-xs mx-auto z-50 fixed top-1/3 left-1/2 -translate-x-1/2`;
             toast.innerHTML = `
@@ -1183,7 +2044,6 @@
             initAudio();
             if (ticketingActive) return;
 
-            // 게임 변수 초기화
             ticketingActive = true;
             isPracticeStarted = false;
             btnStartTicketing.disabled = true;
@@ -1191,13 +2051,12 @@
             ticketingFeedback.innerText = "서버 연결 확보 중... 광클 준비하세요!";
             ticketingFeedback.className = "text-sm h-12 flex items-center justify-center font-semibold text-yellow-400 animate-pulse";
             
-            // 타이머 카운트 다운 시작
-            let startCount = 3000; // 3초 카운트다운
-            const intervalTime = 13; // 밀리초 정밀 연산
+            let startCount = 3000; 
+            const intervalTime = 13; 
             targetOpenTime = Date.now() + startCount;
 
             btnTicketingAction.innerText = "대기 대기 대기!";
-            btnTicketingAction.className = "w-48 h-16 bg-gray-800 text-gray-500 font-black text-lg rounded-2xl transition-all shadow-xl tracking-wider cursor-not-allowed";
+            btnTicketingAction.className = "w-48 h-16 bg-gray-800 text-gray-500 font-black text-base md:text-lg rounded-2xl transition-all shadow-xl tracking-wider cursor-not-allowed";
             btnTicketingAction.disabled = true;
 
             ticketingTimer = setInterval(() => {
@@ -1217,19 +2076,18 @@
             ticketTimerDisplay.innerText = "00:00.000";
             ticketTimerDisplay.className = "text-4xl font-black text-red-500 tracking-widest monospace animate-ping";
             
-            // 예매 개시 활성화
             btnTicketingAction.disabled = false;
             btnTicketingAction.innerText = "👉 예매하기 (클릭) 👈";
             btnTicketingAction.className = "w-48 h-16 bg-gradient-to-r from-red-500 to-yellow-500 text-black font-black text-xl rounded-2xl transition-all shadow-[0_0_20px_rgba(239,68,68,0.6)] tracking-wider cursor-pointer active:scale-95 animate-pulse";
             
             isPracticeStarted = true;
-            targetOpenTime = Date.now(); // 정확한 오픈 타임으로 재할당하여 반응속도 계측
+            targetOpenTime = Date.now(); 
         }
 
         btnTicketingAction.addEventListener('click', () => {
             if (!ticketingActive || !isPracticeStarted) return;
 
-            const reactionTime = (Date.now() - targetOpenTime) / 1000; // 초 단위 변환
+            const reactionTime = (Date.now() - targetOpenTime) / 1000; 
             ticketingActive = false;
             isPracticeStarted = false;
             
@@ -1241,18 +2099,14 @@
             btnTicketingAction.innerText = "대기 중...";
             ticketTimerDisplay.className = "text-4xl font-black text-yellow-400 tracking-widest monospace";
 
-            // 피드백 연산
             if (reactionTime < 0.15) {
-                // 대성공 (전설의 자리 획득)
                 playSfx('legendary');
                 ticketingFeedback.innerHTML = `🎉 대성공!! 반응속도 <span class="text-green-400">${reactionTime.toFixed(3)}초</span>! [VIP 그라운드 1열 극사이드]를 사수했습니다!`;
                 ticketingFeedback.className = "text-sm h-12 flex items-center justify-center font-bold text-green-400";
                 
-                // 보상 부여
                 idolState.fandomPower += 5000;
                 showToast("🏆 티켓팅 정복! 초대박 덕력 +5,000 💖 보너스!");
 
-                // 전설 등급 포카 무작위 확정 획득
                 const legends = photoCardsPool.filter(c => c.grade === 'Legendary');
                 const winCard = legends[Math.floor(Math.random() * legends.length)];
                 if (!collectedCards.includes(winCard.id)) {
@@ -1264,20 +2118,17 @@
                 }
 
             } else if (reactionTime < 0.28) {
-                // 성공 (일반 구역 좌석)
                 playSfx('upgrade');
                 ticketingFeedback.innerHTML = `👍 성공! 반응속도 <span class="text-blue-400">${reactionTime.toFixed(3)}초</span>! [1층 15구역 R석] 예매 완료!`;
                 ticketingFeedback.className = "text-sm h-12 flex items-center justify-center font-bold text-blue-400";
                 idolState.fandomPower += 1000;
                 showToast("🎟️ 티켓팅 안착! 덕력 +1,000 💖 획득!");
             } else {
-                // 이선좌 탈락
                 playSfx('ticketing-fail');
                 ticketingFeedback.innerHTML = `😢 이미 선택된 좌석입니다 (대기번호 54,201번). 반응속도: ${reactionTime.toFixed(3)}초`;
                 ticketingFeedback.className = "text-sm h-12 flex items-center justify-center font-semibold text-red-500";
             }
 
-            // 최고 기록 갱신
             if (reactionTime < bestReactionTime) {
                 bestReactionTime = reactionTime;
                 ticketingHighScoreEl.innerText = `최고기록: ${bestReactionTime.toFixed(3)}초`;
@@ -1298,7 +2149,6 @@
         btnStartRhythm.addEventListener('click', () => {
             initAudio();
             if (rhythmGameActive) {
-                // 게임 중지
                 stopRhythmGame();
                 return;
             }
@@ -1314,7 +2164,6 @@
             btnStartRhythm.innerText = "응원 종료";
             btnStartRhythm.className = "bg-red-500 hover:bg-red-600 text-white font-black text-sm px-6 py-2.5 rounded-xl transition-all";
 
-            // 노트 스폰 루프 개시
             rhythmTimer = setInterval(spawnRhythmNote, noteSpawnInterval);
             showToast("🎮 리듬 응원봉 훈련이 시작되었습니다! 비트에 맞춰 터치하세요!");
         });
@@ -1324,7 +2173,6 @@
             clearInterval(rhythmTimer);
             rhythmTimer = null;
             
-            // 모든 낙하 노트 소거
             const remainingNotes = document.querySelectorAll('.rhythm-note');
             remainingNotes.forEach(note => note.remove());
             generatedNotes = [];
@@ -1332,11 +2180,10 @@
             btnStartRhythm.innerText = "리듬응원 시작";
             btnStartRhythm.className = "bg-green-500 hover:bg-green-600 text-black font-black text-sm px-6 py-2.5 rounded-xl transition-all";
             
-            // 수치 마일스톤에 따른 보너스 정산
             if (rhythmScore > 0) {
                 const bonusPower = Math.floor(rhythmScore * 2);
                 idolState.fandomPower += bonusPower;
-                showToast(`🎉 리듬 응원 대성공! 팬클럽 결속력 상승으로 추가 덕력 +${bonusPower.toLocaleString()} 💖을 정산받았습니다!`);
+                showToast(`🎉 리듬 응원 대성공! 추가 덕력 +${bonusPower.toLocaleString()} 💖을 정산받았습니다!`);
             }
         }
 
@@ -1344,7 +2191,6 @@
             if (!rhythmGameActive) return;
 
             const note = document.createElement('div');
-            // 귀여운 하트 또는 이모지로 디자인된 노트
             const emojis = ['💖', '⭐', '🎵', '🫶'];
             note.innerText = emojis[Math.floor(Math.random() * emojis.length)];
             note.className = "rhythm-note absolute text-2xl select-none pointer-events-none transition-all duration-1000";
@@ -1359,7 +2205,6 @@
             };
             generatedNotes.push(noteObj);
 
-            // 떨어지는 애니메이션 적용
             setTimeout(() => {
                 if (rhythmGameActive && !noteObj.hit) {
                     note.style.transform = `translateY(240px)`;
@@ -1367,11 +2212,9 @@
                 }
             }, 50);
 
-            // 판정 유효시간이 지나 아래 화면 밖으로 이탈하면 자동 제거
             setTimeout(() => {
                 if (!noteObj.hit) {
                     note.remove();
-                    // 미스 판정 처리
                     if (rhythmGameActive) {
                         rhythmCombo = 0;
                         rhythmComboEl.innerText = "0";
@@ -1383,7 +2226,6 @@
             }, noteSpeed * 1000 + 100);
         }
 
-        // 판정 차트 터치 이벤트
         btnRhythmLane.addEventListener('mousedown', () => {
             triggerHitLogic();
         });
@@ -1391,14 +2233,11 @@
         function triggerHitLogic() {
             if (!rhythmGameActive || generatedNotes.length === 0) return;
 
-            // 판정선 도달 거리 계산
-            // 가장 바닥에 도달한 노트를 판정 대상으로 선발
             const targetNote = generatedNotes[0];
             if (!targetNote) return;
 
             const now = Date.now();
             const elapsed = now - targetNote.spawnTime;
-            // 타겟 완벽 판정 시간 계산 (총 속도 3.5초 중, 타겟 라인은 바닥에서 48px 위인 약 3.1초 시점)
             const perfectTime = noteSpeed * 1000 * 0.85; 
             const diff = Math.abs(elapsed - perfectTime);
 
@@ -1424,7 +2263,6 @@
                 rhythmCombo = 0;
             }
 
-            // 시각적 피드백 구현
             targetNote.element.style.opacity = '0';
             targetNote.element.style.transform = 'translateY(240px) scale(2)';
             targetNote.hit = true;
@@ -1433,18 +2271,16 @@
                 targetNote.element.remove();
             }, 200);
 
-            rhythmScore += scoreEarned + (rhythmCombo * 5); // 콤보 보너스 부여
+            rhythmScore += scoreEarned + (rhythmCombo * 5); 
             rhythmScoreEl.innerText = rhythmScore;
             rhythmComboEl.innerText = rhythmCombo;
 
             rhythmJudgement.innerText = judgeText;
             rhythmJudgement.className = `absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-2xl font-black italic tracking-wider uppercase select-none pointer-events-none ${judgeColor} animate-ping`;
 
-            // 판정한 노트 데이터 목록에서 제거
             generatedNotes.shift();
         }
 
-        // 키보드 스페이스바로도 타격 지원 (PC 사용자 편의)
         window.addEventListener('keydown', (e) => {
             if (e.code === "Space") {
                 e.preventDefault();
@@ -1461,27 +2297,22 @@
         const btnSendLetter = document.getElementById('btn-send-letter');
         const btnClearLetter = document.getElementById('btn-clear-letter');
 
-        // 스티커 도배 기능
         document.querySelectorAll('.sticker-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 initAudio();
                 const sticker = btn.getAttribute('data-sticker');
                 
-                // 보드 위에 무작위 좌표에 스티커 래핑 엘리먼트 부착
                 const wrapper = document.createElement('div');
                 wrapper.innerText = sticker;
                 wrapper.className = "absolute text-3xl pointer-events-auto select-none cursor-move transition-transform active:scale-125";
                 
-                // 편지 공간 범위 내 랜덤 좌표 연산
                 const boardWidth = stickerBoard.clientWidth;
                 const boardHeight = stickerBoard.clientHeight;
                 wrapper.style.left = `${Math.random() * (boardWidth - 40)}px`;
                 wrapper.style.top = `${Math.random() * (boardHeight - 40)}px`;
                 
-                // 미세한 랜덤 각도 회전
                 wrapper.style.transform = `rotate(${Math.random() * 40 - 20}deg)`;
 
-                // 스티커 클릭 시 지워지는 이스터에그 추가
                 wrapper.addEventListener('dblclick', () => {
                     wrapper.remove();
                     playSfx('click');
@@ -1505,15 +2336,12 @@
                 return;
             }
 
-            // 발송 애니메이션 및 완료 피드백
             playSfx('upgrade');
             showToast(`💌 To. ${idolState.idolName}님께 진심이 듬뿍 담긴 팬레터가 성공적으로 전달되었습니다!`);
             
-            // 팬레터 정기 발송 특전 보상
             const bonus = Math.floor(100 + Math.random() * 200 + stickerBoard.children.length * 50);
             idolState.fandomPower += bonus;
             
-            // 초기화
             letterContent.value = '';
             stickerBoard.innerHTML = '';
             updateUI();
@@ -1528,7 +2356,6 @@
         const btnCloseCustom = document.getElementById('btn-close-custom');
         const btnSaveCustom = document.getElementById('btn-save-custom');
 
-        // 커스텀 기본값 입력창 셋팅
         btnOpenCustom.addEventListener('click', () => {
             document.getElementById('input-idol-name').value = idolState.idolName;
             document.getElementById('input-group-name').value = idolState.groupName;
@@ -1554,18 +2381,15 @@
                 return;
             }
 
-            // 글로벌 상태 전이
             idolState.idolName = name;
             idolState.groupName = group;
             idolState.fandomName = fandom;
             idolState.avatarEmoji = emoji;
             idolState.themeColor = color;
 
-            // 테마 테마색 컬러 전역 CSS 변수 수정 적용
             document.documentElement.style.setProperty('--theme-color', color);
             document.documentElement.style.setProperty('--theme-color-glow', `${color}66`);
 
-            // 상단 레이아웃 즉시 동기화
             document.getElementById('header-idol-name').innerText = name;
             document.getElementById('header-group-name').innerText = group;
             document.getElementById('header-fandom-name').innerText = fandom;
@@ -1588,19 +2412,16 @@
                 initAudio();
                 const targetId = btn.getAttribute('data-target');
 
-                // 탭 버튼 활성화 상태 토글
                 document.querySelectorAll('.tab-btn').forEach(b => {
-                    b.className = "tab-btn flex-1 py-3 text-sm font-bold rounded-lg transition-all duration-200 text-gray-400 hover:text-white";
+                    b.className = "tab-btn flex-1 py-3 text-xs md:text-sm font-bold rounded-lg transition-all duration-200 text-gray-400 hover:text-white";
                 });
-                btn.className = "tab-btn flex-1 py-3 text-sm font-bold rounded-lg transition-all duration-200 bg-pink-600 text-white";
+                btn.className = "tab-btn flex-1 py-3 text-xs md:text-sm font-bold rounded-lg transition-all duration-200 bg-pink-600 text-white";
 
-                // 모든 탭 컨텐츠 보이기/숨기기
                 document.querySelectorAll('.tab-content').forEach(content => {
                     content.classList.add('hidden');
                 });
                 document.getElementById(targetId).classList.remove('hidden');
 
-                // 리듬 게임 탭 이탈 시 정지 기능 연동
                 if (targetId !== 'tab-rhythm' && rhythmGameActive) {
                     stopRhythmGame();
                 }
@@ -1621,12 +2442,10 @@
             `;
             container.appendChild(toast);
 
-            // 서서히 밀려 들어오기
             setTimeout(() => {
                 toast.classList.remove('translate-x-12', 'opacity-0');
             }, 50);
 
-            // 소멸 소요 설정
             setTimeout(() => {
                 toast.classList.add('opacity-0', 'translate-y-[-10px]');
                 setTimeout(() => {
@@ -1636,10 +2455,29 @@
         }
 
         // ==========================================
-        // 13. 최초 앱 기동 초기화
+        // 13. [핵심 추가] 소스 코드 자가 다운로드 모듈
+        // ==========================================
+        function downloadSelf() {
+            // 현재 실행 중인 HTML 마크업 전체를 Blob으로 래핑하여 내보냅니다.
+            const htmlContent = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+            const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `idol_fandom_simulator_${idolState.idolName}.html`;
+            document.body.appendChild(a);
+            a.click();
+            
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast("💾 게임 소스 코드가 PC로 성공적으로 다운로드되었습니다!");
+        }
+
+        // ==========================================
+        // 14. 최초 앱 기동 초기화
         // ==========================================
         window.addEventListener('load', () => {
-            // 상단 레이어 바인딩 초기 동기화
             document.getElementById('header-idol-name').innerText = idolState.idolName;
             document.getElementById('header-group-name').innerText = idolState.groupName;
             document.getElementById('header-fandom-name').innerText = idolState.fandomName;
@@ -1653,7 +2491,5 @@
             updateUI();
         });
     </script>
-</body>
-</html>
 
-```
+</body></html>
