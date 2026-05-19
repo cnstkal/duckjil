@@ -2492,4 +2492,46 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
         });
     </script>
 
+
+<style>
+#SUPER_ADMIN_BUTTON{
+position:fixed !important;
+top:12px !important;
+right:12px !important;
+z-index:2147483647 !important;
+background:#ff2a7a !important;
+color:white !important;
+padding:12px 18px !important;
+border-radius:999px !important;
+font-size:14px !important;
+font-weight:700 !important;
+border:none !important;
+display:block !important;
+opacity:1 !important;
+visibility:visible !important;
+}
+</style>
+
+<script>
+window.addEventListener("DOMContentLoaded",()=>{
+
+const btn=document.createElement("button");
+
+btn.id="SUPER_ADMIN_BUTTON";
+btn.innerText="관리자";
+
+document.body.appendChild(btn);
+
+btn.onclick=()=>{
+const pw=prompt("관리자 비밀번호");
+
+if(pw==="duckjiladmin"){
+localStorage.setItem("duckjil-admin","true");
+alert("관리자 모드 활성화");
+}
+};
+
+});
+</script>
+
 </body></html>
