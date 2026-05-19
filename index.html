@@ -1,751 +1,1659 @@
-
-<!doctype html>
+```html
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Mystery Store</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>최애 아이돌 덕질 시뮬레이터</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome 아이콘 CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+        
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #0b071e;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
 
-<style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
+        :root {
+            --theme-color: #ff2a7a;
+            --theme-color-glow: rgba(255, 42, 122, 0.4);
+            --theme-color-dark: #b30047;
+        }
 
-body{
-font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-background:#07090f;
-color:#fff;
-padding:18px;
-padding-bottom:120px;
-}
+        .theme-glow {
+            text-shadow: 0 0 10px var(--theme-color-glow), 0 0 20px var(--theme-color-glow);
+        }
 
-.page{
-display:none;
-}
+        .theme-bg-glow {
+            box-shadow: 0 0 15px var(--theme-color-glow);
+        }
 
-.page.active{
-display:block;
-}
+        /* 포토카드 홀로그램 효과 */
+        .photocard {
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        
+        .photocard::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0) 30%,
+                rgba(255, 255, 255, 0.3) 40%,
+                rgba(255, 255, 255, 0.5) 50%,
+                rgba(255, 255, 255, 0.3) 60%,
+                rgba(255, 255, 255, 0) 70%
+            );
+            background-size: 300% 300%;
+            background-position: 0% 0%;
+            transition: background-position 0.5s ease;
+            pointer-events: none;
+            z-index: 5;
+        }
 
-.top{
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
+        .photocard:hover::before {
+            background-position: 100% 100%;
+        }
 
-.cart-icon{
-width:46px;
-height:46px;
-border-radius:16px;
-background:#121725;
-display:flex;
-align-items:center;
-justify-content:center;
-cursor:pointer;
-}
+        .photocard.legendary::before {
+            background: linear-gradient(
+                135deg,
+                rgba(255, 0, 128, 0.3) 0%,
+                rgba(0, 255, 255, 0.3) 50%,
+                rgba(255, 255, 0, 0.3) 100%
+            );
+            background-size: 200% 200%;
+            animation: holo-shine 3s linear infinite;
+        }
 
-.cart-icon svg,
-.nav svg{
-width:22px;
-height:22px;
-stroke:white;
-fill:none;
-stroke-width:1.8;
-}
+        @keyframes holo-shine {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
 
-.hero{
-margin-top:18px;
-border-radius:32px;
-padding:28px;
-background:linear-gradient(180deg,#161b2a,#0b0d14);
-}
-
-.hero small{
-color:#9ca3b8;
-}
-
-.hero h1{
-font-size:54px;
-line-height:1;
-margin-top:12px;
-}
-
-.grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:14px;
-margin-top:24px;
-}
-
-.card{
-background:#121725;
-border-radius:24px;
-overflow:hidden;
-cursor:pointer;
-}
-
-.thumb{
-width:100%;
-height:190px;
-object-fit:cover;
-background:#1d2435;
-}
-
-.card-body{
-padding:14px;
-}
-
-.price{
-margin-top:10px;
-color:#cdd3df;
-}
-
-.detail-image{
-width:100%;
-height:320px;
-border-radius:28px;
-object-fit:cover;
-background:#1d2435;
-}
-
-.gallery{
-display:flex;
-gap:10px;
-overflow:auto;
-margin-top:14px;
-}
-
-.gallery img{
-width:70px;
-height:70px;
-border-radius:14px;
-object-fit:cover;
-cursor:pointer;
-}
-
-.btn{
-width:100%;
-border:none;
-padding:16px;
-border-radius:18px;
-margin-top:16px;
-font-size:15px;
-cursor:pointer;
-}
-
-.primary{
-background:#8b5cf6;
-color:white;
-}
-
-.secondary{
-background:#1b2030;
-color:white;
-}
-
-.danger{
-background:#6d3041;
-color:white;
-}
-
-.nav{
-position:fixed;
-left:18px;
-right:18px;
-bottom:18px;
-background:#121725;
-border-radius:28px;
-padding:14px;
-display:flex;
-justify-content:space-around;
-align-items:center;
-}
-
-.nav button{
-background:none;
-border:none;
-color:#9ca3b8;
-display:flex;
-flex-direction:column;
-align-items:center;
-gap:6px;
-font-size:11px;
-}
-
-.nav .active-nav{
-color:#9e7bff;
-}
-
-.cart-item{
-display:flex;
-gap:14px;
-background:#121725;
-border-radius:22px;
-padding:14px;
-margin-top:14px;
-align-items:center;
-}
-
-.cart-item img{
-width:90px;
-height:90px;
-border-radius:18px;
-object-fit:cover;
-}
-
-.qty{
-display:flex;
-gap:10px;
-margin-top:10px;
-align-items:center;
-}
-
-.qty button{
-width:28px;
-height:28px;
-border:none;
-border-radius:10px;
-background:#1d2435;
-color:#fff;
-}
-
-.editor{
-margin-top:20px;
-}
-
-.editor input,
-.editor textarea{
-width:100%;
-background:#121725;
-border:none;
-color:white;
-padding:16px;
-border-radius:18px;
-margin-top:12px;
-}
-
-.editor textarea{
-height:220px;
-resize:none;
-}
-
-.mypage-card{
-background:#121725;
-border-radius:28px;
-padding:22px;
-margin-top:18px;
-}
-
-.level-bar{
-height:8px;
-background:#1c2333;
-border-radius:999px;
-overflow:hidden;
-margin-top:12px;
-}
-
-.level-fill{
-height:100%;
-width:40%;
-background:#9e7bff;
-}
-
-.hidden-editor{
-position:fixed;
-top:16px;
-right:16px;
-opacity:.08;
-font-size:12px;
-padding:6px;
-}
-</style>
+        /* 스크롤바 디자인 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #110d29;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--theme-color);
+            border-radius: 3px;
+        }
+    </style>
 </head>
-
-<body>
-
-<div class="hidden-editor" ondblclick="go('editor')">
-◌
-</div>
-
-<!-- HOME -->
-<section id="home" class="page active">
-
-<div class="top">
-<h1>Mystery Store</h1>
-
-<div class="cart-icon" onclick="go('cart')">
-<svg viewBox="0 0 24 24">
-<circle cx="9" cy="20" r="1"/>
-<circle cx="18" cy="20" r="1"/>
-<path d="M3 4h2l2.5 11h10l2-8H6"/>
-</svg>
-</div>
-</div>
-
-<div class="hero">
-<small>익숙한 일상 속</small>
-<h1>낯선<br>무언가</h1>
-</div>
-
-<div class="grid" id="products"></div>
-
-</section>
-
-<!-- DETAIL -->
-<section id="detail" class="page">
-
-<div onclick="go('home')" style="margin-bottom:18px">
-← 돌아가기
-</div>
-
-<img id="detailMain" class="detail-image">
-
-<div class="gallery" id="gallery"></div>
-
-<h1 id="detailTitle" style="margin-top:20px"></h1>
-
-<div id="detailPrice" class="price"></div>
-
-<p id="detailDesc"
-style="
-margin-top:20px;
-line-height:1.9;
-color:#9ca3b8;
-">
-</p>
-
-<button class="btn primary" onclick="addCart()">
-장바구니 담기
-</button>
-
-<button class="btn secondary" onclick="editProduct()">
-상품 수정
-</button>
-
-<button class="btn danger" onclick="deleteProduct()">
-상품 삭제
-</button>
-
-</section>
-
-<!-- CART -->
-<section id="cart" class="page">
-
-<div class="top">
-<h1>장바구니</h1>
-<div onclick="go('home')">편집</div>
-</div>
-
-<div id="cartWrap"></div>
-
-<div class="mypage-card">
-<div style="display:flex;justify-content:space-between">
-<span>배송비</span>
-<span>₩3,000</span>
-</div>
-
-<div style="display:flex;justify-content:space-between;margin-top:16px">
-<b>총 결제금액</b>
-<b id="cartTotal" style="color:#9e7bff"></b>
-</div>
-
-<button class="btn primary">
-주문하기
-</button>
-</div>
-
-</section>
-
-<!-- MYPAGE -->
-<section id="mypage" class="page">
-
-<div class="mypage-card">
-<h1>Explorer</h1>
-
-<div style="margin-top:8px;color:#9ca3b8">
-호기심 Lv.3
-</div>
-
-<div class="level-bar">
-<div class="level-fill"></div>
-</div>
-
-<div style="margin-top:10px;color:#9ca3b8">
-320 / 600
-</div>
-</div>
-
-<div class="mypage-card">
-<div style="line-height:2.2">
-공지사항<br>
-고객센터<br>
-설정
-</div>
-</div>
-
-</section>
-
-<!-- EDITOR -->
-<section id="editor" class="page">
-
-<div onclick="go('home')">
-← 홈
-</div>
-
-<div class="editor">
-
-<input id="name" placeholder="상품 이름">
-
-<input id="priceInput" placeholder="가격">
-
-<textarea id="descInput"
-placeholder="블로그 글 쓰듯 상세 설명 작성">
-</textarea>
-
-<input id="images"
-type="file"
-multiple
-accept="image/*">
-
-<button class="btn primary" onclick="saveProduct()">
-저장하기
-</button>
-
-</div>
-
-</section>
-
-<!-- NAV -->
-<div class="nav">
-
-<button class="active-nav" onclick="go('home')">
-<svg viewBox="0 0 24 24">
-<path d="M3 10.5 12 3l9 7.5"/>
-<path d="M5 9.5V21h14V9.5"/>
-</svg>
-홈
-</button>
-
-<button onclick="go('cart')">
-<svg viewBox="0 0 24 24">
-<circle cx="9" cy="20" r="1"/>
-<circle cx="18" cy="20" r="1"/>
-<path d="M3 4h2l2.5 11h10l2-8H6"/>
-</svg>
-장바구니
-</button>
-
-<button onclick="go('mypage')">
-<svg viewBox="0 0 24 24">
-<circle cx="12" cy="8" r="4"/>
-<path d="M4 21c2-4 14-4 16 0"/>
-</svg>
-마이페이지
-</button>
-
-</div>
-
-<script>
-
-let products = JSON.parse(localStorage.products || '[]')
-
-if(!products.length){
-
-products = [
-{
-id:1,
-name:'다차원 큐브',
-price:59000,
-desc:'빛을 비추면 내부 구조가 바뀐다.',
-images:[
-'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200&auto=format&fit=crop'
-]
-}
-]
-
-}
-
-let cart = JSON.parse(localStorage.cart || '[]')
-
-let current = null
-
-function save(){
-localStorage.products = JSON.stringify(products)
-localStorage.cart = JSON.stringify(cart)
-}
-
-function go(id){
-
-document.querySelectorAll('.page')
-.forEach(v=>v.classList.remove('active'))
-
-document
-.getElementById(id)
-.classList.add('active')
-
-document
-.querySelectorAll('.nav button')
-.forEach(v=>v.classList.remove('active-nav'))
-
-if(id === 'home'){
-document.querySelectorAll('.nav button')[0].classList.add('active-nav')
-}
-
-if(id === 'cart'){
-document.querySelectorAll('.nav button')[1].classList.add('active-nav')
-}
-
-if(id === 'mypage'){
-document.querySelectorAll('.nav button')[2].classList.add('active-nav')
-}
-
-}
-
-function render(){
-
-const wrap = document.getElementById('products')
-
-wrap.innerHTML = ''
-
-products.forEach(p=>{
-
-const card = document.createElement('div')
-
-card.className = 'card'
-
-card.onclick = ()=>openDetail(p.id)
-
-card.innerHTML = `
-<img class="thumb" src="${p.images[0]}">
-
-<div class="card-body">
-<h3>${p.name}</h3>
-
-<div class="price">
-₩${p.price.toLocaleString()}
-</div>
-</div>
-`
-
-wrap.appendChild(card)
-
-})
-
-renderCart()
-
-save()
-
-}
-
-function openDetail(id){
-
-current = products.find(v=>v.id===id)
-
-detailMain.src = current.images[0]
-
-gallery.innerHTML = ''
-
-current.images.forEach(img=>{
-
-const el = document.createElement('img')
-
-el.src = img
-
-el.onclick = ()=>{
-detailMain.src = img
-}
-
-gallery.appendChild(el)
-
-})
-
-detailTitle.innerText = current.name
-
-detailPrice.innerText =
-'₩' + current.price.toLocaleString()
-
-detailDesc.innerText = current.desc
-
-go('detail')
-
-}
-
-function addCart(){
-
-const found = cart.find(v=>v.id===current.id)
-
-if(found){
-
-found.qty++
-
-}else{
-
-cart.push({
-...current,
-qty:1
-})
-
-}
-
-render()
-
-}
-
-function renderCart(){
-
-cartWrap.innerHTML = ''
-
-let total = 3000
-
-cart.forEach(item=>{
-
-total += item.price * item.qty
-
-const el = document.createElement('div')
-
-el.className = 'cart-item'
-
-el.innerHTML = `
-<img src="${item.images[0]}">
-
-<div style="flex:1">
-<h3>${item.name}</h3>
-
-<div class="price">
-₩${item.price.toLocaleString()}
-</div>
-
-<div class="qty">
-<button onclick="minus(${item.id})">-</button>
-<span>${item.qty}</span>
-<button onclick="plus(${item.id})">+</button>
-</div>
-</div>
-`
-
-cartWrap.appendChild(el)
-
-})
-
-cartTotal.innerText =
-'₩' + total.toLocaleString()
-
-}
-
-function plus(id){
-cart.find(v=>v.id===id).qty++
-render()
-}
-
-function minus(id){
-
-const item = cart.find(v=>v.id===id)
-
-if(item.qty > 1){
-item.qty--
-}
-
-render()
-
-}
-
-let editing = null
-
-function editProduct(){
-
-editing = current.id
-
-name.value = current.name
-
-priceInput.value = current.price
-
-descInput.value = current.desc
-
-go('editor')
-
-}
-
-function deleteProduct(){
-
-products = products.filter(v=>v.id!==current.id)
-
-render()
-
-go('home')
-
-}
-
-async function saveProduct(){
-
-const files =
-[...images.files].slice(0,5)
-
-const imgs = []
-
-for(const file of files){
-
-imgs.push(await toBase64(file))
-
-}
-
-const item = {
-
-id: editing || Date.now(),
-
-name: name.value,
-
-price: +priceInput.value,
-
-desc: descInput.value,
-
-images: imgs.length
-? imgs
-: current?.images || []
-
-}
-
-if(editing){
-
-products =
-products.map(v=>
-v.id===editing ? item : v
-)
-
-}else{
-
-products.unshift(item)
-
-}
-
-editing = null
-
-render()
-
-go('home')
-
-}
-
-function toBase64(file){
-
-return new Promise(resolve=>{
-
-const fr = new FileReader()
-
-fr.onload = e=>{
-resolve(e.target.result)
-}
-
-fr.readAsDataURL(file)
-
-})
-
-}
-
-render()
-
-</script>
-
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- 상단 헤더 -->
+    <header class="border-b border-gray-800 bg-[#120a2b]/90 backdrop-blur-md sticky top-0 z-50 px-4 py-3">
+        <div class="max-w-6xl mx-auto flex flex-wrap justify-between items-center gap-4">
+            <!-- 로고 및 최애 이름 -->
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center text-xl bg-gradient-to-tr from-purple-600 to-pink-500 shadow-lg">
+                    👑
+                </div>
+                <div>
+                    <h1 class="font-black text-lg md:text-xl tracking-wider flex items-center">
+                        <span id="header-idol-name" class="text-pink-400 mr-2">최애</span> 
+                        <span class="text-xs px-2 py-0.5 rounded bg-pink-500/20 text-pink-300 border border-pink-500/30" id="header-group-name">그룹</span>
+                    </h1>
+                    <p class="text-xs text-gray-400">공식 팬덤명: <span id="header-fandom-name" class="font-semibold text-gray-300">-</span></p>
+                </div>
+            </div>
+
+            <!-- 재화 및 상태 정보 -->
+            <div class="flex items-center space-x-4 md:space-x-6">
+                <!-- 덕력 (Fandom Power) -->
+                <div class="bg-black/30 px-3 py-1.5 rounded-full border border-pink-500/30 flex items-center space-x-2">
+                    <span class="text-base">💖</span>
+                    <div>
+                        <p class="text-[10px] text-gray-400 leading-none">덕력 (Fandom Power)</p>
+                        <p class="font-black text-sm md:text-base text-pink-400" id="stat-fandom-power">0</p>
+                    </div>
+                </div>
+
+                <!-- 음원 차트 순위 -->
+                <div class="bg-black/30 px-3 py-1.5 rounded-full border border-purple-500/30 flex items-center space-x-2">
+                    <span class="text-base">📈</span>
+                    <div>
+                        <p class="text-[10px] text-gray-400 leading-none">멜론 실시간 순위</p>
+                        <p class="font-black text-sm md:text-base text-purple-400" id="stat-chart-rank">외곽 100위 밖</p>
+                    </div>
+                </div>
+
+                <!-- BGM 컨트롤러 -->
+                <button id="btn-bgm" class="w-10 h-10 rounded-full bg-[#ff2a7a]/20 hover:bg-[#ff2a7a]/40 border border-[#ff2a7a]/50 flex items-center justify-center text-white transition-all duration-200">
+                    <i class="fas fa-music text-sm" id="bgm-icon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 메인 대시보드 -->
+    <main class="max-w-6xl w-full mx-auto px-4 py-6 flex-grow grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- 왼쪽: 최애 비주얼 & 응원봉 클릭 존 (4열) -->
+        <div class="lg:col-span-4 flex flex-col space-y-4">
+            <!-- 프로필 카드 및 커스텀 설정 -->
+            <div class="bg-[#18113c] p-5 rounded-2xl border border-gray-800 shadow-xl relative overflow-hidden">
+                <div class="absolute -top-10 -right-10 w-28 h-28 bg-pink-500/10 rounded-full blur-xl"></div>
+                
+                <h2 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3 flex justify-between items-center">
+                    <span>최애 아이돌 정보</span>
+                    <button id="btn-open-custom" class="text-xs bg-gray-800 text-gray-300 hover:bg-gray-700 px-2 py-1 rounded transition-colors">
+                        <i class="fas fa-edit mr-1"></i>최애 변경
+                    </button>
+                </h2>
+
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-pink-500 via-purple-600 to-indigo-500 flex items-center justify-center text-3xl shadow-inner border-2 border-pink-400" id="avatar-emoji">
+                            🌟
+                        </div>
+                        <span class="absolute bottom-0 right-0 bg-green-500 text-white text-[9px] px-1 py-0.5 rounded font-black">ACTIVE</span>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-black text-white" id="profile-idol-name">최애</h3>
+                        <p class="text-xs text-gray-400">소속 그룹: <span id="profile-group-name" class="text-gray-300 font-medium">그룹</span></p>
+                        <p class="text-xs text-gray-400 mt-0.5">현재 앨범 판매량: <span id="profile-sales" class="text-pink-400 font-bold">0</span> 장</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 대형 응원봉 클릭 액션 -->
+            <div class="bg-[#18113c] p-6 rounded-2xl border border-gray-800 shadow-xl flex-grow flex flex-col justify-between items-center relative min-h-[320px]">
+                <div class="text-center w-full">
+                    <h3 class="text-sm font-black text-gray-400 mb-1">응원봉을 클릭해 응원하세요!</h3>
+                    <p class="text-xs text-gray-500">클릭 시 덕력 증가 및 음원 스트리밍 가속!</p>
+                </div>
+
+                <!-- 응원봉 영역 -->
+                <div class="relative my-6 group cursor-pointer" id="cheer-stick-zone">
+                    <div class="absolute inset-0 bg-pink-500/20 rounded-full blur-3xl group-hover:bg-pink-500/40 transition-all duration-300" id="stick-glow"></div>
+                    <div class="relative w-40 h-40 bg-gradient-to-b from-[#ff2a7a]/20 to-transparent rounded-full flex items-center justify-center transform active:scale-95 transition-transform select-none" id="cheer-stick">
+                        <!-- 응원봉 그래픽 (SVG) -->
+                        <svg class="w-24 h-24 drop-shadow-[0_0_15px_var(--theme-color-glow)]" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- 로고 영역 -->
+                            <circle cx="50" cy="40" r="28" fill="url(#stick-grad)" stroke="#ff2a7a" stroke-width="3"/>
+                            <!-- 별 로고 -->
+                            <path d="M50 22L57 37H73L60 46L65 61L50 51L35 61L40 46L27 37H43L50 22Z" fill="#fff" />
+                            <!-- 손잡이 -->
+                            <rect x="46" y="68" width="8" height="24" rx="4" fill="#ff2a7a"/>
+                            <rect x="46" y="72" width="8" height="3" fill="#fff" opacity="0.6"/>
+                            <!-- 그라데이션 정의 -->
+                            <defs>
+                                <radialGradient id="stick-grad" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" stop-color="#fff" stop-opacity="0.9"/>
+                                    <stop offset="50%" stop-color="#ff7da7" stop-opacity="0.6"/>
+                                    <stop offset="100%" stop-color="#ff2a7a" stop-opacity="0.2"/>
+                                </radialGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- 클릭당 생산량 정보 -->
+                <div class="text-center w-full border-t border-gray-800/60 pt-4">
+                    <p class="text-xs text-gray-400">클릭 당 덕력 수급: <span class="font-bold text-pink-400" id="stat-power-per-click">+1</span></p>
+                    <p class="text-xs text-gray-400">자동 스트리밍 속도: <span class="font-bold text-purple-400" id="stat-power-per-second">0</span>/초</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 오른쪽: 탭 및 콘텐츠 영역 (8열) -->
+        <div class="lg:col-span-8 flex flex-col space-y-4">
+            <!-- 탭 네비게이션 -->
+            <div class="bg-[#120a2b] p-1 rounded-xl border border-gray-800 flex space-x-1">
+                <button class="tab-btn flex-1 py-3 text-sm font-bold rounded-lg transition-all duration-200 bg-pink-600 text-white" data-target="tab-streaming">
+                    <i class="fas fa-headphones mr-1"></i> 스밍 & 육성
+                </button>
+                <button class="tab-btn flex-1 py-3 text-sm font-bold rounded-lg transition-all duration-200 text-gray-400 hover:text-white" data-target="tab-gacha">
+                    <i class="fas fa-id-card mr-1"></i> 포카 수집
+                </button>
+                <button class="tab-btn flex-1 py-3 text-sm font-bold rounded-lg transition-all duration-200 text-gray-400 hover:text-white" data-target="tab-ticketing">
+                    <i class="fas fa-ticket-alt mr-1"></i> 티켓팅 연습
+                </button>
+                <button class="tab-btn flex-1 py-3 text-sm font-bold rounded-lg transition-all duration-200 text-gray-400 hover:text-white" data-target="tab-rhythm">
+                    <i class="fas fa-gamepad mr-1"></i> 리듬 응원
+                </button>
+                <button class="tab-btn flex-1 py-3 text-sm font-bold rounded-lg transition-all duration-200 text-gray-400 hover:text-white" data-target="tab-letter">
+                    <i class="fas fa-envelope mr-1"></i> 팬레터
+                </button>
+            </div>
+
+            <!-- 탭 콘텐츠박스 -->
+            <div class="bg-[#18113c] p-6 rounded-2xl border border-gray-800 shadow-xl min-h-[480px]">
+                
+                <!-- 탭 1: 스밍 & 육성 -->
+                <div id="tab-streaming" class="tab-content space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-bold text-white flex items-center">
+                            <i class="fas fa-music text-pink-500 mr-2"></i> 음원 스트리밍 & 홍보 활동
+                        </h3>
+                        <span class="text-xs text-gray-400 bg-black/40 px-3 py-1 rounded-full">스트리밍 장비를 늘려 순위를 올리세요!</span>
+                    </div>
+
+                    <!-- 실시간 통계 보드 -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="bg-black/30 p-3 rounded-xl border border-gray-800 text-center">
+                            <p class="text-[11px] text-gray-500">스트리밍 누적수</p>
+                            <p class="font-black text-base text-pink-400" id="stat-stream-count">0</p>
+                        </div>
+                        <div class="bg-black/30 p-3 rounded-xl border border-gray-800 text-center">
+                            <p class="text-[11px] text-gray-500">홍보 파워</p>
+                            <p class="font-black text-base text-purple-400" id="stat-promo-power">0</p>
+                        </div>
+                        <div class="bg-black/30 p-3 rounded-xl border border-gray-800 text-center">
+                            <p class="text-[11px] text-gray-500">팬클럽 가입자수</p>
+                            <p class="font-black text-base text-blue-400" id="stat-fan-count">1</p>
+                        </div>
+                        <div class="bg-black/30 p-3 rounded-xl border border-gray-800 text-center">
+                            <p class="text-[11px] text-gray-500">지상파 음악방송</p>
+                            <p class="font-black text-base text-green-400" id="stat-music-show-rank">데뷔 대기중</p>
+                        </div>
+                    </div>
+
+                    <!-- 스밍 및 홍보 장비 상점 -->
+                    <div class="space-y-3">
+                        <h4 class="text-xs font-bold text-gray-400 tracking-wider">업그레이드 리스트</h4>
+                        <div class="space-y-3 overflow-y-auto max-h-[250px] pr-2" id="upgrade-list">
+                            <!-- JS로 렌더링됨 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 탭 2: 포카 수집 -->
+                <div id="tab-gacha" class="tab-content hidden space-y-6">
+                    <div class="flex justify-between items-center flex-wrap gap-2">
+                        <div>
+                            <h3 class="text-lg font-bold text-white flex items-center">
+                                <i class="fas fa-id-card text-pink-500 mr-2"></i> 최애 포토카드 뽑기
+                            </h3>
+                            <p class="text-xs text-gray-400 mt-1">덕력을 소모하여 희귀한 한정판 포카를 수집하고 바인더를 채우세요!</p>
+                        </div>
+                        <button id="btn-draw" class="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-black text-sm px-6 py-2.5 rounded-xl shadow-lg transform active:scale-95 transition-all">
+                            🎁 포카 뽑기 (비용: 100 💖)
+                        </button>
+                    </div>
+
+                    <!-- 포카 전시 & 도감 -->
+                    <div class="border-t border-gray-800/60 pt-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="text-xs font-bold text-gray-400 tracking-wider">나의 포토카드 바인더 (<span id="collected-cards-count">0</span>/16)</h4>
+                            <span class="text-[11px] text-gray-400 bg-pink-500/10 px-2 py-0.5 rounded text-pink-300">레전더리 확률 2%</span>
+                        </div>
+                        
+                        <!-- 도감 그리드 -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" id="photocard-grid">
+                            <!-- JS로 렌더링됨 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 탭 3: 티켓팅 연습 -->
+                <div id="tab-ticketing" class="tab-content hidden space-y-6">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h3 class="text-lg font-bold text-white flex items-center">
+                                <i class="fas fa-ticket-alt text-yellow-500 mr-2"></i> 실전! 피켓팅 모의훈련
+                            </h3>
+                            <p class="text-xs text-gray-400 mt-1">포도알을 정밀 타격하세요! 타이밍 조절과 빠른 클릭이 생명입니다.</p>
+                        </div>
+                        <span class="text-xs text-yellow-400 bg-yellow-400/10 px-2 py-1 rounded border border-yellow-500/20" id="ticketing-high-score">최고기록: 없음</span>
+                    </div>
+
+                    <div class="bg-black/40 border border-gray-800 rounded-2xl p-6 text-center space-y-4">
+                        <div class="max-w-md mx-auto space-y-3">
+                            <div class="text-sm font-semibold text-gray-300">티켓 오픈 카운트다운</div>
+                            <div class="text-4xl font-black text-yellow-400 tracking-widest monospace" id="ticket-timer">00:03.000</div>
+                            <p class="text-xs text-gray-400">오픈 카운트가 <span class="text-pink-400 font-bold">00:00.000</span>이 되는 순간 즉시 버튼을 클릭하세요!</p>
+                        </div>
+
+                        <div class="flex justify-center py-4">
+                            <button id="btn-ticketing-action" class="w-48 h-16 bg-gray-700 hover:bg-gray-600 text-gray-400 font-black text-lg rounded-2xl transition-all shadow-xl tracking-wider cursor-not-allowed" disabled>
+                                대기 중...
+                            </button>
+                        </div>
+
+                        <!-- 상태 및 결과 피드백 -->
+                        <div id="ticketing-feedback" class="text-sm h-12 flex items-center justify-center font-semibold text-gray-400">
+                            준비 버튼을 눌러 티켓팅을 시작하세요.
+                        </div>
+
+                        <div class="flex justify-center space-x-2">
+                            <button id="btn-start-ticketing" class="bg-yellow-500 hover:bg-yellow-600 text-black font-black text-sm px-6 py-2 rounded-xl transition-all">
+                                훈련 시작
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 티켓팅 보상 설명 -->
+                    <div class="bg-[#1c1444] p-4 rounded-xl border border-yellow-500/10 text-xs text-gray-300 flex items-start space-x-2">
+                        <span class="text-base">💡</span>
+                        <p class="leading-relaxed">
+                            <strong>티켓팅 성공 혜택:</strong> 반응속도 <strong>0.15초 미만</strong>으로 예매에 성공하면 전설적인 <span class="text-yellow-400 font-bold">콘서트 1열 좌석 획득!</span>과 함께 특별 대량 덕력(+5,000 💖) 보상이 쏟아집니다.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 탭 4: 리듬 응원 게임 -->
+                <div id="tab-rhythm" class="tab-content hidden space-y-6">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h3 class="text-lg font-bold text-white flex items-center">
+                                <i class="fas fa-gamepad text-green-400 mr-2"></i> 응원법 리듬 훈련
+                            </h3>
+                            <p class="text-xs text-gray-400 mt-1">박자에 맞게 날아오는 응원 혜성(노트)을 클릭하여 오프라인 콘서트 응원을 준비하세요!</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xs text-gray-400">현재 스코어: <span class="font-bold text-green-400" id="rhythm-score">0</span></div>
+                            <div class="text-xs text-gray-500">콤보: <span class="font-bold text-pink-400" id="rhythm-combo">0</span></div>
+                        </div>
+                    </div>
+
+                    <!-- 리듬게임 캔버스/영역 -->
+                    <div class="relative bg-black rounded-2xl border border-gray-800 h-64 overflow-hidden flex flex-col justify-between items-center p-4">
+                        <!-- 배경 그리드 이펙트 -->
+                        <div class="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+                        
+                        <!-- 떨어지는 노트 컨테이너 -->
+                        <div id="rhythm-note-container" class="absolute inset-0 pointer-events-none">
+                            <!-- JS로 노트 요소들이 생성되어 떨어짐 -->
+                        </div>
+
+                        <!-- 타겟 판정선 -->
+                        <div class="absolute bottom-12 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-pink-500 to-transparent flex justify-center items-center">
+                            <div class="px-3 py-0.5 rounded-full bg-pink-500 text-[10px] font-black uppercase text-white tracking-widest animate-pulse">
+                                HIT ZONE
+                            </div>
+                        </div>
+
+                        <div class="w-full flex justify-around mt-auto z-10">
+                            <!-- 판정 버튼들 -->
+                            <button id="btn-rhythm-lane" class="w-2/3 py-3 bg-pink-500/20 hover:bg-pink-500/40 border-2 border-pink-500 text-white font-black rounded-xl text-center shadow-lg active:scale-95 transition-all">
+                                <span class="block text-sm">💖 지금 터치!</span>
+                                <span class="text-[9px] text-pink-300">박자에 맞춰 응원 구호 외치기!</span>
+                            </button>
+                        </div>
+
+                        <!-- 판정 텍스트 -->
+                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-2xl font-black italic tracking-wider uppercase select-none pointer-events-none" id="rhythm-judgement">
+                            <!-- PERFECT, GOOD, MISS 등 -->
+                        </div>
+                    </div>
+
+                    <div class="flex justify-center space-x-3">
+                        <button id="btn-start-rhythm" class="bg-green-500 hover:bg-green-600 text-black font-black text-sm px-6 py-2.5 rounded-xl transition-all">
+                            리듬응원 시작
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 탭 5: 팬레터 쓰기 -->
+                <div id="tab-letter" class="tab-content hidden space-y-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-white flex items-center">
+                            <i class="fas fa-envelope text-pink-500 mr-2"></i> 최애에게 보내는 팬레터
+                        </h3>
+                        <p class="text-xs text-gray-400 mt-1">이쁜 편지지에 진심을 담아 팬레터를 작성하고, 스티커를 붙여 꾸며보세요!</p>
+                    </div>
+
+                    <!-- 팬레터 캔버스 / 시뮬레이터 -->
+                    <div class="bg-[#1f164c] rounded-2xl border border-gray-800 p-6 space-y-4 shadow-inner relative">
+                        <div class="flex justify-between items-center border-b border-gray-800 pb-3">
+                            <span class="text-xs font-bold text-gray-400">To. <span class="text-pink-400" id="letter-recipient-name">최애</span></span>
+                            <div class="flex space-x-2">
+                                <button class="sticker-btn text-base bg-black/40 p-1.5 rounded-lg hover:bg-black/60 transition-colors" data-sticker="❤️">❤️</button>
+                                <button class="sticker-btn text-base bg-black/40 p-1.5 rounded-lg hover:bg-black/60 transition-colors" data-sticker="✨">✨</button>
+                                <button class="sticker-btn text-base bg-black/40 p-1.5 rounded-lg hover:bg-black/60 transition-colors" data-sticker="👑">👑</button>
+                                <button class="sticker-btn text-base bg-black/40 p-1.5 rounded-lg hover:bg-black/60 transition-colors" data-sticker="🧸">🧸</button>
+                            </div>
+                        </div>
+
+                        <!-- 편지 쓰기 영역 -->
+                        <div class="relative min-h-[180px]">
+                            <textarea id="letter-content" class="w-full h-full min-h-[160px] bg-transparent text-white border-0 outline-none resize-none text-sm leading-relaxed placeholder-gray-500" placeholder="여기에 최애를 향한 고백과 응원 메시지를 남겨보세요... (스티커를 누르면 편지에 추가됩니다)"></textarea>
+                            
+                            <!-- 스티커 배치 컨테이너 -->
+                            <div id="sticker-board" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
+                        </div>
+
+                        <!-- 발송 구역 -->
+                        <div class="flex justify-between items-center border-t border-gray-800 pt-3">
+                            <button id="btn-clear-letter" class="text-xs text-gray-400 hover:text-white transition-colors">
+                                <i class="fas fa-trash-alt mr-1"></i> 편지 지우기
+                            </button>
+                            <button id="btn-send-letter" class="bg-pink-500 hover:bg-pink-600 text-white font-black text-sm px-6 py-2 rounded-xl transition-all shadow-md">
+                                <i class="fas fa-paper-plane mr-1"></i> 최애에게 편지 전송하기!
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- 커스텀 모달 (최애 아이돌 변경 창) -->
+    <div id="custom-modal" class="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-[#18113c] border border-gray-800 rounded-2xl p-6 max-w-md w-full space-y-5 shadow-2xl">
+            <h3 class="text-xl font-bold text-white flex items-center">
+                <i class="fas fa-magic text-pink-500 mr-2"></i> 나만의 최애 설정하기
+            </h3>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs text-gray-400 font-semibold mb-1">최애 멤버 이름</label>
+                    <input type="text" id="input-idol-name" class="w-full bg-black/40 border border-gray-800 rounded-xl px-4 py-2 text-white outline-none focus:border-pink-500 text-sm" placeholder="예: 카리나, 장원영, 지민">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-400 font-semibold mb-1">소속 그룹명</label>
+                    <input type="text" id="input-group-name" class="w-full bg-black/40 border border-gray-800 rounded-xl px-4 py-2 text-white outline-none focus:border-pink-500 text-sm" placeholder="예: 에스파, 아이브, BTS">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-400 font-semibold mb-1">공식 팬덤명</label>
+                    <input type="text" id="input-fandom-name" class="w-full bg-black/40 border border-gray-800 rounded-xl px-4 py-2 text-white outline-none focus:border-pink-500 text-sm" placeholder="예: 마이, 다이브, 아미">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-400 font-semibold mb-1">최애 대표 이모지</label>
+                    <select id="input-avatar-emoji" class="w-full bg-black/40 border border-gray-800 rounded-xl px-4 py-2 text-white outline-none focus:border-pink-500 text-sm">
+                        <option value="👑">👑 (왕관)</option>
+                        <option value="✨">✨ (반짝이)</option>
+                        <option value="🐱">🐱 (고양이)</option>
+                        <option value="🐰">🐰 (토끼)</option>
+                        <option value="🐹">🐹 (햄스터)</option>
+                        <option value="🐻">🐻 (곰돌이)</option>
+                        <option value="🔥">🔥 (불꽃)</option>
+                        <option value="❤️">❤️ (하트)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-400 font-semibold mb-1">팬덤 테마 색상</label>
+                    <input type="color" id="input-theme-color" class="w-full h-10 bg-black/40 border border-gray-800 rounded-xl p-1 cursor-pointer" value="#ff2a7a">
+                </div>
+            </div>
+
+            <div class="flex space-x-2 pt-2">
+                <button id="btn-close-custom" class="flex-1 py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-300 font-bold rounded-xl text-sm transition-all">
+                    취소
+                </button>
+                <button id="btn-save-custom" class="flex-1 py-2.5 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold rounded-xl text-sm transition-all">
+                    적용하기
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 하단 푸터 -->
+    <footer class="border-t border-gray-900 bg-[#080516] text-center py-4 text-xs text-gray-500">
+        <p>© 2026 최애 아이돌 덕질 시뮬레이터. All Rights Reserved.</p>
+        <p class="mt-1">내장된 BGM은 브라우저 Web Audio API로 실시간 자가 생성하는 무손실 레트로 신스 음악입니다.</p>
+    </footer>
+
+    <!-- 플로팅 메시지 피드백 (Toast) -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+    <script>
+        // ==========================================
+        // 1. 상태 전역 변수 (State Management)
+        // ==========================================
+        let idolState = {
+            idolName: "장원영",
+            groupName: "아이브",
+            fandomName: "다이브",
+            avatarEmoji: "🐰",
+            themeColor: "#ff2a7a",
+            fandomPower: 0,
+            powerPerClick: 1,
+            powerPerSecond: 0,
+            chartRank: 101, // 101위 시작 (탑100 밖)
+            albumSales: 0,
+            streamCount: 0,
+            promoPower: 0,
+            fanCount: 1,
+            musicShowRank: "데뷔 평가 중"
+        };
+
+        // 업그레이드 및 장비 목록
+        const upgrades = [
+            { id: "stream-pc", name: "동생 폰으로 스밍", desc: "몰래 동생 스마트폰을 빌려 무한 스트리밍을 재생합니다.", cost: 15, pps: 0.2, count: 0 },
+            { id: "fan-union", name: "지역 소모임 결성", desc: "뜻이 맞는 로컬 팬들과 소모임을 결성해 공동 전선을 이룹니다.", cost: 100, pps: 1.5, count: 0 },
+            { id: "streaming-pc-room", name: "스밍 전용 PC 구매", desc: "스트리밍 공장을 풀가동할 고사양 컴퓨터를 방에 맞춥니다.", cost: 800, pps: 8, count: 0 },
+            { id: "subway-ad", name: "지하철 전광판 광고", desc: "유동인구가 많은 신도림역에 최애 컴백 축하 지하철 광고를 게시합니다.", cost: 5000, pps: 45, count: 0 },
+            { id: "fan-union-bus", name: "연합 총공 버스 래핑", desc: "대형 버스 전체를 최애 얼굴로 디자인하여 시내를 하루 종일 주행합니다.", cost: 35000, pps: 260, count: 0 },
+            { id: "world-billboard", name: "뉴욕 타임스스퀘어 전광판", desc: "세계의 중심 뉴욕에 최애 생일 기념 대형 디지털 빌보드를 게재합니다.", cost: 250000, pps: 1800, count: 0 }
+        ];
+
+        // 포토카드 원본 데이터
+        const photoCardsPool = [
+            { id: "card-01", name: "신인 시절 교복 셀카", grade: "Normal", design: "bg-gradient-to-tr from-slate-700 to-slate-500", effect: "😊 데뷔 직후 앳된 모습" },
+            { id: "card-02", name: "무대 리허설 사복 패션", grade: "Normal", design: "bg-gradient-to-tr from-zinc-700 to-zinc-500", effect: "🧥 무심한 듯 스타일리시" },
+            { id: "card-03", name: "팬사인회 머리띠 장착", grade: "Normal", design: "bg-gradient-to-tr from-stone-700 to-stone-500", effect: "🧸 귀여운 동물 귀 머리띠" },
+            { id: "card-04", name: "음악방송 대기실 브이", grade: "Normal", design: "bg-gradient-to-tr from-neutral-700 to-neutral-500", effect: "✌️ 오늘도 1등 가자!" },
+            { id: "card-05", name: "화보 촬영장 미소", grade: "Rare", design: "bg-gradient-to-tr from-cyan-600 via-teal-700 to-emerald-600 border border-teal-400", effect: "✨ 독보적인 눈빛 발산" },
+            { id: "card-06", name: "출국길 공항 내추럴 샷", grade: "Rare", design: "bg-gradient-to-tr from-blue-600 via-indigo-700 to-purple-600 border border-blue-400", effect: "✈️ 자연스러운 매력 폭발" },
+            { id: "card-07", name: "퇴근길 창문 키스", grade: "Rare", design: "bg-gradient-to-tr from-orange-500 via-red-600 to-pink-600 border border-red-400", effect: "🚗 창밖으로 건네는 고마움" },
+            { id: "card-08", name: "콘서트 비하인드 눈물", grade: "Rare", design: "bg-gradient-to-tr from-indigo-500 via-pink-600 to-yellow-600 border border-pink-400", effect: "💧 감동의 첫 1위 눈물" },
+            { id: "card-09", name: "드레스업 레드카펫 여신", grade: "SuperRare", design: "bg-gradient-to-tr from-yellow-500 via-amber-600 to-orange-600 border-2 border-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.5)]", effect: "👗 완벽한 드레스 자태" },
+            { id: "card-10", name: "자체 제작 한정 수트핏", grade: "SuperRare", design: "bg-gradient-to-tr from-fuchsia-600 via-pink-700 to-rose-600 border-2 border-fuchsia-400 shadow-[0_0_10px_rgba(217,70,239,0.5)]", effect: "🕶️ 시크하고 세련된 정장" },
+            { id: "card-11", name: "뮤직비디오 시그니처 윙크", grade: "SuperRare", design: "bg-gradient-to-tr from-violet-600 via-purple-700 to-fuchsia-600 border-2 border-purple-400 shadow-[0_0_10px_rgba(168,85,247,0.5)]", effect: "😉 심장 저격 입덕 요정" },
+            { id: "card-12", name: "월드투어 엔딩 센터 샷", grade: "SuperRare", design: "bg-gradient-to-tr from-sky-500 via-blue-600 to-indigo-700 border-2 border-sky-400 shadow-[0_0_10px_rgba(14,165,233,0.5)]", effect: "🎤 찬란한 피날레 무대" },
+            { id: "card-13", name: "[전설] 월드 스타 명예전당 입성", grade: "Legendary", design: "bg-gradient-to-tr from-yellow-300 via-pink-500 to-blue-500 text-yellow-100 border-2 border-yellow-300 holographic shadow-[0_0_20px_rgba(251,191,36,0.8)]", effect: "🏆 전 세계를 제패한 대기록" },
+            { id: "card-14", name: "[전설] 우주최강 팬미팅 하이터치", grade: "Legendary", design: "bg-gradient-to-tr from-green-300 via-pink-400 to-purple-500 text-green-100 border-2 border-pink-300 holographic shadow-[0_0_20px_rgba(244,63,94,0.8)]", effect: "🤝 평생 소장 각 밀착 아이컨택" },
+            { id: "card-15", name: "[전설] 영혼의 손편지 & 오디오 북", grade: "Legendary", design: "bg-gradient-to-tr from-teal-300 via-purple-400 to-yellow-400 text-teal-100 border-2 border-cyan-300 holographic shadow-[0_0_20px_rgba(34,211,238,0.8)]", effect: "✍️ 직접 써 내려간 감동 편지" },
+            { id: "card-16", name: "[전설] 단독 전세기 직찍 생얼", grade: "Legendary", design: "bg-gradient-to-tr from-red-400 via-yellow-400 to-indigo-500 text-rose-100 border-2 border-red-400 holographic shadow-[0_0_20px_rgba(239,68,68,0.8)]", effect: "✈️ 가장 내추럴하고 귀여운 레어" }
+        ];
+
+        let collectedCards = []; // 수집된 카드 ID 리스트
+
+        // 티켓팅 게임용 상태
+        let ticketingTimer = null;
+        let ticketingActive = false;
+        let targetOpenTime = 0;
+        let countdownDuration = 3000; // 3초
+        let isPracticeStarted = false;
+
+        // 리듬게임용 상태
+        let rhythmTimer = null;
+        let rhythmGameActive = false;
+        let rhythmScore = 0;
+        let rhythmCombo = 0;
+        let noteSpeed = 3.5; // 화면 위에서 아래로 떨어지는 시간 (초)
+        let noteSpawnInterval = 1200; // 노프 스폰 간격 (ms)
+        let generatedNotes = [];
+
+        // ==========================================
+        // 2. Web Audio API 엔진 (BGM & SFX 자가 생성)
+        // ==========================================
+        let audioCtx = null;
+        let isBgmPlaying = false;
+        let bgmSequencer = null;
+        let beatCount = 0;
+
+        // 오디오 컨텍스트 지연 초기화
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        // 간단한 효과음(SFX) 합성 기능
+        function playSfx(type) {
+            initAudio();
+            if (!audioCtx) return;
+
+            const now = audioCtx.currentTime;
+            
+            if (type === 'click') {
+                // 상큼한 버블 터지는 응원음
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(440, now);
+                osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.1);
+            } 
+            else if (type === 'upgrade') {
+                // 띠링! 장비 구입 및 랭크업 음
+                const osc1 = audioCtx.createOscillator();
+                const osc2 = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                osc1.type = 'triangle';
+                osc2.type = 'sine';
+                
+                osc1.frequency.setValueAtTime(523.25, now); // C5
+                osc1.frequency.setValueAtTime(659.25, now + 0.08); // E5
+                osc1.frequency.setValueAtTime(783.99, now + 0.16); // G5
+                osc1.frequency.setValueAtTime(1046.50, now + 0.24); // C6
+
+                gain.gain.setValueAtTime(0.12, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.45);
+                
+                osc1.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc1.start(now);
+                osc1.stop(now + 0.5);
+            } 
+            else if (type === 'gacha') {
+                // 샤라랑~ 고전 포카 뽑기 음
+                const steps = 8;
+                const duration = 0.4;
+                const baseFreq = 600;
+                
+                for(let i = 0; i < steps; i++) {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(baseFreq + (i * 120), now + (i * 0.05));
+                    
+                    gain.gain.setValueAtTime(0.06, now + (i * 0.05));
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + (i * 0.05) + 0.15);
+                    
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + (i * 0.05));
+                    osc.stop(now + (i * 0.05) + 0.2);
+                }
+            }
+            else if (type === 'legendary') {
+                // 빰빠카빰! 초대형 한정 레전더리 획득음
+                const notes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99, 1046.50, 1318.51];
+                notes.forEach((freq, idx) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.06);
+                    gain.gain.setValueAtTime(0.1, now + idx * 0.06);
+                    gain.gain.exponentialRampToValueAtTime(0.005, now + idx * 0.06 + 0.3);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + idx * 0.06);
+                    osc.stop(now + idx * 0.06 + 0.4);
+                });
+            }
+            else if (type === 'ticketing-fail') {
+                // 삐- 이선좌(이미 선택된 좌석입니다) 탈락음
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(120, now);
+                osc.frequency.linearRampToValueAtTime(80, now + 0.35);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            }
+            else if (type === 'hit') {
+                // 리듬게임 퍼펙트 타격 타악기음
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(10, now + 0.08);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.08);
+            }
+        }
+
+        // Web Audio API로 만드는 8비트 K-Pop 스타일 레트로 루프 음악 
+        function runBgmSequencer() {
+            if (!isBgmPlaying) return;
+
+            const bpm = 125;
+            const quarterNoteDuration = 60 / bpm;
+            const stepDuration = quarterNoteDuration / 2; // 8분 음표 기준 루프
+
+            // K-pop 대중적인 감성 코드 진행: C -> G/B -> Am -> F (마법의 4코드)
+            const chords = [
+                [48, 52, 55, 60], // C Major (C3, E3, G3, C4)
+                [47, 50, 55, 59], // G Major (B2, D3, G3, B3)
+                [45, 48, 52, 57], // A Minor (A2, C3, E3, A3)
+                [41, 45, 48, 53]  // F Major (F2, A2, C3, F3)
+            ];
+
+            const melodies = [
+                [60, 64, 67, 72, 67, 64, 60, 67], // C멜로디
+                [59, 62, 67, 71, 67, 62, 59, 67], // G멜로디
+                [57, 60, 64, 69, 64, 60, 57, 64], // Am멜로디
+                [53, 57, 60, 65, 60, 57, 53, 60]  // F멜로디
+            ];
+
+            const now = audioCtx.currentTime;
+
+            // 1. 드럼 비트 (단순 자작 킥 & 스네어)
+            const drumOsc = audioCtx.createOscillator();
+            const drumGain = audioCtx.createGain();
+            drumOsc.type = 'sine';
+            
+            if (beatCount % 4 === 0) {
+                // 킥 드럼
+                drumOsc.frequency.setValueAtTime(150, now);
+                drumOsc.frequency.exponentialRampToValueAtTime(30, now + 0.1);
+                drumGain.gain.setValueAtTime(0.18, now);
+                drumGain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+            } else if (beatCount % 4 === 2) {
+                // 스네어 드럼 대용 (간단한 고음 노이즈 효과)
+                drumOsc.frequency.setValueAtTime(400, now);
+                drumOsc.frequency.linearRampToValueAtTime(200, now + 0.08);
+                drumGain.gain.setValueAtTime(0.08, now);
+                drumGain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+            } else {
+                // 하이햇 대용
+                drumOsc.frequency.setValueAtTime(8000, now);
+                drumGain.gain.setValueAtTime(0.02, now);
+                drumGain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+            }
+            drumOsc.connect(drumGain);
+            drumGain.connect(audioCtx.destination);
+            drumOsc.start(now);
+            drumOsc.stop(now + 0.2);
+
+            // 2. 신스 메인 멜로디 연주
+            const chordIndex = Math.floor((beatCount / 8) % 4);
+            const noteIndex = beatCount % 8;
+            const midNote = melodies[chordIndex][noteIndex];
+            
+            const synthOsc = audioCtx.createOscillator();
+            const synthGain = audioCtx.createGain();
+            synthOsc.type = 'triangle'; // 한층 더 청량하고 둥글둥글한 느낌의 삼각파
+            synthOsc.frequency.setValueAtTime(midiToFreq(midNote), now);
+            
+            synthGain.gain.setValueAtTime(0.05, now);
+            synthGain.gain.exponentialRampToValueAtTime(0.001, now + stepDuration - 0.02);
+            
+            synthOsc.connect(synthGain);
+            synthGain.connect(audioCtx.destination);
+            synthOsc.start(now);
+            synthOsc.stop(now + stepDuration);
+
+            // 3. 베이스 신스 추가로 사운드를 단단하게
+            if (beatCount % 2 === 0) {
+                const bassOsc = audioCtx.createOscillator();
+                const bassGain = audioCtx.createGain();
+                const rootMidi = chords[chordIndex][0];
+                bassOsc.type = 'sine';
+                bassOsc.frequency.setValueAtTime(midiToFreq(rootMidi - 12), now); // 더 낮은 옥타브 베이스
+                
+                bassGain.gain.setValueAtTime(0.1, now);
+                bassGain.gain.exponentialRampToValueAtTime(0.001, now + (stepDuration * 2) - 0.04);
+                
+                bassOsc.connect(bassGain);
+                bassGain.connect(audioCtx.destination);
+                bassOsc.start(now);
+                bassOsc.stop(now + (stepDuration * 2));
+            }
+
+            beatCount++;
+            
+            // 다음 비트 예약
+            bgmSequencer = setTimeout(() => {
+                runBgmSequencer();
+            }, stepDuration * 1000);
+        }
+
+        function midiToFreq(note) {
+            return 440 * Math.pow(2, (note - 69) / 12);
+        }
+
+        // BGM 재생 및 토글 컨트롤러
+        document.getElementById('btn-bgm').addEventListener('click', () => {
+            initAudio();
+            const bgmIcon = document.getElementById('bgm-icon');
+            const btnBgm = document.getElementById('btn-bgm');
+
+            if (!isBgmPlaying) {
+                isBgmPlaying = true;
+                beatCount = 0;
+                runBgmSequencer();
+                bgmIcon.className = "fas fa-volume-up text-sm animate-pulse";
+                btnBgm.classList.add('theme-bg-glow');
+                showToast("🎵 청량 레트로 K-POP BGM 재생 시작!");
+            } else {
+                isBgmPlaying = false;
+                clearTimeout(bgmSequencer);
+                bgmSequencer = null;
+                bgmIcon.className = "fas fa-music text-sm";
+                btnBgm.classList.remove('theme-bg-glow');
+                showToast("🔇 BGM을 일시정지했습니다.");
+            }
+        });
+
+
+        // ==========================================
+        // 3. 메인 게임 루프 & 스밍 공장 수치 처리
+        // ==========================================
+        
+        // 정기적 자동 덕력 누적 및 데이터 갱신 (1초에 10번 실행하여 부드럽게 상승)
+        let lastUpdateTime = Date.now();
+        setInterval(() => {
+            const now = Date.now();
+            const deltaTime = (now - lastUpdateTime) / 1000;
+            lastUpdateTime = now;
+
+            // 자동 스트리밍 상승
+            if (idolState.powerPerSecond > 0) {
+                idolState.fandomPower += idolState.powerPerSecond * deltaTime;
+                idolState.streamCount += Math.floor(idolState.powerPerSecond * deltaTime * 5); // 덕력 1당 대략 5번 스트리밍
+            }
+
+            // 음원 차트 랭킹 계산 로직 (스밍 수 및 기타 스탯 기반)
+            calculateChartRank();
+
+            // 앨범 판매량 누적
+            if (idolState.fandomPower > 500) {
+                idolState.albumSales = Math.floor(idolState.fandomPower * 1.5 + idolState.fanCount * 12);
+            }
+
+            // 프론트엔드 UI 데이터 동기화
+            updateUI();
+        }, 100);
+
+        // 차트 순위 동적 정밀 계산
+        function calculateChartRank() {
+            const index = idolState.streamCount + (idolState.fanCount * 10);
+            let rank = 101;
+            
+            if (index > 1000000) rank = 1;
+            else if (index > 500000) rank = 2;
+            else if (index > 250000) rank = 3;
+            else if (index > 100000) rank = 5;
+            else if (index > 50000) rank = 10;
+            else if (index > 20000) rank = 18;
+            else if (index > 10000) rank = 32;
+            else if (index > 5000) rank = 45;
+            else if (index > 2000) rank = 61;
+            else if (index > 800) rank = 78;
+            else if (index > 300) rank = 90;
+            else if (index > 100) rank = 99;
+            else rank = 101;
+
+            idolState.chartRank = rank;
+
+            // 지상파 음악방송 등극 여부
+            if (rank === 1) {
+                idolState.musicShowRank = "🏆 1위 트리플 크라운!";
+            } else if (rank <= 3) {
+                idolState.musicShowRank = "🥈 1위 후보 등극!";
+            } else if (rank <= 10) {
+                idolState.musicShowRank = "🏅 TOP 10 진입완료";
+            } else if (rank <= 50) {
+                idolState.musicShowRank = "📻 라디오 대세 출현";
+            } else {
+                idolState.musicShowRank = "🌱 차트 인 목표";
+            }
+        }
+
+        // 전체 UI 정보 갱신
+        function updateUI() {
+            document.getElementById('stat-fandom-power').innerText = Math.floor(idolState.fandomPower).toLocaleString();
+            
+            const rankEl = document.getElementById('stat-chart-rank');
+            if (idolState.chartRank <= 100) {
+                rankEl.innerText = `실시간 ${idolState.chartRank}위`;
+                rankEl.className = "font-black text-sm md:text-base text-pink-500 animate-pulse";
+            } else {
+                rankEl.innerText = "외곽 (100위 밖)";
+                rankEl.className = "font-black text-sm md:text-base text-purple-400";
+            }
+
+            document.getElementById('stat-stream-count').innerText = Math.floor(idolState.streamCount).toLocaleString() + "회";
+            document.getElementById('stat-promo-power').innerText = idolState.promoPower.toLocaleString() + " PP";
+            document.getElementById('stat-fan-count').innerText = idolState.fanCount.toLocaleString() + "명";
+            document.getElementById('stat-music-show-rank').innerText = idolState.musicShowRank;
+            document.getElementById('profile-sales').innerText = idolState.albumSales.toLocaleString();
+            document.getElementById('stat-power-per-second').innerText = idolState.powerPerSecond.toFixed(1);
+        }
+
+
+        // ==========================================
+        // 4. 업그레이드 아이템 구매 상점 구현
+        // ==========================================
+        function renderUpgrades() {
+            const container = document.getElementById('upgrade-list');
+            container.innerHTML = '';
+
+            upgrades.forEach((item, index) => {
+                const canBuy = idolState.fandomPower >= item.cost;
+                const buyBtnClass = canBuy 
+                    ? "bg-gradient-to-r from-pink-500 to-purple-500 text-white" 
+                    : "bg-gray-800 text-gray-500 cursor-not-allowed";
+
+                const cardHtml = `
+                    <div class="bg-black/30 p-4 rounded-xl border border-gray-800/80 hover:border-pink-500/40 transition-all flex justify-between items-center gap-4">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2">
+                                <span class="font-bold text-sm text-gray-200">${item.name}</span>
+                                <span class="text-xs bg-pink-500/20 text-pink-300 px-1.5 py-0.5 rounded font-bold">보유: ${item.count}</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">${item.desc}</p>
+                            <p class="text-[10px] text-pink-400 mt-1 font-semibold">+${item.pps} 💖/초 증가 (스밍 공장 속도 증가)</p>
+                        </div>
+                        <button onclick="buyUpgrade(${index})" class="${buyBtnClass} text-xs font-black px-4 py-2.5 rounded-xl flex flex-col items-center justify-center min-w-[100px] transition-all transform active:scale-95">
+                            <span>구매하기</span>
+                            <span class="text-[10px] opacity-90 mt-0.5">${item.cost.toLocaleString()} 💖</span>
+                        </button>
+                    </div>
+                `;
+                container.innerHTML += cardHtml;
+            });
+        }
+
+        // 글로벌 범위 바인딩을 위해 전역에 함수 매핑
+        window.buyUpgrade = function(index) {
+            const item = upgrades[index];
+            if (idolState.fandomPower >= item.cost) {
+                idolState.fandomPower -= item.cost;
+                item.count++;
+                
+                // 스탯 복리 연산 적용
+                idolState.powerPerSecond += item.pps;
+                idolState.fanCount += Math.ceil(item.pps * 4);
+                idolState.promoPower += Math.ceil(item.cost / 5);
+                
+                // 가격 기하급수적 인상
+                item.cost = Math.floor(item.cost * 1.55);
+
+                playSfx('upgrade');
+                showToast(`💖 ${item.name} 대여 완료! 자동 응원 화력 증가!`);
+                renderUpgrades();
+                updateUI();
+            } else {
+                showToast("❌ 최애를 서포트할 덕력이 모자랍니다!");
+            }
+        };
+
+        // 실시간으로 덕력 변화에 맞춰 버튼 스타일 갱신하기 위함
+        setInterval(renderUpgrades, 1000);
+
+
+        // ==========================================
+        // 5. 응원봉 클릭 이벤트 & 하트 아파트 생성기
+        // ==========================================
+        const cheerStick = document.getElementById('cheer-stick');
+        cheerStick.addEventListener('mousedown', (e) => {
+            idolState.fandomPower += idolState.powerPerClick;
+            idolState.streamCount += 1;
+            playSfx('click');
+
+            // 클릭 이펙트 애니메이션
+            const stickGlow = document.getElementById('stick-glow');
+            stickGlow.classList.remove('blur-3xl');
+            stickGlow.classList.add('blur-xl', 'bg-pink-500/50');
+            setTimeout(() => {
+                stickGlow.classList.remove('blur-xl', 'bg-pink-500/50');
+                stickGlow.classList.add('blur-3xl');
+            }, 100);
+
+            // 마우스 좌표 기준으로 날아가는 하트 및 응원 구호 팝업 생성
+            createFloatingEffect(e);
+        });
+
+        // 모바일 터치 대응
+        cheerStick.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            idolState.fandomPower += idolState.powerPerClick;
+            idolState.streamCount += 1;
+            playSfx('click');
+
+            const stickGlow = document.getElementById('stick-glow');
+            stickGlow.classList.add('blur-xl', 'bg-pink-500/50');
+            setTimeout(() => {
+                stickGlow.classList.remove('blur-xl', 'bg-pink-500/50');
+            }, 100);
+
+            const touch = e.touches[0];
+            createFloatingEffect({ clientX: touch.clientX, clientY: touch.clientY });
+        }, { passive: false });
+
+        function createFloatingEffect(e) {
+            const rect = cheerStick.getBoundingClientRect();
+            const textX = e.clientX || (rect.left + rect.width / 2);
+            const textY = e.clientY || (rect.top + rect.height / 2);
+
+            // 1. 하트 요소 생성
+            const heart = document.createElement('div');
+            heart.className = 'absolute text-xl pointer-events-none z-50 transition-all duration-1000 ease-out select-none';
+            heart.innerText = ['❤️', '✨', '💖', '⭐', '🫶'][Math.floor(Math.random() * 5)];
+            heart.style.left = `${textX - 10}px`;
+            heart.style.top = `${textY - 20}px`;
+            document.body.appendChild(heart);
+
+            // 2. 응원 텍스트 요소 생성
+            const slogan = document.createElement('div');
+            slogan.className = 'absolute text-xs font-black text-pink-300 pointer-events-none z-50 transition-all duration-1000 ease-out select-none theme-glow';
+            slogan.innerText = [
+                `${idolState.idolName} 사랑해!`, 
+                `가자 1위로!`, 
+                `얼굴 천재!`, 
+                `평생 덕질 약속!`, 
+                `${idolState.fandomName}이 지킨다!`
+            ][Math.floor(Math.random() * 5)];
+            slogan.style.left = `${textX + (Math.random() * 40 - 20)}px`;
+            slogan.style.top = `${textY - 30}px`;
+            document.body.appendChild(slogan);
+
+            // 애니메이션 진행 후 자동 소멸
+            requestAnimationFrame(() => {
+                const angle = Math.random() * Math.PI - Math.PI; // 위쪽 반원 방향
+                const distance = 80 + Math.random() * 50;
+                const destX = textX + Math.cos(angle) * distance;
+                const destY = textY + Math.sin(angle) * distance;
+
+                heart.style.transform = `translate(${destX - textX}px, ${destY - textY}px) scale(1.5)`;
+                heart.style.opacity = '0';
+
+                slogan.style.transform = `translate(${(destX - textX) * 0.5}px, ${(destY - textY) * 1.2}px) scale(1.1)`;
+                slogan.style.opacity = '0';
+            });
+
+            setTimeout(() => {
+                heart.remove();
+                slogan.remove();
+            }, 1000);
+        }
+
+
+        // ==========================================
+        // 6. 포토카드 가챠 & 도감 수집 엔진
+        // ==========================================
+        function initBinder() {
+            const grid = document.getElementById('photocard-grid');
+            grid.innerHTML = '';
+
+            photoCardsPool.forEach(card => {
+                const isCollected = collectedCards.includes(card.id);
+                let cardClass = isCollected ? card.design : "bg-[#110d29] border border-gray-900 filter saturate-50 opacity-40";
+                let holoClass = (isCollected && card.grade === 'Legendary') ? "legendary" : "";
+
+                const cardHtml = `
+                    <div class="photocard ${cardClass} ${holoClass} p-3 rounded-2xl h-48 flex flex-col justify-between shadow-lg relative overflow-hidden group select-none">
+                        <!-- 등급 배지 -->
+                        <div class="flex justify-between items-center z-10">
+                            <span class="text-[9px] font-black px-2 py-0.5 rounded ${getGradeBadgeClass(card.grade)}">${card.grade}</span>
+                            ${isCollected ? '<span class="text-xs">📸</span>' : '<span class="text-xs text-gray-600">🔒</span>'}
+                        </div>
+
+                        <!-- 중앙 텍스트/실루엣 -->
+                        <div class="my-auto text-center z-10">
+                            ${isCollected 
+                                ? `<p class="font-extrabold text-xs text-white leading-tight drop-shadow-md px-1">${card.name}</p>`
+                                : '<i class="fas fa-question text-xl text-gray-700"></i>'
+                            }
+                        </div>
+
+                        <!-- 카드 상세 묘사 -->
+                        <div class="z-10 mt-auto">
+                            ${isCollected 
+                                ? `<p class="text-[9px] text-gray-200/90 leading-none truncate">${card.effect}</p>`
+                                : '<p class="text-[9px] text-gray-700 leading-none">미수집</p>'
+                            }
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += cardHtml;
+            });
+
+            // 수집 카운트 갱신
+            document.getElementById('collected-cards-count').innerText = collectedCards.length;
+        }
+
+        function getGradeBadgeClass(grade) {
+            switch(grade) {
+                case 'Legendary': return 'bg-yellow-400 text-black';
+                case 'SuperRare': return 'bg-purple-600 text-white';
+                case 'Rare': return 'bg-blue-600 text-white';
+                default: return 'bg-zinc-600 text-white';
+            }
+        }
+
+        document.getElementById('btn-draw').addEventListener('click', () => {
+            const cost = 100;
+            if (idolState.fandomPower >= cost) {
+                idolState.fandomPower -= cost;
+                updateUI();
+
+                // 가차 뽑기 알고리즘
+                // Legendary: 2%, SuperRare: 13%, Rare: 35%, Normal: 50%
+                const rand = Math.random() * 100;
+                let selectedGrade = "Normal";
+                
+                if (rand < 2) selectedGrade = "Legendary";
+                else if (rand < 15) selectedGrade = "SuperRare";
+                else if (rand < 50) selectedGrade = "Rare";
+
+                // 해당 등급 내에서 카드 하나 랜덤 선정
+                const possibleCards = photoCardsPool.filter(c => c.grade === selectedGrade);
+                const drawnCard = possibleCards[Math.floor(Math.random() * possibleCards.length)];
+
+                // 소장 여부 확인 및 추가
+                const isNew = !collectedCards.includes(drawnCard.id);
+                if (isNew) {
+                    collectedCards.push(drawnCard.id);
+                }
+
+                // 사운드 이펙트 분기
+                if (selectedGrade === 'Legendary') {
+                    playSfx('legendary');
+                } else {
+                    playSfx('gacha');
+                }
+
+                // 뽑기 결과 다이얼로그 모달식 효과 (토스트로 크게 노출)
+                showGachaResult(drawnCard, isNew);
+                initBinder();
+            } else {
+                showToast("❌ 포카를 뽑기 위해 필요한 100 💖의 덕력이 부족합니다!");
+            }
+        });
+
+        function showGachaResult(card, isNew) {
+            // 커스텀 대형 결과 알림
+            const toast = document.createElement('div');
+            toast.className = `p-5 rounded-2xl ${card.design} text-white shadow-2xl flex flex-col items-center justify-center space-y-2 border-2 border-white/20 animate-bounce max-w-xs mx-auto z-50 fixed top-1/3 left-1/2 -translate-x-1/2`;
+            toast.innerHTML = `
+                <div class="text-[10px] bg-black/40 px-3 py-0.5 rounded-full font-bold">${isNew ? '✨ NEW 포토카드 획득!' : '🎨 중복 소장'}</div>
+                <div class="text-3xl my-1">📷</div>
+                <h4 class="font-black text-sm text-center leading-snug">${card.name}</h4>
+                <p class="text-[11px] text-gray-200/90 italic text-center">"${card.effect}"</p>
+                <button class="bg-black/60 hover:bg-black/80 text-xs px-4 py-1.5 rounded-lg mt-2 font-bold" onclick="this.parentElement.remove()">확인</button>
+            `;
+            document.body.appendChild(toast);
+        }
+
+
+        // ==========================================
+        // 7. 실시간 콘서트 티켓팅 연습 게임
+        // ==========================================
+        const btnStartTicketing = document.getElementById('btn-start-ticketing');
+        const btnTicketingAction = document.getElementById('btn-ticketing-action');
+        const ticketTimerDisplay = document.getElementById('ticket-timer');
+        const ticketingFeedback = document.getElementById('ticketing-feedback');
+        const ticketingHighScoreEl = document.getElementById('ticketing-high-score');
+
+        let bestReactionTime = Infinity;
+
+        btnStartTicketing.addEventListener('click', () => {
+            initAudio();
+            if (ticketingActive) return;
+
+            // 게임 변수 초기화
+            ticketingActive = true;
+            isPracticeStarted = false;
+            btnStartTicketing.disabled = true;
+            btnStartTicketing.classList.add('opacity-50', 'cursor-not-allowed');
+            ticketingFeedback.innerText = "서버 연결 확보 중... 광클 준비하세요!";
+            ticketingFeedback.className = "text-sm h-12 flex items-center justify-center font-semibold text-yellow-400 animate-pulse";
+            
+            // 타이머 카운트 다운 시작
+            let startCount = 3000; // 3초 카운트다운
+            const intervalTime = 13; // 밀리초 정밀 연산
+            targetOpenTime = Date.now() + startCount;
+
+            btnTicketingAction.innerText = "대기 대기 대기!";
+            btnTicketingAction.className = "w-48 h-16 bg-gray-800 text-gray-500 font-black text-lg rounded-2xl transition-all shadow-xl tracking-wider cursor-not-allowed";
+            btnTicketingAction.disabled = true;
+
+            ticketingTimer = setInterval(() => {
+                const timeLeft = targetOpenTime - Date.now();
+                if (timeLeft <= 0) {
+                    clearInterval(ticketingTimer);
+                    triggerTicketOpen();
+                } else {
+                    const secs = Math.floor(timeLeft / 1000);
+                    const ms = timeLeft % 1000;
+                    ticketTimerDisplay.innerText = `00:0${secs}.${String(ms).padStart(3, '0')}`;
+                }
+            }, intervalTime);
+        });
+
+        function triggerTicketOpen() {
+            ticketTimerDisplay.innerText = "00:00.000";
+            ticketTimerDisplay.className = "text-4xl font-black text-red-500 tracking-widest monospace animate-ping";
+            
+            // 예매 개시 활성화
+            btnTicketingAction.disabled = false;
+            btnTicketingAction.innerText = "👉 예매하기 (클릭) 👈";
+            btnTicketingAction.className = "w-48 h-16 bg-gradient-to-r from-red-500 to-yellow-500 text-black font-black text-xl rounded-2xl transition-all shadow-[0_0_20px_rgba(239,68,68,0.6)] tracking-wider cursor-pointer active:scale-95 animate-pulse";
+            
+            isPracticeStarted = true;
+            targetOpenTime = Date.now(); // 정확한 오픈 타임으로 재할당하여 반응속도 계측
+        }
+
+        btnTicketingAction.addEventListener('click', () => {
+            if (!ticketingActive || !isPracticeStarted) return;
+
+            const reactionTime = (Date.now() - targetOpenTime) / 1000; // 초 단위 변환
+            ticketingActive = false;
+            isPracticeStarted = false;
+            
+            btnStartTicketing.disabled = false;
+            btnStartTicketing.classList.remove('opacity-50', 'cursor-not-allowed');
+            
+            btnTicketingAction.disabled = true;
+            btnTicketingAction.className = "w-48 h-16 bg-gray-700 text-gray-400 font-black text-lg rounded-2xl transition-all shadow-xl tracking-wider cursor-not-allowed";
+            btnTicketingAction.innerText = "대기 중...";
+            ticketTimerDisplay.className = "text-4xl font-black text-yellow-400 tracking-widest monospace";
+
+            // 피드백 연산
+            if (reactionTime < 0.15) {
+                // 대성공 (전설의 자리 획득)
+                playSfx('legendary');
+                ticketingFeedback.innerHTML = `🎉 대성공!! 반응속도 <span class="text-green-400">${reactionTime.toFixed(3)}초</span>! [VIP 그라운드 1열 극사이드]를 사수했습니다!`;
+                ticketingFeedback.className = "text-sm h-12 flex items-center justify-center font-bold text-green-400";
+                
+                // 보상 부여
+                idolState.fandomPower += 5000;
+                showToast("🏆 티켓팅 정복! 초대박 덕력 +5,000 💖 보너스!");
+
+                // 전설 등급 포카 무작위 확정 획득
+                const legends = photoCardsPool.filter(c => c.grade === 'Legendary');
+                const winCard = legends[Math.floor(Math.random() * legends.length)];
+                if (!collectedCards.includes(winCard.id)) {
+                    collectedCards.push(winCard.id);
+                    setTimeout(() => {
+                        showGachaResult(winCard, true);
+                        initBinder();
+                    }, 1500);
+                }
+
+            } else if (reactionTime < 0.28) {
+                // 성공 (일반 구역 좌석)
+                playSfx('upgrade');
+                ticketingFeedback.innerHTML = `👍 성공! 반응속도 <span class="text-blue-400">${reactionTime.toFixed(3)}초</span>! [1층 15구역 R석] 예매 완료!`;
+                ticketingFeedback.className = "text-sm h-12 flex items-center justify-center font-bold text-blue-400";
+                idolState.fandomPower += 1000;
+                showToast("🎟️ 티켓팅 안착! 덕력 +1,000 💖 획득!");
+            } else {
+                // 이선좌 탈락
+                playSfx('ticketing-fail');
+                ticketingFeedback.innerHTML = `😢 이미 선택된 좌석입니다 (대기번호 54,201번). 반응속도: ${reactionTime.toFixed(3)}초`;
+                ticketingFeedback.className = "text-sm h-12 flex items-center justify-center font-semibold text-red-500";
+            }
+
+            // 최고 기록 갱신
+            if (reactionTime < bestReactionTime) {
+                bestReactionTime = reactionTime;
+                ticketingHighScoreEl.innerText = `최고기록: ${bestReactionTime.toFixed(3)}초`;
+            }
+        });
+
+
+        // ==========================================
+        // 8. 오프라인 리듬 응원봉 미니게임 
+        // ==========================================
+        const btnStartRhythm = document.getElementById('btn-start-rhythm');
+        const btnRhythmLane = document.getElementById('btn-rhythm-lane');
+        const rhythmScoreEl = document.getElementById('rhythm-score');
+        const rhythmComboEl = document.getElementById('rhythm-combo');
+        const rhythmJudgement = document.getElementById('rhythm-judgement');
+        const noteContainer = document.getElementById('rhythm-note-container');
+
+        btnStartRhythm.addEventListener('click', () => {
+            initAudio();
+            if (rhythmGameActive) {
+                // 게임 중지
+                stopRhythmGame();
+                return;
+            }
+
+            rhythmGameActive = true;
+            rhythmScore = 0;
+            rhythmCombo = 0;
+            rhythmScoreEl.innerText = "0";
+            rhythmComboEl.innerText = "0";
+            rhythmJudgement.innerText = "START!";
+            rhythmJudgement.className = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-2xl font-black italic tracking-wider text-green-400 uppercase select-none pointer-events-none";
+            
+            btnStartRhythm.innerText = "응원 종료";
+            btnStartRhythm.className = "bg-red-500 hover:bg-red-600 text-white font-black text-sm px-6 py-2.5 rounded-xl transition-all";
+
+            // 노트 스폰 루프 개시
+            rhythmTimer = setInterval(spawnRhythmNote, noteSpawnInterval);
+            showToast("🎮 리듬 응원봉 훈련이 시작되었습니다! 비트에 맞춰 터치하세요!");
+        });
+
+        function stopRhythmGame() {
+            rhythmGameActive = false;
+            clearInterval(rhythmTimer);
+            rhythmTimer = null;
+            
+            // 모든 낙하 노트 소거
+            const remainingNotes = document.querySelectorAll('.rhythm-note');
+            remainingNotes.forEach(note => note.remove());
+            generatedNotes = [];
+
+            btnStartRhythm.innerText = "리듬응원 시작";
+            btnStartRhythm.className = "bg-green-500 hover:bg-green-600 text-black font-black text-sm px-6 py-2.5 rounded-xl transition-all";
+            
+            // 수치 마일스톤에 따른 보너스 정산
+            if (rhythmScore > 0) {
+                const bonusPower = Math.floor(rhythmScore * 2);
+                idolState.fandomPower += bonusPower;
+                showToast(`🎉 리듬 응원 대성공! 팬클럽 결속력 상승으로 추가 덕력 +${bonusPower.toLocaleString()} 💖을 정산받았습니다!`);
+            }
+        }
+
+        function spawnRhythmNote() {
+            if (!rhythmGameActive) return;
+
+            const note = document.createElement('div');
+            // 귀여운 하트 또는 이모지로 디자인된 노트
+            const emojis = ['💖', '⭐', '🎵', '🫶'];
+            note.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+            note.className = "rhythm-note absolute text-2xl select-none pointer-events-none transition-all duration-1000";
+            note.style.left = `${10 + Math.random() * 80}%`;
+            note.style.top = "-24px";
+            noteContainer.appendChild(note);
+
+            const noteObj = {
+                element: note,
+                spawnTime: Date.now(),
+                hit: false
+            };
+            generatedNotes.push(noteObj);
+
+            // 떨어지는 애니메이션 적용
+            setTimeout(() => {
+                if (rhythmGameActive && !noteObj.hit) {
+                    note.style.transform = `translateY(240px)`;
+                    note.style.transition = `transform ${noteSpeed}s linear, opacity 0.2s`;
+                }
+            }, 50);
+
+            // 판정 유효시간이 지나 아래 화면 밖으로 이탈하면 자동 제거
+            setTimeout(() => {
+                if (!noteObj.hit) {
+                    note.remove();
+                    // 미스 판정 처리
+                    if (rhythmGameActive) {
+                        rhythmCombo = 0;
+                        rhythmComboEl.innerText = "0";
+                        rhythmJudgement.innerText = "MISS!";
+                        rhythmJudgement.className = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-2xl font-black italic tracking-wider text-red-500 uppercase select-none pointer-events-none";
+                    }
+                    generatedNotes = generatedNotes.filter(n => n !== noteObj);
+                }
+            }, noteSpeed * 1000 + 100);
+        }
+
+        // 판정 차트 터치 이벤트
+        btnRhythmLane.addEventListener('mousedown', () => {
+            triggerHitLogic();
+        });
+
+        function triggerHitLogic() {
+            if (!rhythmGameActive || generatedNotes.length === 0) return;
+
+            // 판정선 도달 거리 계산
+            // 가장 바닥에 도달한 노트를 판정 대상으로 선발
+            const targetNote = generatedNotes[0];
+            if (!targetNote) return;
+
+            const now = Date.now();
+            const elapsed = now - targetNote.spawnTime;
+            // 타겟 완벽 판정 시간 계산 (총 속도 3.5초 중, 타겟 라인은 바닥에서 48px 위인 약 3.1초 시점)
+            const perfectTime = noteSpeed * 1000 * 0.85; 
+            const diff = Math.abs(elapsed - perfectTime);
+
+            let scoreEarned = 0;
+            let judgeText = "MISS";
+            let judgeColor = "text-red-500";
+
+            if (diff < 150) {
+                judgeText = "PERFECT!!";
+                judgeColor = "text-green-400";
+                scoreEarned = 100;
+                rhythmCombo++;
+                playSfx('hit');
+            } else if (diff < 320) {
+                judgeText = "GOOD";
+                judgeColor = "text-blue-400";
+                scoreEarned = 50;
+                rhythmCombo++;
+                playSfx('hit');
+            } else {
+                judgeText = "BAD";
+                judgeColor = "text-yellow-500";
+                rhythmCombo = 0;
+            }
+
+            // 시각적 피드백 구현
+            targetNote.element.style.opacity = '0';
+            targetNote.element.style.transform = 'translateY(240px) scale(2)';
+            targetNote.hit = true;
+
+            setTimeout(() => {
+                targetNote.element.remove();
+            }, 200);
+
+            rhythmScore += scoreEarned + (rhythmCombo * 5); // 콤보 보너스 부여
+            rhythmScoreEl.innerText = rhythmScore;
+            rhythmComboEl.innerText = rhythmCombo;
+
+            rhythmJudgement.innerText = judgeText;
+            rhythmJudgement.className = `absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-2xl font-black italic tracking-wider uppercase select-none pointer-events-none ${judgeColor} animate-ping`;
+
+            // 판정한 노트 데이터 목록에서 제거
+            generatedNotes.shift();
+        }
+
+        // 키보드 스페이스바로도 타격 지원 (PC 사용자 편의)
+        window.addEventListener('keydown', (e) => {
+            if (e.code === "Space") {
+                e.preventDefault();
+                triggerHitLogic();
+            }
+        });
+
+
+        // ==========================================
+        // 9. 팬레터 시뮬레이션 및 발송 로직
+        // ==========================================
+        const letterContent = document.getElementById('letter-content');
+        const stickerBoard = document.getElementById('sticker-board');
+        const btnSendLetter = document.getElementById('btn-send-letter');
+        const btnClearLetter = document.getElementById('btn-clear-letter');
+
+        // 스티커 도배 기능
+        document.querySelectorAll('.sticker-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                initAudio();
+                const sticker = btn.getAttribute('data-sticker');
+                
+                // 보드 위에 무작위 좌표에 스티커 래핑 엘리먼트 부착
+                const wrapper = document.createElement('div');
+                wrapper.innerText = sticker;
+                wrapper.className = "absolute text-3xl pointer-events-auto select-none cursor-move transition-transform active:scale-125";
+                
+                // 편지 공간 범위 내 랜덤 좌표 연산
+                const boardWidth = stickerBoard.clientWidth;
+                const boardHeight = stickerBoard.clientHeight;
+                wrapper.style.left = `${Math.random() * (boardWidth - 40)}px`;
+                wrapper.style.top = `${Math.random() * (boardHeight - 40)}px`;
+                
+                // 미세한 랜덤 각도 회전
+                wrapper.style.transform = `rotate(${Math.random() * 40 - 20}deg)`;
+
+                // 스티커 클릭 시 지워지는 이스터에그 추가
+                wrapper.addEventListener('dblclick', () => {
+                    wrapper.remove();
+                    playSfx('click');
+                });
+
+                stickerBoard.appendChild(wrapper);
+                playSfx('click');
+            });
+        });
+
+        btnClearLetter.addEventListener('click', () => {
+            letterContent.value = '';
+            stickerBoard.innerHTML = '';
+            showToast("🧹 작성중이던 팬레터를 깨끗이 비웠습니다.");
+        });
+
+        btnSendLetter.addEventListener('click', () => {
+            const txt = letterContent.value.trim();
+            if (txt.length < 5) {
+                showToast("❌ 정성이 조금 부족합니다! 팬레터를 최소 5자 이상 작성해주세요.");
+                return;
+            }
+
+            // 발송 애니메이션 및 완료 피드백
+            playSfx('upgrade');
+            showToast(`💌 To. ${idolState.idolName}님께 진심이 듬뿍 담긴 팬레터가 성공적으로 전달되었습니다!`);
+            
+            // 팬레터 정기 발송 특전 보상
+            const bonus = Math.floor(100 + Math.random() * 200 + stickerBoard.children.length * 50);
+            idolState.fandomPower += bonus;
+            
+            // 초기화
+            letterContent.value = '';
+            stickerBoard.innerHTML = '';
+            updateUI();
+        });
+
+
+        // ==========================================
+        // 10. 최애 정보 커스터마이징 모달 처리
+        // ==========================================
+        const customModal = document.getElementById('custom-modal');
+        const btnOpenCustom = document.getElementById('btn-open-custom');
+        const btnCloseCustom = document.getElementById('btn-close-custom');
+        const btnSaveCustom = document.getElementById('btn-save-custom');
+
+        // 커스텀 기본값 입력창 셋팅
+        btnOpenCustom.addEventListener('click', () => {
+            document.getElementById('input-idol-name').value = idolState.idolName;
+            document.getElementById('input-group-name').value = idolState.groupName;
+            document.getElementById('input-fandom-name').value = idolState.fandomName;
+            document.getElementById('input-avatar-emoji').value = idolState.avatarEmoji;
+            document.getElementById('input-theme-color').value = idolState.themeColor;
+            customModal.classList.remove('hidden');
+        });
+
+        btnCloseCustom.addEventListener('click', () => {
+            customModal.classList.add('hidden');
+        });
+
+        btnSaveCustom.addEventListener('click', () => {
+            const name = document.getElementById('input-idol-name').value.trim();
+            const group = document.getElementById('input-group-name').value.trim();
+            const fandom = document.getElementById('input-fandom-name').value.trim();
+            const emoji = document.getElementById('input-avatar-emoji').value;
+            const color = document.getElementById('input-theme-color').value;
+
+            if (!name || !group || !fandom) {
+                showToast("❌ 공란을 모두 올바르게 작성해주세요.");
+                return;
+            }
+
+            // 글로벌 상태 전이
+            idolState.idolName = name;
+            idolState.groupName = group;
+            idolState.fandomName = fandom;
+            idolState.avatarEmoji = emoji;
+            idolState.themeColor = color;
+
+            // 테마 테마색 컬러 전역 CSS 변수 수정 적용
+            document.documentElement.style.setProperty('--theme-color', color);
+            document.documentElement.style.setProperty('--theme-color-glow', `${color}66`);
+
+            // 상단 레이아웃 즉시 동기화
+            document.getElementById('header-idol-name').innerText = name;
+            document.getElementById('header-group-name').innerText = group;
+            document.getElementById('header-fandom-name').innerText = fandom;
+            document.getElementById('profile-idol-name').innerText = name;
+            document.getElementById('profile-group-name').innerText = group;
+            document.getElementById('avatar-emoji').innerText = emoji;
+            document.getElementById('letter-recipient-name').innerText = name;
+
+            customModal.classList.add('hidden');
+            playSfx('upgrade');
+            showToast(`💖 최애 아이돌이 [${group} ${name}] 님으로 성공적으로 적용되었습니다!`);
+        });
+
+
+        // ==========================================
+        // 11. 탭 네비게이션 제어 모듈
+        // ==========================================
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                initAudio();
+                const targetId = btn.getAttribute('data-target');
+
+                // 탭 버튼 활성화 상태 토글
+                document.querySelectorAll('.tab-btn').forEach(b => {
+                    b.className = "tab-btn flex-1 py-3 text-sm font-bold rounded-lg transition-all duration-200 text-gray-400 hover:text-white";
+                });
+                btn.className = "tab-btn flex-1 py-3 text-sm font-bold rounded-lg transition-all duration-200 bg-pink-600 text-white";
+
+                // 모든 탭 컨텐츠 보이기/숨기기
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.add('hidden');
+                });
+                document.getElementById(targetId).classList.remove('hidden');
+
+                // 리듬 게임 탭 이탈 시 정지 기능 연동
+                if (targetId !== 'tab-rhythm' && rhythmGameActive) {
+                    stopRhythmGame();
+                }
+            });
+        });
+
+
+        // ==========================================
+        // 12. 공용 알림 시스템 (Toast)
+        // ==========================================
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = "bg-slate-900/95 border-l-4 border-pink-500 text-white text-xs px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-2 pointer-events-auto transition-all duration-300 transform translate-x-12 opacity-0 max-w-sm";
+            toast.innerHTML = `
+                <span>📢</span>
+                <span class="font-medium">${message}</span>
+            `;
+            container.appendChild(toast);
+
+            // 서서히 밀려 들어오기
+            setTimeout(() => {
+                toast.classList.remove('translate-x-12', 'opacity-0');
+            }, 50);
+
+            // 소멸 소요 설정
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-[-10px]');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 3000);
+        }
+
+        // ==========================================
+        // 13. 최초 앱 기동 초기화
+        // ==========================================
+        window.addEventListener('load', () => {
+            // 상단 레이어 바인딩 초기 동기화
+            document.getElementById('header-idol-name').innerText = idolState.idolName;
+            document.getElementById('header-group-name').innerText = idolState.groupName;
+            document.getElementById('header-fandom-name').innerText = idolState.fandomName;
+            document.getElementById('profile-idol-name').innerText = idolState.idolName;
+            document.getElementById('profile-group-name').innerText = idolState.groupName;
+            document.getElementById('avatar-emoji').innerText = idolState.avatarEmoji;
+            document.getElementById('letter-recipient-name').innerText = idolState.idolName;
+
+            renderUpgrades();
+            initBinder();
+            updateUI();
+        });
+    </script>
 </body>
 </html>
+
+```
