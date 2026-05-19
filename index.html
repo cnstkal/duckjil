@@ -575,7 +575,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
 
 })();</script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>최애 아이돌 덕질 시뮬레이터</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -2496,23 +2496,25 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
 <script>
 window.addEventListener("DOMContentLoaded",()=>{
 
-const ADMIN_PASSWORD="duckjiladmin";
-let isAdmin=localStorage.getItem("duckjil-admin")==="true";
+/* ===== ADMIN ===== */
 
-/* 관리자 버튼 */
+const ADMIN_PASSWORD="duckjiladmin";
+
+let isAdmin=
+localStorage.getItem("duckjil-admin")==="true";
 
 const adminBtn=document.createElement("button");
 
-function updateAdminButton(){
+function syncBtn(){
 adminBtn.innerHTML=isAdmin?"로그아웃":"관리자";
 }
 
-updateAdminButton();
+syncBtn();
 
 adminBtn.style.cssText=`
 position:fixed;
-top:14px;
-right:14px;
+top:16px;
+right:16px;
 z-index:999999999;
 background:#ff2a7a;
 color:white;
@@ -2528,6 +2530,7 @@ document.body.appendChild(adminBtn);
 adminBtn.onclick=()=>{
 
 if(isAdmin){
+
 localStorage.removeItem("duckjil-admin");
 location.reload();
 return;
@@ -2536,34 +2539,17 @@ return;
 const pw=prompt("관리자 비밀번호");
 
 if(pw===ADMIN_PASSWORD){
+
 localStorage.setItem("duckjil-admin","true");
 location.reload();
+
+}else if(pw!==null){
+
+alert("비밀번호 틀림");
 }
 };
 
-/* 확대 방지 */
-
-document.addEventListener(
-"dblclick",
-e=>e.preventDefault(),
-{passive:false}
-);
-
-let lastTouchEnd=0;
-
-document.addEventListener("touchend",(e)=>{
-
-const now=(new Date()).getTime();
-
-if(now-lastTouchEnd<=300){
-e.preventDefault();
-}
-
-lastTouchEnd=now;
-
-},false);
-
-/* 프로필 */
+/* ===== PROFILE ===== */
 
 const avatar=document.getElementById("avatar-emoji");
 
@@ -2574,10 +2560,11 @@ avatar.style.overflow="hidden";
 const savedProfile=
 localStorage.getItem("duckjil-profile");
 
+if(savedProfile){
+
 avatar.innerHTML=`
 <img
-id="profile-image"
-src="${savedProfile || "https://placehold.co/300x300"}"
+src="${savedProfile}"
 style="
 width:100%;
 height:100%;
@@ -2586,12 +2573,13 @@ border-radius:999px;
 "
 />
 `;
+}
 
 if(isAdmin){
 
 const profileBtn=document.createElement("button");
 
-profileBtn.innerHTML="프로필 변경";
+profileBtn.innerHTML="프로필";
 
 profileBtn.style.cssText=`
 margin-top:8px;
@@ -2628,14 +2616,12 @@ const reader=new FileReader();
 
 reader.onload=(ev)=>{
 
-document.getElementById(
-"profile-image"
-).src=ev.target.result;
-
 localStorage.setItem(
 "duckjil-profile",
 ev.target.result
 );
+
+location.reload();
 
 };
 
@@ -2645,34 +2631,22 @@ reader.readAsDataURL(file);
 }
 }
 
-/* 포카 잠금 해제 */
+/* ===== PHOTOCARDS ===== */
 
-const cardSelectors=[
-".photocard",
-".photo-card",
-".card",
-"[class*=photocard]"
+const cards=[
+...document.querySelectorAll(".photocard")
 ];
-
-let cards=[];
-
-cardSelectors.forEach(sel=>{
-
-document.querySelectorAll(sel).forEach(el=>{
-
-if(!cards.includes(el)){
-cards.push(el);
-}
-
-});
-
-});
 
 cards.forEach((card,index)=>{
 
-/* 잠금 제거 */
+/* 관리자 모드면 잠금 제거 */
 
 if(isAdmin){
+
+card.classList.remove(
+"opacity-40",
+"saturate-50"
+);
 
 card.querySelectorAll("*").forEach(el=>{
 
@@ -2680,80 +2654,20 @@ const txt=(el.innerText||"").trim();
 
 if(
 txt==="🔒" ||
-txt.includes("미수집") ||
-txt.includes("?")
+txt==="미수집"
 ){
-el.style.display="none";
+el.remove();
 }
-
 });
 
-card.style.opacity="1";
-card.style.filter="none";
+const q=card.querySelector(".fa-question");
+
+if(q){
+q.remove();
+}
 }
 
-/* 이름 표시 */
-
-let nameTag=
-card.querySelector(
-".card-name,.name,h3,h4,p,span"
-);
-
-if(!nameTag){
-
-nameTag=document.createElement("div");
-
-nameTag.innerHTML=`포카 ${index+1}`;
-
-card.appendChild(nameTag);
-}
-
-if(isAdmin){
-
-nameTag.style.display="block";
-nameTag.style.fontSize="12px";
-nameTag.style.fontWeight="700";
-nameTag.style.marginTop="8px";
-nameTag.style.color="white";
-
-}else{
-
-nameTag.style.display="none";
-}
-
-/* 관리자 포카 사진 교체 */
-
-if(isAdmin){
-
-const editBtn=document.createElement("button");
-
-editBtn.innerHTML=`사진 넣기`;
-
-editBtn.style.cssText=`
-margin-top:8px;
-background:#7c3aed;
-color:white;
-border:none;
-padding:6px 10px;
-border-radius:999px;
-font-size:11px;
-font-weight:700;
-width:100%;
-`;
-
-card.appendChild(editBtn);
-
-const upload=document.createElement("input");
-
-upload.type="file";
-upload.accept="image/*";
-upload.style.display="none";
-
-document.body.appendChild(upload);
-
-editBtn.onclick=()=>{
-upload.click();
-};
+/* 저장된 이미지 */
 
 const saved=
 localStorage.getItem(
@@ -2762,17 +2676,72 @@ localStorage.getItem(
 
 if(saved){
 
-let img=card.querySelector("img");
+card.innerHTML=`
+<img
+src="${saved}"
+style="
+position:absolute;
+inset:0;
+width:100%;
+height:100%;
+object-fit:cover;
+"
+/>
 
-if(img){
-
-img.src=saved;
-img.style.objectFit="cover";
-img.style.opacity="1";
+<div style="
+position:absolute;
+bottom:8px;
+left:8px;
+z-index:10;
+background:rgba(0,0,0,.6);
+padding:4px 8px;
+border-radius:999px;
+font-size:11px;
+font-weight:700;
+color:white;
+">
+포카 ${index+1}
+</div>
+`;
 }
-}
 
-upload.onchange=(e)=>{
+/* 관리자 사진 넣기 */
+
+if(isAdmin){
+
+const edit=document.createElement("button");
+
+edit.innerHTML="사진 넣기";
+
+edit.style.cssText=`
+position:absolute;
+bottom:8px;
+right:8px;
+z-index:20;
+background:#7c3aed;
+color:white;
+border:none;
+padding:6px 8px;
+border-radius:999px;
+font-size:10px;
+font-weight:700;
+`;
+
+card.appendChild(edit);
+
+const input=document.createElement("input");
+
+input.type="file";
+input.accept="image/*";
+input.style.display="none";
+
+document.body.appendChild(input);
+
+edit.onclick=()=>{
+input.click();
+};
+
+input.onchange=(e)=>{
 
 const file=e.target.files[0];
 
@@ -2782,26 +2751,12 @@ const reader=new FileReader();
 
 reader.onload=(ev)=>{
 
-let img=card.querySelector("img");
-
-if(!img){
-
-img=document.createElement("img");
-
-card.prepend(img);
-}
-
-img.src=ev.target.result;
-
-img.style.width="100%";
-img.style.height="100%";
-img.style.objectFit="cover";
-img.style.opacity="1";
-
 localStorage.setItem(
 "duckjil-card-"+index,
 ev.target.result
 );
+
+location.reload();
 
 };
 
@@ -2809,14 +2764,39 @@ reader.readAsDataURL(file);
 
 };
 }
-
 });
 
-/* 랜덤 답장 */
+/* ===== DOUBLE TAP BLOCK ===== */
+
+document.addEventListener(
+"dblclick",
+e=>e.preventDefault(),
+{passive:false}
+);
+
+let lastTouchEnd=0;
+
+document.addEventListener(
+"touchend",
+function(e){
+
+const now=(new Date()).getTime();
+
+if(now-lastTouchEnd<=300){
+e.preventDefault();
+}
+
+lastTouchEnd=now;
+
+},
+false
+);
+
+/* ===== RANDOM REPLY ===== */
 
 const replies=[
 "오늘도 와줘서 고마워 💖",
-"편지 읽고 힘났어!",
+"편지 읽었어!!",
 "항상 응원 고마워 🥺",
 "나도 보고싶었어",
 "다음에도 또 와줘 ✨"
@@ -2824,14 +2804,12 @@ const replies=[
 
 setTimeout(()=>{
 
-const textarea=document.querySelector("textarea");
-
-const buttons=[
-...document.querySelectorAll("button")
-];
+const textarea=
+document.querySelector("textarea");
 
 const sendBtn=
-buttons.find(btn=>
+[...document.querySelectorAll("button")]
+.find(btn=>
 btn.innerText.includes("보내")
 || btn.innerText.includes("편지")
 );
@@ -2857,15 +2835,15 @@ if(count>=3&&Math.random()>0.5){
 
 setTimeout(()=>{
 
-const popup=document.createElement("div");
+const pop=document.createElement("div");
 
-popup.innerHTML=
+pop.innerHTML=
 "💌 최애 답장<br><br>"+
 replies[
 Math.floor(Math.random()*replies.length)
 ];
 
-popup.style.cssText=`
+pop.style.cssText=`
 position:fixed;
 left:50%;
 bottom:100px;
@@ -2878,17 +2856,17 @@ z-index:999999999;
 text-align:center;
 `;
 
-document.body.appendChild(popup);
+document.body.appendChild(pop);
 
 setTimeout(()=>{
-popup.remove();
-},4500);
+pop.remove();
+},4000);
 
-},1200);
+},1000);
 }
 });
 
-},1200);
+},1000);
 
 });
 </script>
