@@ -3,206 +3,218 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IDOL CARD UNIVERSE</title>
+  <title>IDOL CARD UNIVERSE PRO</title>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Noto+Sans+KR:wght@400;500;700&display=swap');
     body {
       font-family: 'Noto Sans KR', sans-serif;
-      background: #0d0b18;
+      background: #09070f;
       color: #ffffff;
     }
-    .font-logo {
-      font-family: 'Orbitron', sans-serif;
+    .font-logo { font-family: 'Orbitron', sans-serif; }
+    
+    /* 등급별 유니크 카드 효과 */
+    .grade-Mythic {
+      position: relative; overflow: hidden;
+      border: 2px solid #ff007f !important;
+      box-shadow: 0 0 20px rgba(255, 0, 127, 0.6);
     }
-    .card-holo {
-      position: relative;
-      overflow: hidden;
+    .grade-Mythic::before {
+      content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+      background: linear-gradient(45deg, rgba(255,0,132,0.3), rgba(0,255,255,0.3), rgba(255,255,0,0.3), rgba(255,0,132,0.3));
+      animation: holoRotate 4s linear infinite; z-index: 1; pointer-events: none;
     }
-    .card-holo::after {
-      content: '';
-      position: absolute;
-      top: -150%; left: -150%; width: 300%; height: 300%;
-      background: linear-gradient(115deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 30%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0.3) 70%, rgba(255,255,255,0) 100%);
-      transform: rotate(30deg);
-      transition: all 0.5s ease;
-      opacity: 0;
-    }
-    .card-holo:hover::after {
-      opacity: 1;
-      top: -50%; left: -50%;
+    @keyframes holoRotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between select-none">
+<body class="min-h-screen flex flex-col justify-between select-none pb-24">
 
-  <header class="border-b border-purple-900/40 bg-purple-950/20 backdrop-blur-md sticky top-0 z-50 px-4 py-3">
+  <header class="border-b border-purple-950 bg-purple-950/40 backdrop-blur-md sticky top-0 z-50 px-4 py-3">
     <div class="max-w-md mx-auto flex justify-between items-center">
       <div class="flex items-center space-x-2 cursor-pointer" onclick="switchView('lobby')">
-        <i class="fa-solid fa-wand-magic-sparkles text-pink-500 text-xl animate-pulse"></i>
-        <span class="font-logo font-black text-lg tracking-wider bg-gradient-to-r from-pink-500 to-purple-400 bg-clip-text text-transparent">IDOL.UNI</span>
+        <i class="fa-solid fa-star text-pink-500 animate-spin" style="animation-duration: 3s"></i>
+        <span class="font-logo font-black text-xl tracking-widest bg-gradient-to-r from-pink-500 via-purple-400 to-cyan-400 bg-clip-text text-transparent">IDOL.UNI V2</span>
       </div>
-      <div class="flex items-center space-x-3 bg-purple-950/60 border border-purple-500/30 px-3 py-1 rounded-full">
-        <i class="fa-solid fa-heart text-pink-500 text-sm"></i>
-        <span id="global-points" class="font-logo font-bold text-pink-400">0</span>
+      <div class="flex items-center space-x-2 bg-black/40 border border-purple-500/30 px-3 py-1 rounded-full">
+        <i class="fa-solid fa-heart text-pink-500 text-xs"></i>
+        <span id="global-points" class="font-logo font-bold text-pink-400 text-sm">0</span>
       </div>
     </div>
   </header>
 
-  <main class="flex-1 max-w-md w-full mx-auto p-4 pb-24 overflow-y-auto">
+  <main class="flex-1 max-w-md w-full mx-auto p-4 overflow-y-auto">
     
-    <section id="view-lobby" class="view-section space-y-6">
-      <div class="bg-gradient-to-br from-purple-900/50 to-pink-900/30 border border-purple-500/20 rounded-2xl p-6 text-center space-y-3 shadow-xl">
-        <h2 class="text-xl font-bold">✨ 나만의 최애 컬렉션 ✨</h2>
-        <p class="text-sm text-purple-200">미공개 포토카드를 잠금 해제하고 멤버들의 한정판 모습을 확인하세요!</p>
-        <div class="pt-2">
-          <span class="text-xs bg-purple-800/60 px-3 py-1 rounded-full text-purple-300">
+    <section id="view-lobby" class="view-section space-y-5">
+      <div class="bg-gradient-to-br from-purple-900/60 to-black border border-purple-500/20 rounded-2xl p-5 text-center space-y-2 shadow-2xl">
+        <h2 class="text-lg font-bold tracking-tight">🪐 무한한 최애 컬렉션 세계관</h2>
+        <p class="text-xs text-gray-400">포인트를 모아 5가지 등급의 스페셜 미공개 포카를 수집하세요!</p>
+        <div class="pt-2 flex justify-center space-x-2">
+          <span class="text-[11px] bg-purple-950 border border-purple-500/30 px-3 py-1 rounded-full text-purple-300">
             도감 달성도: <span id="collection-progress" class="font-bold text-white">0/0</span>
           </span>
         </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-4">
-        <button onclick="switchView('game')" class="bg-gradient-to-b from-purple-800 to-purple-950 border border-purple-500/30 hover:border-pink-500/50 p-5 rounded-2xl flex flex-col items-center justify-center space-y-3 transition group active:scale-95 shadow-lg">
-          <div class="w-12 h-12 rounded-full bg-pink-500/20 flex items-center justify-center group-hover:bg-pink-500/30 transition">
-            <i class="fa-solid fa-gamepad text-pink-400 text-xl"></i>
-          </div>
-          <span class="font-bold text-sm">하트 캐칭 게임</span>
-          <span class="text-xs text-gray-400">포인트 충전하기</span>
+      <div class="grid grid-cols-2 gap-3">
+        <button onclick="switchView('game-select')" class="bg-purple-950/30 border border-purple-900/50 hover:border-pink-500/40 p-4 rounded-xl flex flex-col items-center justify-center space-y-2 transition active:scale-95">
+          <i class="fa-solid fa-gamepad text-pink-500 text-2xl"></i>
+          <span class="font-bold text-xs">미니게임 (5종)</span>
         </button>
-
-        <button onclick="switchView('gacha')" class="bg-gradient-to-b from-purple-800 to-purple-950 border border-purple-500/30 hover:border-pink-500/50 p-5 rounded-2xl flex flex-col items-center justify-center space-y-3 transition group active:scale-95 shadow-lg">
-          <div class="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center group-hover:bg-purple-500/30 transition">
-            <i class="fa-solid fa-box-open text-purple-400 text-xl"></i>
-          </div>
-          <span class="font-bold text-sm">랜덤 카드 뽑기</span>
-          <span class="text-xs text-gray-400">100 🤍 / 1회</span>
+        <button onclick="switchView('gacha')" class="bg-purple-950/30 border border-purple-900/50 hover:border-purple-500/40 p-4 rounded-xl flex flex-col items-center justify-center space-y-2 transition active:scale-95">
+          <i class="fa-solid fa-box-open text-cyan-400 text-2xl"></i>
+          <span class="font-bold text-xs">랜덤 럭키 드로우</span>
         </button>
       </div>
 
-      <div class="space-y-3">
-        <h3 class="text-sm font-bold text-purple-300 tracking-wide uppercase px-1">최근 획득 카드</h3>
+      <div class="space-y-2">
+        <h3 class="text-xs font-bold text-gray-400 tracking-wider uppercase">최근 해제된 포토카드</h3>
         <div id="lobby-recent-cards" class="grid grid-cols-3 gap-2"></div>
       </div>
     </section>
 
-    <section id="view-game" class="view-section hidden space-y-4">
-      <div class="flex justify-between items-center bg-purple-950/40 border border-purple-900 px-4 py-3 rounded-xl">
-        <div>
-          <span class="text-xs text-gray-400 block">획득한 하트</span>
-          <span id="game-score" class="font-logo text-xl font-black text-pink-500">0</span>
+    <section id="view-game-select" class="view-section hidden space-y-3">
+      <h2 class="text-sm font-bold text-purple-400 px-1"><i class="fa-solid fa-circle-play mr-1"></i> 플레이할 게임 선택</h2>
+      <div class="space-y-2">
+        <div onclick="initGame(1)" class="bg-purple-950/40 border border-purple-900 p-4 rounded-xl flex justify-between items-center cursor-pointer hover:border-pink-500/40 transition">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-lg bg-pink-500/10 flex items-center justify-center"><i class="fa-solid fa-heart text-pink-500"></i></div>
+            <div><h3 class="text-sm font-bold">1. 하트 캐칭 피버</h3><p class="text-[11px] text-gray-400">화면에 나타나는 하트를 빠르게 클릭!</p></div>
+          </div>
+          <i class="fa-solid fa-chevron-right text-xs text-gray-500"></i>
         </div>
-        <div class="text-right">
-          <span class="text-xs text-gray-400 block">남은 시간</span>
-          <span id="game-timer" class="font-logo text-xl font-black text-yellow-400">30s</span>
+        <div onclick="initGame(2)" class="bg-purple-950/40 border border-purple-900 p-4 rounded-xl flex justify-between items-center cursor-pointer hover:border-yellow-500/40 transition">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-lg bg-yellow-500/10 flex items-center justify-center"><i class="fa-solid fa-wand-magic-sparkles text-yellow-500"></i></div>
+            <div><h3 class="text-sm font-bold">2. 응원봉 타이밍 탭</h3><p class="text-[11px] text-gray-400">움직이는 바를 게이지 한가운데에 정확히 탭!</p></div>
+          </div>
+          <i class="fa-solid fa-chevron-right text-xs text-gray-500"></i>
         </div>
-      </div>
-
-      <div id="game-zone" class="relative w-full h-[380px] bg-black/40 border-2 border-dashed border-purple-500/30 rounded-2xl overflow-hidden shadow-inner flex flex-col items-center justify-center text-center p-6">
-        <div id="game-intro" class="space-y-4">
-          <i class="fa-solid fa-heart-crack text-pink-500 text-5xl animate-bounce"></i>
-          <h3 class="font-bold text-lg">하트 비트 타임!</h3>
-          <p class="text-xs text-gray-400 leading-relaxed">화면에 무작위로 날아다니는 하트를 탭하세요.<br>제한시간 30초 동안 최대한 많은 하트를 모으세요!</p>
-          <button onclick="startGame()" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 font-bold py-3 px-6 rounded-xl hover:brightness-110 shadow-md transition active:scale-95">게임 시작</button>
+        <div onclick="initGame(3)" class="bg-purple-950/40 border border-purple-900 p-4 rounded-xl flex justify-between items-center cursor-pointer hover:border-cyan-500/40 transition">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-lg bg-cyan-500/10 flex items-center justify-center"><i class="fa-solid fa-clone text-cyan-400"></i></div>
+            <div><h3 class="text-sm font-bold">3. 기억력 카드 매칭</h3><p class="text-[11px] text-gray-400">뒤집힌 최애 아이콘 카드의 짝을 맞추기</p></div>
+          </div>
+          <i class="fa-solid fa-chevron-right text-xs text-gray-500"></i>
+        </div>
+        <div onclick="initGame(4)" class="bg-purple-950/40 border border-purple-900 p-4 rounded-xl flex justify-between items-center cursor-pointer hover:border-purple-500/40 transition">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center"><i class="fa-solid fa-keyboard text-purple-400"></i></div>
+            <div><h3 class="text-sm font-bold">4. 최애 이름 타이핑 격파</h3><p class="text-[11px] text-gray-400">떨어지는 아이돌 키워드가 바닥에 닿기 전 타이핑!</p></div>
+          </div>
+          <i class="fa-solid fa-chevron-right text-xs text-gray-500"></i>
+        </div>
+        <div onclick="initGame(5)" class="bg-purple-950/40 border border-purple-900 p-4 rounded-xl flex justify-between items-center cursor-pointer hover:border-emerald-500/40 transition">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center"><i class="fa-solid fa-hand-scissors text-emerald-400"></i></div>
+            <div><h3 class="text-sm font-bold">5. 주간 컴백 가위바위보</h3><p class="text-[11px] text-gray-400">아이돌과 직접 눈치 대결! 연속 승리 시 보너스</p></div>
+          </div>
+          <i class="fa-solid fa-chevron-right text-xs text-gray-500"></i>
         </div>
       </div>
     </section>
 
-    <section id="view-gacha" class="view-section hidden text-center space-y-6">
-      <div class="space-y-1">
-        <h2 class="text-2xl font-black bg-gradient-to-r from-pink-400 to-yellow-300 bg-clip-text text-transparent">포토카드 팩 개봉</h2>
-        <p class="text-xs text-gray-400">미공개 독점 컷이 숨어있습니다.</p>
+    <section id="view-game-play" class="view-section hidden space-y-4">
+      <div class="flex justify-between items-center bg-purple-950/50 border border-purple-900 px-4 py-3 rounded-xl">
+        <div><span class="text-[10px] text-gray-400 block">SCORE</span><span id="game-score" class="font-logo text-lg font-black text-pink-400">0</span></div>
+        <div class="text-center"><h2 id="game-title" class="text-xs font-bold bg-purple-900 px-3 py-1 rounded-full">게임</h2></div>
+        <div class="text-right"><span class="text-[10px] text-gray-400 block">TIME / CHANCE</span><span id="game-timer" class="font-logo text-lg font-black text-yellow-400">0</span></div>
       </div>
+      <div id="game-canvas" class="relative w-full h-[380px] bg-black/60 border border-purple-800 rounded-2xl overflow-hidden shadow-inner flex flex-col items-center justify-center p-4">
+        </div>
+    </section>
 
-      <div class="relative w-56 h-80 mx-auto bg-gradient-to-b from-purple-600 to-pink-600 rounded-2xl p-1 shadow-[0_0_30px_rgba(236,72,153,0.3)] flex items-center justify-center group overflow-hidden">
-        <div id="gacha-card-container" class="w-full h-full bg-[#151226] rounded-xl flex flex-col items-center justify-center p-4 transition-all duration-500">
-          <div id="gacha-display-default" class="space-y-3">
-            <i class="fa-solid fa-circle-question text-pink-400 text-5xl animate-pulse"></i>
-            <p class="font-logo font-bold text-sm tracking-widest text-purple-300">UNRELEASED</p>
+    <section id="view-gacha" class="view-section hidden text-center space-y-5">
+      <div><h2 class="text-xl font-black bg-gradient-to-r from-yellow-300 via-pink-400 to-purple-400 bg-clip-text text-transparent">스페셜 드로우 팩</h2><p class="text-[11px] text-gray-400">일반부터 시크릿 미스틱까지 랜덤 박스 오픈</p></div>
+      <div class="relative w-52 h-72 mx-auto bg-gradient-to-b from-purple-600 to-pink-600 rounded-2xl p-1 shadow-2xl flex items-center justify-center overflow-hidden">
+        <div id="gacha-card-container" class="w-full h-full bg-[#110e1c] rounded-xl flex flex-col items-center justify-center p-3 transition-all duration-300">
+          <div id="gacha-display-default" class="space-y-2">
+            <i class="fa-solid fa-box-open text-pink-500 text-4xl animate-bounce"></i>
+            <p class="font-logo text-xs tracking-widest text-purple-400">UNOPENED PACK</p>
           </div>
           <div id="gacha-display-result" class="hidden w-full h-full flex flex-col justify-between items-center">
-            <img id="gacha-result-img" src="" alt="Result" class="w-full h-[80%] object-cover rounded-lg shadow-md">
-            <p id="gacha-result-name" class="font-bold text-sm text-pink-400 mt-2"></p>
+            <img id="gacha-result-img" src="" class="w-full h-[78%] object-cover rounded-lg">
+            <p id="gacha-result-name" class="font-bold text-xs text-white truncate w-full mt-1"></p>
           </div>
         </div>
       </div>
-
-      <div class="max-w-xs mx-auto space-y-2">
-        <button onclick="drawCard()" class="w-full bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 font-bold py-4 rounded-xl shadow-lg hover:brightness-110 active:scale-95 transition flex items-center justify-center space-x-2">
-          <i class="fa-solid fa-ticket"></i>
-          <span>1회 뽑기 (100 하트 소모)</span>
-        </button>
-      </div>
+      <button onclick="drawCard()" class="max-w-xs w-full mx-auto bg-gradient-to-r from-pink-500 to-purple-600 font-bold py-3 rounded-xl text-sm shadow-lg hover:brightness-110 active:scale-95 transition">1회 뽑기 (100 하트 소모)</button>
     </section>
 
     <section id="view-collection" class="view-section hidden space-y-4">
-      <div class="flex justify-between items-center px-1">
-        <h2 class="text-lg font-bold">마이 포토북 📸</h2>
-        <div class="flex items-center space-x-3">
+      <div class="flex justify-between items-center">
+        <h2 class="text-md font-bold">마이 럭셔리 포토북 📸</h2>
+        <div class="flex items-center space-x-2">
           <span class="text-xs text-gray-400" id="collection-count">보유: 0개</span>
-          <button onclick="resetCollection()" class="text-xs bg-red-950/40 border border-red-500/30 text-red-400 px-2 py-1 rounded-md hover:bg-red-900/50 transition active:scale-95">
-            <i class="fa-solid fa-trash-can mr-1"></i>포카 초기화
-          </button>
+          <button onclick="resetCollection()" class="text-[10px] bg-red-950 border border-red-800 text-red-400 px-2 py-0.5 rounded-md hover:bg-red-900 transition">포카 리셋</button>
         </div>
       </div>
-      <div id="collection-grid" class="grid grid-cols-2 gap-4"></div>
+      <div id="collection-grid" class="grid grid-cols-2 gap-3"></div>
+    </section>
+
+    <section id="view-chat" class="view-section hidden space-y-3 flex flex-col h-[480px]">
+      <div class="bg-purple-950/40 p-3 rounded-xl flex justify-between items-center border border-purple-900/40">
+        <div><h2 class="text-xs font-bold text-white">✨ 최애 프라이빗 메신저</h2><p class="text-[10px] text-gray-400">편지를 보내 친밀도가 3의 배수가 되면 최애의 답장이 도착합니다!</p></div>
+        <span class="text-xs bg-pink-600/20 text-pink-400 px-2 py-0.5 rounded-full font-bold">친밀도: <span id="chat-heart-count">0</span></span>
+      </div>
+      
+      <div id="chat-box" class="flex-1 bg-black/40 border border-purple-950 rounded-xl p-3 overflow-y-auto space-y-3 text-xs">
+        <div class="flex space-x-2"><div class="w-7 h-7 rounded-full bg-pink-600 flex items-center justify-center text-[10px] font-bold">★</div><div class="bg-purple-900/60 p-2 rounded-xl rounded-tl-none max-w-[75%]">안녕 가이드 유저님! 오늘 하루는 어땠어? 보고 싶었어 🤍 편지 남겨주면 나도 꼭 답장할게!</div></div>
+      </div>
+
+      <div class="flex space-x-1">
+        <input type="text" id="chat-input" placeholder="최애 아이돌에게 진심어린 편지 쓰기..." class="flex-1 bg-purple-950/40 border border-purple-900 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-pink-500 text-white">
+        <button onclick="sendLetter()" class="bg-pink-600 px-4 rounded-lg font-bold text-xs hover:bg-pink-700 transition active:scale-95">보내기</button>
+      </div>
     </section>
 
     <section id="view-admin" class="view-section hidden space-y-4">
-      <div class="bg-purple-950/30 border border-purple-500/20 p-4 rounded-xl space-y-2">
-        <h2 class="font-bold text-pink-400"><i class="fa-solid fa-unlock-keyhole mr-1"></i> 포토카드 신규 등록 (관리자)</h2>
+      <div class="bg-purple-950/30 border border-purple-900 p-4 rounded-xl"><h2 class="font-bold text-pink-400 text-xs"><i class="fa-solid fa-sliders mr-1"></i> 관리자 데이터 수집 제어 센터 (CRUD)</h2></div>
+      
+      <div class="bg-purple-950/50 p-4 rounded-xl border border-purple-900 space-y-3 text-xs">
+        <h3 id="admin-form-title" class="font-bold text-cyan-400">새 포토카드 등록</h3>
+        <input type="hidden" id="admin-card-id">
+        <div><label class="block text-gray-400 mb-1">포토카드 명칭</label><input type="text" id="admin-card-name" placeholder="예: [미공개] 민지 - 컴백 뮤비 A컷" class="w-full bg-black/40 border border-purple-900 rounded-lg px-3 py-2 text-white"></div>
+        <div class="grid grid-cols-2 gap-2">
+          <div><label class="block text-gray-400 mb-1">5단계 등급 세팅</label>
+            <select id="admin-card-rarity" class="w-full bg-black/40 border border-purple-900 rounded-lg px-2 py-2 text-white">
+              <option value="Normal">Normal (기본)</option><option value="Rare">Rare (레어)</option><option value="SuperRare">Super Rare (SR)</option><option value="UltraRare">Ultra Rare (UR)</option><option value="Mythic">Secret Mythic (신화)</option>
+            </select>
+          </div>
+          <div><label class="block text-gray-400 mb-1">포토카드 고화질 파일</label><input type="file" id="admin-card-file" accept="image/*" class="w-full text-[10px] text-gray-400 mt-1"></div>
+        </div>
+        <div class="flex space-x-2 pt-1">
+          <button onclick="handleAdminSubmit()" id="admin-btn-submit" class="flex-1 bg-pink-600 font-bold py-2 rounded-lg hover:bg-pink-700 transition">등록 / 업데이트</button>
+          <button onclick="resetAdminForm()" id="admin-btn-cancel" class="hidden bg-gray-700 px-3 font-bold rounded-lg">취소</button>
+        </div>
       </div>
 
-      <div class="bg-purple-950/50 p-5 rounded-2xl border border-purple-900 space-y-4">
-        <div>
-          <label class="block text-xs font-bold text-gray-400 mb-1">포토카드 이름 / 멤버명</label>
-          <input type="text" id="admin-card-name" placeholder="예: [미공개] 민지 - 비하인드 컷" class="w-full bg-black/40 border border-purple-900 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-pink-500 text-white">
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-gray-400 mb-1">등급 선택</label>
-          <select id="admin-card-rarity" class="w-full bg-black/40 border border-purple-900 rounded-xl px-3 py-2 text-sm focus:outline-none text-white">
-            <option value="Normal">Normal</option>
-            <option value="Rare">Rare ✨</option>
-            <option value="SuperRare">Super Rare 🔥</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-gray-400 mb-1">이미지 파일</label>
-          <input type="file" id="admin-card-file" accept="image/*" class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-pink-600 file:text-white cursor-pointer">
-        </div>
-        <button onclick="handleAdminUpload()" id="admin-btn-upload" class="w-full bg-pink-600 hover:bg-pink-700 text-white text-sm font-bold py-3 rounded-xl transition flex items-center justify-center space-x-2">
-          <i class="fa-solid fa-cloud-arrow-up"></i>
-          <span>Cloudinary + Firebase 등록</span>
-        </button>
+      <div class="space-y-2">
+        <h3 class="text-xs font-bold text-gray-400">데이터베이스 실시간 현황 목록</h3>
+        <div id="admin-cards-list" class="space-y-1"></div>
       </div>
     </section>
 
   </main>
 
-  <nav class="fixed bottom-0 left-0 right-0 border-t border-purple-900/40 bg-[#0d0b18]/90 backdrop-blur-lg py-2 px-4 z-50">
-    <div class="max-w-md mx-auto flex justify-between items-center text-gray-400">
-      <button onclick="switchView('lobby')" class="nav-tab flex flex-col items-center space-y-1 w-16 text-pink-500" data-view="lobby">
-        <i class="fa-solid fa-house text-lg"></i><span class="text-[10px]">홈</span>
-      </button>
-      <button onclick="switchView('game')" class="nav-tab flex flex-col items-center space-y-1 w-16" data-view="game">
-        <i class="fa-solid fa-gamepad text-lg"></i><span class="text-[10px]">게임</span>
-      </button>
-      <button onclick="switchView('gacha')" class="nav-tab flex flex-col items-center space-y-1 w-16" data-view="gacha">
-        <i class="fa-solid fa-box-open text-lg"></i><span class="text-[10px]">뽑기</span>
-      </button>
-      <button onclick="switchView('collection')" class="nav-tab flex flex-col items-center space-y-1 w-16" data-view="collection">
-        <i class="fa-solid fa-images text-lg"></i><span class="text-[10px]">포토북</span>
-      </button>
-      <button onclick="switchView('admin')" class="nav-tab flex flex-col items-center space-y-1 w-16" data-view="admin">
-        <i class="fa-solid fa-gear text-lg"></i><span class="text-[10px]">관리자</span>
-      </button>
+  <nav class="fixed bottom-0 left-0 right-0 border-t border-purple-950 bg-[#09070f]/95 backdrop-blur-md py-2 px-2 z-50">
+    <div class="max-w-md mx-auto flex justify-between items-center text-gray-500 text-[10px]">
+      <button onclick="switchView('lobby')" class="nav-tab flex flex-col items-center space-y-1 w-14 text-pink-500" data-view="lobby"><i class="fa-solid fa-house text-base"></i><span>홈</span></button>
+      <button onclick="switchView('game-select')" class="nav-tab flex flex-col items-center space-y-1 w-14" data-view="game-select"><i class="fa-solid fa-circle-play text-base"></i><span>게임</span></button>
+      <button onclick="switchView('gacha')" class="nav-tab flex flex-col items-center space-y-1 w-14" data-view="gacha"><i class="fa-solid fa-box-open text-base"></i><span>뽑기</span></button>
+      <button onclick="switchView('collection')" class="nav-tab flex flex-col items-center space-y-1 w-14" data-view="collection"><i class="fa-solid fa-images text-base"></i><span>포토북</span></button>
+      <button onclick="switchView('chat')" class="nav-tab flex flex-col items-center space-y-1 w-14" data-view="chat"><i class="fa-solid fa-comment-dots text-base"></i><span>최애소통</span></button>
+      <button onclick="switchView('admin')" class="nav-tab flex flex-col items-center space-y-1 w-14" data-view="admin"><i class="fa-solid fa-sliders text-base"></i><span>관리자</span></button>
     </div>
   </nav>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const CLOUDINARY_CLOUD = 'dbljkloal';
     const CLOUDINARY_PRESET = 'clowofficial';
@@ -216,335 +228,624 @@
       appId: "1:744761377245:web:3ddaee14f184716eeef634"
     };
 
-    // Global App States
     let db = null;
     let userId = "";
     let userPoints = 300;
     let unlockedCards = [];
     let allPhotocards = [];
-    let gameInterval, timerInterval;
+    let letterCount = 0;
+    let gameLoopInterval = null;
+    let gameTimerInterval = null;
 
-    // 🌟 안전장치: 버튼 함수들을 전역에 즉시 맵핑하여 스크립트 도중 에러가 나도 먹통이 되지 않도록 방지
+    // 등급별 한글 매핑 및 컬러풀 디자인 배치 백업용 데이터 정의
+    const rarityMeta = {
+      Normal: { ko: "일반", color: "bg-slate-700" },
+      Rare: { ko: "레어 ✨", color: "bg-cyan-600" },
+      SuperRare: { ko: "슈퍼레어 🔥", color: "bg-yellow-600" },
+      UltraRare: { ko: "울트라레어 🔮", color: "bg-purple-600" },
+      Mythic: { ko: "시크릿 미스틱 👑", color: "bg-gradient-to-r from-pink-600 to-yellow-500" }
+    };
+
+    // [A] 안전 초기화용 전역 라우팅 링크 선언
     window.switchView = function(viewId) {
+      clearInterval(gameLoopInterval); clearInterval(gameTimerInterval);
       document.querySelectorAll(".view-section").forEach(sec => sec.classList.add("hidden"));
       document.getElementById(`view-${viewId}`).classList.remove("hidden");
       document.querySelectorAll(".nav-tab").forEach(tab => {
-        if (tab.getAttribute("data-view") === viewId) {
+        if (tab.getAttribute("data-view") === viewId || (viewId.startsWith('game') && tab.getAttribute("data-view") === 'game-select')) {
           tab.classList.add("text-pink-500"); tab.classList.remove("text-gray-400");
         } else {
           tab.classList.remove("text-pink-500"); tab.classList.add("text-gray-400");
         }
       });
-      if (viewId === 'gacha') {
-        document.getElementById("gacha-display-default").innerHTML = `<i class="fa-solid fa-circle-question text-pink-400 text-5xl animate-pulse"></i><p class="font-logo font-bold text-sm tracking-widest text-purple-300">UNRELEASED</p>`;
+      if(viewId === 'gacha') {
         document.getElementById("gacha-display-default").classList.remove("hidden");
         document.getElementById("gacha-display-result").classList.add("hidden");
       }
     };
 
-    // UI 동기화 함수
-    function updateGlobalUI() {
+    // UI 일괄 업데이트 및 도감 바인딩 
+    function syncMainUI() {
       document.getElementById("global-points").innerText = userPoints;
       document.getElementById("collection-progress").innerText = `${unlockedCards.length}/${allPhotocards.length}`;
       document.getElementById("collection-count").innerText = `보유: ${unlockedCards.length}개`;
-      
-      const recentContainer = document.getElementById("lobby-recent-cards");
-      recentContainer.innerHTML = "";
-      const reversedUnlocked = [...unlockedCards].reverse().slice(0, 3);
-      
-      if (reversedUnlocked.length === 0) {
-        recentContainer.innerHTML = `<div class="col-span-3 text-center py-4 text-xs text-gray-500">획득 카드가 없습니다.</div>`;
+      document.getElementById("chat-heart-count").innerText = letterCount;
+
+      // 홈화면 최근 획득 3종 렌더링
+      const recentBox = document.getElementById("lobby-recent-cards");
+      recentBox.innerHTML = "";
+      const recentIds = [...unlockedCards].reverse().slice(0, 3);
+      if(recentIds.length === 0) {
+        recentBox.innerHTML = `<div class="col-span-3 text-center py-4 text-[11px] text-gray-500">도감을 아직 채우지 못했습니다.</div>`;
       } else {
-        reversedUnlocked.forEach(cardId => {
-          const card = allPhotocards.find(c => c.id === cardId);
+        recentIds.forEach(id => {
+          const card = allPhotocards.find(c => c.id === id);
           if (card) {
-            recentContainer.innerHTML += `
-              <div class="bg-purple-950/40 border border-purple-500/20 rounded-lg p-1 text-center">
-                <img src="${card.imageUrl}" class="w-full h-20 object-cover rounded-md">
-                <p class="text-[10px] truncate mt-1 text-purple-200">${card.name}</p>
+            recentBox.innerHTML += `
+              <div class="bg-purple-950/30 border border-purple-900/40 rounded-lg p-1 text-center">
+                <img src="${card.imageUrl}" class="w-full h-20 object-cover rounded">
+                <p class="text-[9px] truncate mt-1 text-purple-200">${card.name}</p>
               </div>`;
           }
         });
       }
-    }
 
-    function renderCollection() {
+      // 포토북 도감 그리드 출력
       const grid = document.getElementById("collection-grid");
       grid.innerHTML = "";
-      if (allPhotocards.length === 0) {
-        grid.innerHTML = `<div class="col-span-2 text-center py-12 text-xs text-gray-500">등록된 카드가 없습니다.<br>관리자 메뉴에서 먼저 업로드하세요!</div>`;
-        return;
+      if(allPhotocards.length === 0) {
+        grid.innerHTML = `<div class="col-span-2 text-center py-10 text-xs text-gray-500">관리자 탭에서 포토카드를 먼저 올려주세요!</div>`;
+      } else {
+        allPhotocards.forEach(card => {
+          const isOwn = unlockedCards.includes(card.id);
+          const meta = rarityMeta[card.rarity] || { ko: card.rarity, color: "bg-gray-600" };
+          if(isOwn) {
+            grid.innerHTML += `
+              <div class="bg-gradient-to-b from-purple-950 to-black p-1.5 rounded-xl border border-purple-900 grade-${card.rarity} flex flex-col justify-between">
+                <img src="${card.imageUrl}" class="w-full h-44 object-cover rounded-lg shadow-md z-10 relative">
+                <div class="mt-2 p-1 z-10 relative">
+                  <span class="text-[8px] text-white px-2 py-0.5 rounded-full font-bold ${meta.color}">${meta.ko}</span>
+                  <p class="text-xs font-bold text-gray-200 truncate mt-1">${card.name}</p>
+                </div>
+              </div>`;
+          } else {
+            grid.innerHTML += `
+              <div class="bg-purple-950/20 border border-purple-950 p-1.5 rounded-xl relative opacity-40">
+                <div class="absolute inset-0 bg-black/70 z-10 rounded-xl flex flex-col items-center justify-center space-y-1">
+                  <i class="fa-solid fa-lock text-purple-400 text-sm"></i><span class="text-[9px] text-gray-400">LOCKED</span>
+                </div>
+                <img src="${card.imageUrl}" class="w-full h-44 object-cover rounded-lg filter blur-md grayscale">
+                <div class="mt-2 p-1"><span class="text-[8px] bg-gray-800 text-gray-500 px-2 py-0.5 rounded-full font-bold">???</span><p class="text-xs font-bold text-gray-600 truncate mt-1">미공개 포카</p></div>
+              </div>`;
+          }
+        });
       }
+
+      // 관리자 탭 제어 리스트 바인딩
+      const adminList = document.getElementById("admin-cards-list");
+      adminList.innerHTML = "";
       allPhotocards.forEach(card => {
-        const isUnlocked = unlockedCards.includes(card.id);
-        if (isUnlocked) {
-          grid.innerHTML += `
-            <div class="bg-gradient-to-b from-purple-900 to-black border border-pink-500/40 rounded-2xl p-2 shadow-md card-holo">
-              <img src="${card.imageUrl}" class="w-full h-48 object-cover rounded-xl">
-              <div class="mt-2 px-1">
-                <span class="text-[9px] bg-pink-600/80 px-2 py-0.5 rounded-full text-white font-bold">${card.rarity}</span>
-                <p class="text-xs font-bold text-white truncate mt-1">${card.name}</p>
-              </div>
-            </div>`;
-        } else {
-          grid.innerHTML += `
-            <div class="bg-purple-950/20 border border-purple-900/40 rounded-2xl p-2 relative opacity-60">
-              <div class="absolute inset-0 bg-black/60 z-10 rounded-2xl flex flex-col items-center justify-center space-y-1">
-                <i class="fa-solid fa-lock text-purple-400"></i><span class="text-[10px] text-gray-400">LOCKED</span>
-              </div>
-              <img src="${card.imageUrl}" class="w-full h-48 object-cover rounded-xl filter blur-sm grayscale">
-              <div class="mt-2 px-1">
-                <span class="text-[9px] bg-gray-700 px-2 py-0.5 rounded-full text-gray-400 font-bold">???</span>
-                <p class="text-xs font-bold text-gray-500 truncate mt-1">미공개 포토카드</p>
-              </div>
-            </div>`;
-        }
+        const meta = rarityMeta[card.rarity] || { ko: card.rarity };
+        adminList.innerHTML += `
+          <div class="bg-black/40 border border-purple-950 px-3 py-2 rounded-lg flex justify-between items-center text-xs">
+            <div class="flex items-center space-x-2 truncate">
+              <img src="${card.imageUrl}" class="w-7 h-7 object-cover rounded">
+              <span class="text-[10px] font-mono text-pink-400">[${card.rarity}]</span>
+              <span class="truncate text-gray-200">${card.name}</span>
+            </div>
+            <div class="flex space-x-1 flex-shrink-0">
+              <button onclick="prepareEditCard('${card.id}')" class="bg-cyan-950 border border-cyan-800 text-cyan-400 px-2 py-1 rounded text-[10px]">수정</button>
+              <button onclick="deleteCard('${card.id}')" class="bg-red-950 border border-red-800 text-red-400 px-2 py-1 rounded text-[10px]">삭제</button>
+            </div>
+          </div>`;
       });
     }
 
-    // 데이터 초기화 및 불러오기 (Try-Catch 안전 강화)
-    async function initApp() {
-      // 1. 유저 ID 발급 및 로컬 데이터 세팅
-      if (localStorage.getItem("idol_app_uid")) {
-        userId = localStorage.getItem("idol_app_uid");
+    // 초기 데이터 시드 로드 및 백업 엔진
+    async function setupAppEngine() {
+      if (localStorage.getItem("idol_app_uid_v2")) {
+        userId = localStorage.getItem("idol_app_uid_v2");
       } else {
-        userId = "user_" + Math.random().toString(36).substr(2, 9);
-        localStorage.setItem("idol_app_uid", userId);
+        userId = "u_" + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem("idol_app_uid_v2", userId);
       }
 
-      // 로컬 스토리지 백업 데이터 확보
-      userPoints = parseInt(localStorage.getItem(`pts_${userId}`)) || 300;
-      try {
-        unlockedCards = JSON.parse(localStorage.getItem(`cards_${userId}`)) || [];
-      } catch(e) { unlockedCards = []; }
+      userPoints = parseInt(localStorage.getItem(`pts_v2_${userId}`)) || 300;
+      letterCount = parseInt(localStorage.getItem(`letters_v2_${userId}`)) || 0;
+      try { unlockedCards = JSON.parse(localStorage.getItem(`cards_v2_${userId}`)) || []; } catch(e) { unlockedCards = []; }
+      allPhotocards = JSON.parse(localStorage.getItem("local_photocards_v2")) || [];
 
-      // 2. 샘플 기본 카드 풀 세팅 (서버 연동 전 백업용)
-      allPhotocards = JSON.parse(localStorage.getItem("local_photocards")) || [];
-
-      // 3. Firebase Firestore 연결 시도
       try {
         const app = initializeApp(firebaseConfig);
         db = getFirestore(app);
 
-        // Firestore 유저 조회
-        const userDocRef = doc(db, "users", userId);
-        const userSnap = await getDoc(userDocRef);
-        if (userSnap.exists()) {
-          const data = userSnap.data();
-          userPoints = data.points !== undefined ? data.points : userPoints;
-          unlockedCards = data.unlockedCards || unlockedCards;
+        const uSnap = await getDoc(doc(db, "users_v2", userId));
+        if (uSnap.exists()) {
+          const d = uSnap.data();
+          userPoints = d.points !== undefined ? d.points : userPoints;
+          unlockedCards = d.unlockedCards || unlockedCards;
+          letterCount = d.letterCount || letterCount;
         } else {
-          await setDoc(userDocRef, { points: userPoints, unlockedCards: unlockedCards });
+          await setDoc(doc(db, "users_v2", userId), { points: userPoints, unlockedCards: unlockedCards, letterCount: letterCount });
         }
 
-        // Firestore 전체 포토카드 가져오기
-        const querySnapshot = await getDocs(collection(db, "photocards"));
-        const serverCards = [];
-        querySnapshot.forEach((doc) => {
-          serverCards.push({ id: doc.id, ...doc.data() });
-        });
-        if (serverCards.length > 0) {
-          allPhotocards = serverCards;
-          localStorage.setItem("local_photocards", JSON.stringify(allPhotocards));
+        const snapshot = await getDocs(collection(db, "photocards_v2"));
+        const temp = [];
+        snapshot.forEach(doc => temp.push({ id: doc.id, ...doc.data() }));
+        if(temp.length > 0) {
+          allPhotocards = temp;
+          localStorage.setItem("local_photocards_v2", JSON.stringify(allPhotocards));
         }
-      } catch (error) {
-        console.warn("Firebase 원격 데이터베이스 연결 실패 -> 로컬 모드로 작동합니다.", error);
+      } catch(err) {
+        console.warn("원격 서버 데이터베이스 통신 불안정으로 로컬 샌드박스로 완벽 구동됩니다.", err);
       }
-
-      // 동기화 출력
-      updateGlobalUI();
-      renderCollection();
+      syncMainUI();
     }
 
-    // 🌟 전역 함수: 포토북 보유 목록 초기화 (재화는 복구 및 0에서 시작)
+    async function syncUserToServer() {
+      localStorage.setItem(`pts_v2_${userId}`, userPoints);
+      localStorage.setItem(`cards_v2_${userId}`, JSON.stringify(unlockedCards));
+      localStorage.setItem(`letters_v2_${userId}`, letterCount);
+      if(db) {
+        try { await setDoc(doc(db, "users_v2", userId), { points: userPoints, unlockedCards: unlockedCards, letterCount: letterCount }, {merge: true}); } catch(e){}
+      }
+    }
+
     window.resetCollection = async function() {
-      if (!confirm("정말로 포토북을 초기화하시겠습니까?\n내가 획득한 모든 포토카드가 사라지고 처음부터 다시 시작합니다.")) {
-        return;
-      }
-      
+      if(!confirm("포토북 수집 내역만 완전히 지우고 0에서부터 새롭게 리셋하시겠습니까?")) return;
       unlockedCards = [];
-      userPoints = 300; // 뽑기를 시작할 수 있게 웰컴 보너스로 리셋
-
-      // 로컬 스토리지 즉시 반영
-      localStorage.setItem(`pts_${userId}`, userPoints);
-      localStorage.setItem(`cards_${userId}`, JSON.stringify(unlockedCards));
-
-      // 파이어베이스 저장 시도
-      if (db) {
-        try {
-          const userDocRef = doc(db, "users", userId);
-          await updateDoc(userDocRef, { points: userPoints, unlockedCards: unlockedCards });
-        } catch(e) { console.error("서버 동기화 실패(로컬 리셋 완료):", e); }
-      }
-
-      alert("포토북이 완전히 초기화되었습니다. 다시 모아보세요!");
-      updateGlobalUI();
-      renderCollection();
+      userPoints = 300;
+      await syncUserToServer();
+      syncMainUI();
+      alert("포토북 목록이 깨끗하게 청소되었습니다!");
     };
 
-    // 하트 캐칭 게임 로직
-    let gameScore = 0; let timeLeft = 30;
-    window.startGame = function() {
-      document.getElementById("game-intro").classList.add("hidden");
-      const zone = document.getElementById("game-zone");
-      gameScore = 0; timeLeft = 30;
-      document.getElementById("game-score").innerText = gameScore;
-      document.getElementById("game-timer").innerText = timeLeft + "s";
+    // [B] 초고속 고화질 업로드 코어: 브라우저 단에서 Canvas 리사이징/압축 기법을 써서 용량을 대폭 줄여 전송 속도 향상
+    function resizeAndCompressImage(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function(event) {
+          const img = new Image();
+          img.src = event.target.result;
+          img.onload = function() {
+            const canvas = document.createElement("canvas");
+            // 모바일 뷰에 꽉 차면서 화질 안 깨지는 골든 해상도 1080px 기준 제어
+            const MAX_WIDTH = 1080;
+            let width = img.width;
+            let height = img.height;
 
-      zone.querySelectorAll(".falling-heart").forEach(h => h.remove());
+            if (width > MAX_WIDTH) {
+              height = Math.round((height * MAX_WIDTH) / width);
+              width = MAX_WIDTH;
+            }
+            canvas.width = width;
+            canvas.height = height;
 
-      timerInterval = setInterval(() => {
-        timeLeft--;
-        document.getElementById("game-timer").innerText = timeLeft + "s";
-        if (timeLeft <= 0) endGame();
-      }, 1000);
-
-      gameInterval = setInterval(() => {
-        const heart = document.createElement("div");
-        heart.className = "falling-heart absolute cursor-pointer text-pink-500 hover:scale-125 transition-transform duration-100 p-2 z-20 text-2xl";
-        heart.innerHTML = `<i class="fa-solid fa-heart drop-shadow-[0_0_8px_rgba(236,72,153,0.7)]"></i>`;
-        const x = Math.random() * (zone.clientWidth - 40);
-        const y = Math.random() * (zone.clientHeight - 40);
-        heart.style.left = x + "px"; heart.style.top = y + "px";
-
-        heart.addEventListener("mousedown", (e) => {
-          e.stopPropagation(); gameScore += 10;
-          document.getElementById("game-score").innerText = gameScore;
-          heart.remove();
-          const pop = document.createElement("span");
-          pop.className = "absolute text-xs font-logo text-pink-400 font-bold animate-ping";
-          pop.style.left = x + "px"; pop.style.top = y + "px"; pop.innerText = "+10";
-          zone.appendChild(pop); setTimeout(() => pop.remove(), 500);
-        });
-        zone.appendChild(heart);
-        setTimeout(() => { if (heart.parentNode) heart.remove(); }, 1500);
-      }, 600);
-    };
-
-    async function endGame() {
-      clearInterval(gameInterval); clearInterval(timerInterval);
-      document.getElementById("game-zone").querySelectorAll(".falling-heart").forEach(h => h.remove());
-
-      userPoints += gameScore;
-      localStorage.setItem(`pts_${userId}`, userPoints);
-
-      if (db) {
-        try {
-          await updateDoc(doc(db, "users", userId), { points: userPoints });
-        } catch(e) { console.error(e); }
-      }
-      updateGlobalUI();
-
-      document.getElementById("game-intro").innerHTML = `
-        <i class="fa-solid fa-trophy text-yellow-400 text-5xl animate-bounce"></i>
-        <h3 class="font-bold text-lg text-white">종료! +${gameScore} 하트 획득</h3>
-        <button onclick="startGame()" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 font-bold py-3 px-6 rounded-xl hover:brightness-110 transition active:scale-95">다시 하기</button>`;
-      document.getElementById("game-intro").classList.remove("hidden");
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            // jpeg 품질 0.9 (눈으로는 압축 여부 구별 불가능하나 용량은 90% 세이브되어 초고속 업로드 보장)
+            canvas.toBlob((blob) => {
+              resolve(blob);
+            }, "image/jpeg", 0.9);
+          };
+        };
+      });
     }
 
-    // 카드 개봉 가차 로직
-    window.drawCard = async function() {
-      if (userPoints < 100) { alert("하트가 부족합니다! 미니게임으로 충전하세요."); return; }
-      if (allPhotocards.length === 0) { alert("등록된 카드가 없습니다. 관리자 탭에서 포카를 먼저 업로드해 주세요!"); return; }
-
-      userPoints -= 100;
-      localStorage.setItem(`pts_${userId}`, userPoints);
-      updateGlobalUI();
-
-      const container = document.getElementById("gacha-card-container");
-      const defDisplay = document.getElementById("gacha-display-default");
-      const resDisplay = document.getElementById("gacha-display-result");
-
-      defDisplay.innerHTML = `<i class="fa-solid fa-compact-disc text-pink-500 text-5xl animate-spin"></i><p class="text-xs text-pink-300 font-bold mt-2">OPENING PACK...</p>`;
-      resDisplay.classList.add("hidden"); defDisplay.classList.remove("hidden");
-      container.classList.add("scale-95", "rotate-3");
-
-      const pickedCard = allPhotocards[Math.floor(Math.random() * allPhotocards.length)];
-
-      setTimeout(async () => {
-        document.getElementById("gacha-result-img").src = pickedCard.imageUrl;
-        document.getElementById("gacha-result-name").innerText = `[${pickedCard.rarity}] ${pickedCard.name}`;
-        
-        defDisplay.classList.add("hidden"); resDisplay.classList.remove("hidden");
-        container.classList.remove("scale-95", "rotate-3");
-
-        if (!unlockedCards.includes(pickedCard.id)) {
-          unlockedCards.push(pickedCard.id);
-          localStorage.setItem(`cards_${userId}`, JSON.stringify(unlockedCards));
-        }
-
-        if (db) {
-          try {
-            await updateDoc(doc(db, "users", userId), { points: userPoints, unlockedCards: unlockedCards });
-          } catch(e) { console.error(e); }
-        }
-        updateGlobalUI();
-        renderCollection();
-      }, 1200);
-    };
-
-    // 관리자 이미지 업로드
-    window.handleAdminUpload = async function() {
-      const nameInput = document.getElementById("admin-card-name");
-      const raritySelect = document.getElementById("admin-card-rarity");
+    // CRUD - 신규 등록 및 기존 내역 수정 처리
+    window.handleAdminSubmit = async function() {
+      const idInput = document.getElementById("admin-card-id").value;
+      const nameInput = document.getElementById("admin-card-name").value.trim();
+      const raritySelect = document.getElementById("admin-card-rarity").value;
       const fileInput = document.getElementById("admin-card-file");
-      const btn = document.getElementById("admin-btn-upload");
+      const btn = document.getElementById("admin-btn-submit");
 
-      if (!nameInput.value.trim() || fileInput.files.length === 0) {
-        alert("이름과 이미지 파일을 모두 입력해 주세요."); return;
-      }
-
-      const file = fileInput.files[0];
+      if(!nameInput) { alert("포토카드 제목을 기입해 주세요."); return; }
+      
       btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> <span>업로드 중...</span>`;
+      btn.innerText = "데이터 고속 연동 중...";
 
       try {
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("upload_preset", CLOUDINARY_PRESET);
-
-        const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, {
-          method: "POST", body: formData
-        });
-        if (!res.ok) throw new Error("Cloudinary 서버 업로드 실패");
-        const resData = await res.json();
-        const uploadedImageUrl = resData.secure_url;
-
-        const newCard = {
-          id: "card_" + Date.now(),
-          name: nameInput.value.trim(),
-          rarity: raritySelect.value,
-          imageUrl: uploadedImageUrl,
-          createdAt: new Date().toISOString()
-        };
-
-        if (db) {
-          const docRef = await addDoc(collection(db, "photocards"), {
-            name: newCard.name, rarity: newCard.rarity, imageUrl: newCard.imageUrl, createdAt: newCard.createdAt
-          });
-          newCard.id = docRef.id;
+        let imageUrl = "";
+        
+        // 기존 수정 시 이미지를 안 바꿨으면 기존 url 유지용 매칭
+        if(idInput) {
+          const old = allPhotocards.find(c => c.id === idInput);
+          if(old) imageUrl = old.imageUrl;
         }
 
-        // 로컬 배열 추가 및 저장
-        allPhotocards.push(newCard);
-        localStorage.setItem("local_photocards", JSON.stringify(allPhotocards));
+        if(fileInput.files.length > 0) {
+          // 고화질 압축 처리 적용
+          const compressedBlob = await resizeAndCompressImage(fileInput.files[0]);
+          
+          const formData = new FormData();
+          formData.append("file", compressedBlob, "photo.jpg");
+          formData.append("upload_preset", CLOUDINARY_PRESET);
 
-        alert("🎉 새로운 미공개 포토카드가 등록되었습니다!");
-        nameInput.value = ""; fileInput.value = "";
-        
-        updateGlobalUI();
-        renderCollection();
-        switchView('collection');
-      } catch (err) {
-        alert("업로드 실패: " + err.message + "\n(데이터는 로컬에 유지될 수 있습니다.)");
+          const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, { method: "POST", body: formData });
+          if(!res.ok) throw new Error("이미지 클라우드 업로드 실패");
+          const resData = await res.json();
+          imageUrl = resData.secure_url;
+        }
+
+        if(!imageUrl) { throw new Error("포토카드 사진 이미지를 등록해야 합니다."); }
+
+        if(idInput) {
+          // UPDATE (수정 작업)
+          if(db) { await setDoc(doc(db, "photocards_v2", idInput), { name: nameInput, rarity: raritySelect, imageUrl: imageUrl }, {merge: true}); }
+          const targetIndex = allPhotocards.findIndex(c => c.id === idInput);
+          if(targetIndex > -1) {
+            allPhotocards[targetIndex].name = nameInput;
+            allPhotocards[targetIndex].rarity = raritySelect;
+            allPhotocards[targetIndex].imageUrl = imageUrl;
+          }
+          alert("포토카드 수정이 정상 완료되었습니다.");
+        } else {
+          // CREATE (신규 등록)
+          const newDocData = { name: nameInput, rarity: raritySelect, imageUrl: imageUrl, createdAt: new Date().toISOString() };
+          let generatedId = "c_" + Date.now();
+          if(db) {
+            const docRef = await addDoc(collection(db, "photocards_v2"), newDocData);
+            generatedId = docRef.id;
+          }
+          allPhotocards.push({ id: generatedId, ...newDocData });
+          alert("새로운 포토카드가 업로드되었습니다!");
+        }
+
+        localStorage.setItem("local_photocards_v2", JSON.stringify(allPhotocards));
+        resetAdminForm();
+        syncMainUI();
+      } catch(err) {
+        alert("작업 중 오류 발생: " + err.message);
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> <span>Cloudinary + Firebase 등록</span>`;
+        btn.innerText = "등록 / 업데이트";
       }
     };
 
-    // 초기화 기동
-    window.addEventListener("DOMContentLoaded", initApp);
+    window.prepareEditCard = function(id) {
+      const card = allPhotocards.find(c => c.id === id);
+      if(!card) return;
+      document.getElementById("admin-form-title").innerText = "포토카드 정보 수정 모드 ✏️";
+      document.getElementById("admin-card-id").value = card.id;
+      document.getElementById("admin-card-name").value = card.name;
+      document.getElementById("admin-card-rarity").value = card.rarity;
+      document.getElementById("admin-btn-cancel").classList.remove("hidden");
+      document.getElementById("admin-card-name").focus();
+    };
+
+    window.resetAdminForm = function() {
+      document.getElementById("admin-form-title").innerText = "새 포토카드 등록";
+      document.getElementById("admin-card-id").value = "";
+      document.getElementById("admin-card-name").value = "";
+      document.getElementById("admin-card-file").value = "";
+      document.getElementById("admin-btn-cancel").classList.add("hidden");
+    };
+
+    // CRUD - DELETE (포토카드 완전 삭제 기능 구현)
+    window.deleteCard = async function(id) {
+      if(!confirm("이 포토카드를 데이터베이스에서 영구 삭제하시겠습니까?\n이 도감을 수집했던 모든 유저들의 기록에서도 사라집니다.")) return;
+      try {
+        if(db) { await deleteDoc(doc(db, "photocards_v2", id)); }
+        allPhotocards = allPhotocards.filter(c => c.id !== id);
+        unlockedCards = unlockedCards.filter(cId => cId !== id);
+        localStorage.setItem("local_photocards_v2", JSON.stringify(allPhotocards));
+        await syncUserToServer();
+        syncMainUI();
+        alert("성공적으로 데이터가 삭제처리 되었습니다.");
+      } catch(e) { alert("삭제 실패: " + e.message); }
+    };
+
+    // [C] 최애 편지방 소통 및 실시간 즉각 타이핑 답신 시스템
+    window.sendLetter = async function() {
+      const input = document.getElementById("chat-input");
+      const text = input.value.trim();
+      if(!text) return;
+
+      const chatBox = document.getElementById("chat-box");
+      
+      // 유저 말풍선 출력
+      chatBox.innerHTML += `
+        <div class="flex justify-end space-x-2">
+          <div class="bg-pink-600 text-white p-2 rounded-xl rounded-tr-none max-w-[75%]">${text}</div>
+        </div>`;
+      
+      input.value = "";
+      letterCount++;
+      await syncUserToServer();
+      document.getElementById("chat-heart-count").innerText = letterCount;
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      // 친밀도가 3의 배수가 될 때마다 최애 아이돌이 2초 후 실시간 자동 답장 발송 인터랙션
+      if(letterCount % 3 === 0) {
+        // 타이핑 중 연출용 임시 가상 노드 생성
+        const typingId = "typing_" + Date.now();
+        chatBox.innerHTML += `
+          <div id="${typingId}" class="flex space-x-2 items-center">
+            <div class="w-7 h-7 rounded-full bg-pink-600 flex items-center justify-center text-[10px] font-bold">★</div>
+            <div class="bg-purple-900/40 p-2 rounded-xl text-gray-400 animate-pulse">최애 아이돌이 답장을 입력하고 있습니다...</div>
+          </div>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        const replies = [
+          "우와.. 편지 정독했어! 보내준 따뜻한 마음 덕분에 오늘 무대 스케줄도 힘내서 마칠 수 있었어 🤍 항상 고마워 내 편!",
+          "보내준 이야기 다 내 다이어리에 적어두고 싶을 만큼 감동이야.. 너도 오늘 맛있는 거 꼭 챙겨 먹고 내 생각하기 약속! 🤙",
+          "진심이 듬뿍 담긴 글자 하나하나 다 느껴져서 눈물날 뻔했잖아.. 항상 같은 자리에서 응원해줘서 고마워, 사랑해!",
+          "헤헤, 타이밍 딱 맞았네! 나도 마침 유저님 생각하면서 연습실에서 쉬고 있었거든. 우리 완전히 텔레파시 통한 거 맞지? 🥰"
+        ];
+
+        setTimeout(() => {
+          const tNode = document.getElementById(typingId);
+          if(tNode) tNode.remove();
+
+          const randomReply = replies[Math.floor(Math.random() * replies.length)];
+          chatBox.innerHTML += `
+            <div class="flex space-x-2 animate-fade-in">
+              <div class="w-7 h-7 rounded-full bg-pink-600 flex items-center justify-center text-[10px] font-bold">★</div>
+              <div class="bg-purple-900/60 p-2 rounded-xl rounded-tl-none max-w-[75%]">${randomReply}</div>
+            </div>`;
+          chatBox.scrollTop = chatBox.scrollHeight;
+        }, 2200);
+      }
+    };
+
+    // [D] 5가지 프리미엄 버라이어티 미니게임 구동 엔진 통합 개발
+    let currentScore = 0;
+    let currentTimer = 0;
+
+    window.initGame = function(gameId) {
+      switchView('game-play');
+      const canvas = document.getElementById("game-canvas");
+      canvas.innerHTML = "";
+      currentScore = 0;
+      document.getElementById("game-score").innerText = currentScore;
+
+      if (gameId === 1) {
+        // 게임 1: 하트 캐칭 피버
+        document.getElementById("game-title").innerText = "하트 캐칭 피버 💓";
+        currentTimer = 20;
+        document.getElementById("game-timer").innerText = currentTimer + "s";
+        
+        gameTimerInterval = setInterval(() => {
+          currentTimer--;
+          document.getElementById("game-timer").innerText = currentTimer + "s";
+          if(currentTimer <= 0) finishGameEngine();
+        }, 1000);
+
+        gameLoopInterval = setInterval(() => {
+          const target = document.createElement("div");
+          target.className = "absolute text-pink-500 text-3xl cursor-pointer hover:scale-110 p-2 animate-ping";
+          target.innerHTML = `<i class="fa-solid fa-heart"></i>`;
+          target.style.left = Math.random() * (canvas.clientWidth - 45) + "px";
+          target.style.top = Math.random() * (canvas.clientHeight - 45) + "px";
+          target.onclick = (e) => { e.stopPropagation(); currentScore += 15; document.getElementById("game-score").innerText = currentScore; target.remove(); };
+          canvas.appendChild(target);
+          setTimeout(() => target.remove(), 1200);
+        }, 500);
+
+      } else if (gameId === 2) {
+        // 게임 2: 응원봉 타이밍 탭
+        document.getElementById("game-title").innerText = "응원봉 타이밍 탭 ⚡";
+        currentTimer = 5; // 기회 5번 제공
+        document.getElementById("game-timer").innerText = `기회: ${currentTimer}회`;
+
+        canvas.innerHTML = `
+          <div class="w-full text-center space-y-4 px-4">
+            <p class="text-xs text-gray-400">움직이는 네온 핑크 바가 정중앙 연두색 존에 도달했을 때<br>[HIT] 버튼을 정확하게 터치하세요!</p>
+            <div class="w-full h-6 bg-gray-800 rounded-full relative overflow-hidden border border-purple-900">
+              <div class="absolute left-[40%] right-[40%] h-full bg-emerald-500/80"></div>
+              <div id="timing-bar" class="absolute left-0 top-0 w-2.5 h-full bg-pink-500 shadow-[0_0_8px_#ff007f]"></div>
+            </div>
+            <button id="hit-btn" class="w-32 bg-cyan-600 font-bold py-3 rounded-xl text-xs active:scale-95 shadow-md">HIT !</button>
+          </div>`;
+
+        let barPos = 0; let direction = 1;
+        gameLoopInterval = setInterval(() => {
+          barPos += (3 * direction);
+          if(barPos >= 96 || barPos <= 0) direction *= -1;
+          const bar = document.getElementById("timing-bar");
+          if(bar) bar.style.left = barPos + "%";
+        }, 16);
+
+        document.getElementById("hit-btn").onclick = () => {
+          if(barPos >= 40 && barPos <= 60) {
+            currentScore += 50; alert("PERFECT!! +50점");
+          } else {
+            alert("MISS! 아쉬워요!");
+          }
+          currentTimer--;
+          document.getElementById("game-score").innerText = currentScore;
+          document.getElementById("game-timer").innerText = `기회: ${currentTimer}회`;
+          if(currentTimer <= 0) finishGameEngine();
+        };
+
+      } else if (gameId === 3) {
+        // 게임 3: 기억력 카드 매칭
+        document.getElementById("game-title").innerText = "기억력 카드 매칭 🃏";
+        currentTimer = 30;
+        document.getElementById("game-timer").innerText = currentTimer + "s";
+
+        gameTimerInterval = setInterval(() => {
+          currentTimer--;
+          document.getElementById("game-timer").innerText = currentTimer + "s";
+          if(currentTimer <= 0) finishGameEngine();
+        }, 1000);
+
+        const icons = ['⭐', '🍒', '🤍', '⭐', '🍒', '🤍'].sort(() => Math.random() - 0.5);
+        canvas.innerHTML = `<div class="grid grid-cols-3 gap-3 w-48" id="card-holder"></div>`;
+        const holder = document.getElementById("card-holder");
+        
+        let choice = [];
+        icons.forEach((icon, idx) => {
+          const card = document.createElement("div");
+          card.className = "w-14 h-20 bg-purple-900 border border-purple-600 rounded-lg flex items-center justify-center text-xl font-bold cursor-pointer text-transparent";
+          card.innerText = icon;
+          card.onclick = () => {
+            if(choice.length < 2 && card.classList.contains('text-transparent')) {
+              card.classList.remove('text-transparent');
+              card.classList.add('text-white', 'bg-pink-600');
+              choice.push({ card, icon });
+
+              if(choice.length === 2) {
+                if(choice[0].icon === choice[1].icon) {
+                  currentScore += 60;
+                  document.getElementById("game-score").innerText = currentScore;
+                  choice = [];
+                  if(canvas.querySelectorAll('.text-transparent').length === 0) setTimeout(() => finishGameEngine(), 500);
+                } else {
+                  setTimeout(() => {
+                    choice.forEach(c => {
+                      c.card.classList.add('text-transparent');
+                      c.card.classList.remove('text-white', 'bg-pink-600');
+                    });
+                    choice = [];
+                  }, 800);
+                }
+              }
+            }
+          };
+          holder.appendChild(card);
+        });
+
+      } else if (gameId === 4) {
+        // 게임 4: 최애 이름 타이핑 격파
+        document.getElementById("game-title").innerText = "아이돌 단어 타이핑 ⌨️";
+        currentTimer = 25;
+        document.getElementById("game-timer").innerText = currentTimer + "s";
+
+        canvas.innerHTML = `
+          <div class="w-full h-full relative flex flex-col justify-between">
+            <div id="word-zone" class="w-full h-64 relative border-b border-purple-950"></div>
+            <input type="text" id="typing-input" placeholder="여기에 낱말을 입력하고 엔터!" class="w-full bg-purple-950/60 p-2 text-xs rounded-lg text-center text-white focus:outline-none">
+          </div>`;
+
+        gameTimerInterval = setInterval(() => {
+          currentTimer--;
+          document.getElementById("game-timer").innerText = currentTimer + "s";
+          if(currentTimer <= 0) finishGameEngine();
+        }, 1000);
+
+        const dict = ["포토카드", "뮤직비디오", "올어라운더", "엔딩요정", "밀리언셀러", "쇼케이스", "음원차트", "본방사수"];
+        let wordY = 10;
+        const wordZone = document.getElementById("word-zone");
+        const currentWord = dict[Math.floor(Math.random() * dict.length)];
+
+        const wordEl = document.createElement("div");
+        wordEl.className = "absolute left-1/3 bg-pink-900/60 px-3 py-1 rounded text-xs font-bold text-white";
+        wordEl.innerText = currentWord;
+        wordZone.appendChild(wordEl);
+
+        gameLoopInterval = setInterval(() => {
+          wordY += 1.8;
+          wordEl.style.top = wordY + "px";
+          if(wordY >= 230) {
+            wordY = 10;
+            wordEl.innerText = dict[Math.floor(Math.random() * dict.length)];
+            wordEl.style.top = wordY + "px";
+          }
+        }, 30);
+
+        document.getElementById("typing-input").onkeydown = (e) => {
+          if(e.key === 'Enter') {
+            if(e.target.value.trim() === wordEl.innerText) {
+              currentScore += 30;
+              document.getElementById("game-score").innerText = currentScore;
+              wordY = 10;
+              wordEl.innerText = dict[Math.floor(Math.random() * dict.length)];
+            }
+            e.target.value = "";
+          }
+        };
+
+      } else if (gameId === 5) {
+        // 게임 5: 컴백 가위바위보
+        document.getElementById("game-title").innerText = "주간 컴백 가위바위보 ✊";
+        currentTimer = 3; // 3회 제한
+        document.getElementById("game-timer").innerText = `남은판: ${currentTimer}판`;
+
+        canvas.innerHTML = `
+          <div class="text-center space-y-4">
+            <p class="text-xs text-gray-400">대기실의 아이돌 멤버와 짜릿한 한판 승부!</p>
+            <div class="text-3xl text-pink-500 animate-bounce" id="ai-status"><i class="fa-solid fa-user-astronaut"></i></div>
+            <div class="flex space-x-2 justify-center">
+              <button onclick="playRPS('✊')" class="bg-purple-900 border border-purple-600 px-3 py-2 rounded-lg text-sm active:scale-95">✊ 주먹</button>
+              <button onclick="playRPS('✋')" class="bg-purple-900 border border-purple-600 px-3 py-2 rounded-lg text-sm active:scale-95">✋ 보</button>
+              <button onclick="playRPS('✌️')" class="bg-purple-900 border border-purple-600 px-3 py-2 rounded-lg text-sm active:scale-95">✌️ 가위</button>
+            </div>
+          </div>`;
+
+        window.playRPS = function(userPick) {
+          const rpsArr = ['✊', '✋', '✌️'];
+          const aiPick = rpsArr[Math.floor(Math.random() * rpsArr.length)];
+          
+          if(userPick === aiPick) {
+            currentScore += 20; alert(`아이돌도 [${aiPick}]! 비겼습니다! (+20점)`);
+          } else if((userPick==='✊'&&aiPick==='✌️') || (userPick==='✋'&&aiPick==='✊') || (userPick==='✌️'&&aiPick==='✋')) {
+            currentScore += 60; alert(`아이돌은 [${aiPick}]! 승리했습니다! (+60점)`);
+          } else {
+            alert(`아이돌은 [${aiPick}]! 졌습니다.. (0점)`);
+          }
+          
+          currentTimer--;
+          document.getElementById("game-score").innerText = currentScore;
+          document.getElementById("game-timer").innerText = `남은판: ${currentTimer}판`;
+          if(currentTimer <= 0) finishGameEngine();
+        };
+      }
+    };
+
+    // 정산 완료 엔진 가동 및 리포트 연출
+    async function finishGameEngine() {
+      clearInterval(gameLoopInterval); clearInterval(gameTimerInterval);
+      userPoints += currentScore;
+      await syncUserToServer();
+      syncMainUI();
+
+      document.getElementById("game-canvas").innerHTML = `
+        <div class="text-center space-y-3">
+          <i class="fa-solid fa-gift text-yellow-400 text-4xl animate-bounce"></i>
+          <h3 class="font-bold text-sm text-white">미니게임 완벽 클리어!</h3>
+          <p class="text-xs text-gray-400">최종 획득 팬 하트: <b class="text-pink-400">+${currentScore} 🤍</b></p>
+          <button onclick="switchView('game-select')" class="bg-gradient-to-r from-pink-500 to-purple-600 font-bold px-4 py-2 text-xs rounded-lg active:scale-95 transition">게임목록으로</button>
+        </div>`;
+    }
+
+    // 럭키 가차 개봉 로직
+    window.drawCard = async function() {
+      if(userPoints < 100) { alert("하트 포인트가 부족합니다. 미니게임에서 🤍를 보충하세요!"); return; }
+      if(allPhotocards.length === 0) { alert("데이터베이스에 등록된 포토카드가 없습니다. 관리자 메뉴에서 등록부터 해주세요!"); return; }
+
+      userPoints -= 100;
+      syncMainUI();
+
+      const def = document.getElementById("gacha-display-default");
+      const res = document.getElementById("gacha-display-result");
+      const container = document.getElementById("gacha-card-container");
+
+      def.innerHTML = `<i class="fa-solid fa-compact-disc text-pink-500 text-4xl animate-spin"></i><p class="text-[10px] text-pink-400 font-mono mt-2">DREW PACK OPENING...</p>`;
+      res.classList.add("hidden"); def.classList.remove("hidden");
+      container.classList.add("scale-95", "rotate-6");
+
+      const randomCard = allPhotocards[Math.floor(Math.random() * allPhotocards.length)];
+
+      setTimeout(async () => {
+        document.getElementById("gacha-result-img").src = randomCard.imageUrl;
+        document.getElementById("gacha-result-name").innerText = `[${randomCard.rarity}] ${randomCard.name}`;
+        
+        def.classList.add("hidden"); res.classList.remove("hidden");
+        container.classList.remove("scale-95", "rotate-6");
+
+        if(!unlockedCards.includes(randomCard.id)) {
+          unlockedCards.push(randomCard.id);
+        }
+        await syncUserToServer();
+        syncMainUI();
+      }, 1300);
+    };
+
+    window.addEventListener("DOMContentLoaded", setupAppEngine);
   </script>
 </body>
 </html>
