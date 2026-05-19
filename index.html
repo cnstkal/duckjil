@@ -2493,35 +2493,21 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
     </script>
 
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+<script>
+window.addEventListener("DOMContentLoaded",()=>{
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAA6mbdYfLrrgCJjN47PX91_mU7I53RiBs",
-  authDomain: "site-c67b4.firebaseapp.com",
-  projectId: "site-c67b4",
-  storageBucket: "site-c67b4.firebasestorage.app",
-  messagingSenderId: "744761377245",
-  appId: "1:744761377245:web:3ddaee14f184716eeef634"
-};
+const ADMIN_PASSWORD="duckjiladmin";
 
-initializeApp(firebaseConfig);
-const db = getFirestore();
+/* =========================
+   ADMIN UI
+========================= */
 
-const CLOUDINARY_CLOUD='dbljkloal';
-const CLOUDINARY_PRESET='clowofficial';
-
-/* 관리자 버튼 */
+let isAdmin=
+localStorage.getItem("duckjil-admin")==="true";
 
 const adminBtn=document.createElement("button");
 
-adminBtn.innerText="관리자";
+adminBtn.innerHTML=isAdmin?"로그아웃":"관리자";
 
 adminBtn.style.cssText=`
 position:fixed;
@@ -2542,31 +2528,50 @@ document.body.appendChild(adminBtn);
 
 adminBtn.onclick=()=>{
 
+if(isAdmin){
+
+localStorage.removeItem("duckjil-admin");
+
+alert("로그아웃 완료");
+
+location.reload();
+
+return;
+}
+
 const pw=prompt("관리자 비밀번호");
 
-if(pw==="duckjiladmin"){
+if(pw===ADMIN_PASSWORD){
 
 localStorage.setItem("duckjil-admin","true");
 
-alert("관리자모드 활성화");
+alert("관리자 모드 활성화");
 
-enableAdminFeatures();
+location.reload();
 
+}else if(pw!==null){
+
+alert("비밀번호 틀림");
 }
 };
 
-function enableAdminFeatures(){
-
-/* 프로필 업로드 */
+/* =========================
+   PROFILE IMAGE
+========================= */
 
 const avatar=document.getElementById("avatar-emoji");
 
 if(avatar){
 
+avatar.style.overflow="hidden";
+
+const savedProfile=
+localStorage.getItem("duckjil-profile");
+
 avatar.innerHTML=`
 <img
 id="profile-image"
-src="${localStorage.getItem("duckjil-profile") || "https://placehold.co/300x300"}"
+src="${savedProfile || "https://placehold.co/300x300"}"
 style="
 width:100%;
 height:100%;
@@ -2576,18 +2581,11 @@ border-radius:999px;
 />
 `;
 
-const upload=document.createElement("input");
-
-upload.type="file";
-upload.accept="image/*";
-
-upload.style.display="none";
-
-document.body.appendChild(upload);
+if(isAdmin){
 
 const profileBtn=document.createElement("button");
 
-profileBtn.innerText="프로필 사진";
+profileBtn.innerHTML="프로필";
 
 profileBtn.style.cssText=`
 margin-top:8px;
@@ -2597,9 +2595,18 @@ border:none;
 padding:6px 10px;
 border-radius:999px;
 font-size:11px;
+font-weight:700;
 `;
 
 avatar.parentElement.appendChild(profileBtn);
+
+const upload=document.createElement("input");
+
+upload.type="file";
+upload.accept="image/*";
+upload.style.display="none";
+
+document.body.appendChild(upload);
 
 profileBtn.onclick=()=>{
 upload.click();
@@ -2614,10 +2621,10 @@ if(!file)return;
 const form=new FormData();
 
 form.append("file",file);
-form.append("upload_preset",CLOUDINARY_PRESET);
+form.append("upload_preset","clowofficial");
 
 const res=await fetch(
-`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`,
+"https://api.cloudinary.com/v1_1/dbljkloal/image/upload",
 {
 method:"POST",
 body:form
@@ -2628,7 +2635,9 @@ const data=await res.json();
 
 if(data.secure_url){
 
-document.getElementById("profile-image").src=data.secure_url;
+document.getElementById(
+"profile-image"
+).src=data.secure_url;
 
 localStorage.setItem(
 "duckjil-profile",
@@ -2637,42 +2646,90 @@ data.secure_url
 }
 };
 }
+}
 
-/* 포카 업로드 */
+/* =========================
+   PHOTOCARD NAMES
+========================= */
 
-const uploadCardBtn=document.createElement("button");
+const cards=[
+...document.querySelectorAll(
+".photocard,.photo-card,[class*=photocard]"
+)
+];
 
-uploadCardBtn.innerText="포카 추가";
+cards.forEach((card,index)=>{
 
-uploadCardBtn.style.cssText=`
-position:fixed;
-top:70px;
-right:14px;
-z-index:999999999;
+let label=
+card.querySelector(
+".card-name,.name,h3,h4,p,span"
+);
+
+if(!label){
+
+label=document.createElement("div");
+
+label.innerHTML=`포카 ${index+1}`;
+
+label.style.marginTop="6px";
+
+card.appendChild(label);
+}
+
+label.classList.add("duckjil-card-name");
+
+if(!isAdmin){
+
+label.style.display="none";
+
+}else{
+
+label.style.display="block";
+label.style.fontWeight="700";
+label.style.fontSize="12px";
+label.style.marginTop="6px";
+}
+});
+
+/* =========================
+   PHOTOCARD IMAGE CHANGE
+========================= */
+
+if(isAdmin){
+
+cards.forEach((card,index)=>{
+
+const btn=document.createElement("button");
+
+btn.innerHTML=`포카 수정 ${index+1}`;
+
+btn.style.cssText=`
+margin-top:8px;
 background:#7c3aed;
 color:white;
 border:none;
-padding:12px 16px;
+padding:6px 10px;
 border-radius:999px;
-font-size:12px;
+font-size:11px;
 font-weight:700;
+display:block;
 `;
 
-document.body.appendChild(uploadCardBtn);
+card.appendChild(btn);
 
-const cardInput=document.createElement("input");
+const upload=document.createElement("input");
 
-cardInput.type="file";
-cardInput.accept="image/*";
-cardInput.style.display="none";
+upload.type="file";
+upload.accept="image/*";
+upload.style.display="none";
 
-document.body.appendChild(cardInput);
+document.body.appendChild(upload);
 
-uploadCardBtn.onclick=()=>{
-cardInput.click();
+btn.onclick=()=>{
+upload.click();
 };
 
-cardInput.onchange=async(e)=>{
+upload.onchange=async(e)=>{
 
 const file=e.target.files[0];
 
@@ -2681,10 +2738,10 @@ if(!file)return;
 const form=new FormData();
 
 form.append("file",file);
-form.append("upload_preset",CLOUDINARY_PRESET);
+form.append("upload_preset","clowofficial");
 
 const res=await fetch(
-`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`,
+"https://api.cloudinary.com/v1_1/dbljkloal/image/upload",
 {
 method:"POST",
 body:form
@@ -2695,72 +2752,55 @@ const data=await res.json();
 
 if(!data.secure_url)return;
 
-await addDoc(collection(db,"photocards"),{
-image:data.secure_url,
-createdAt:Date.now()
-});
+let img=card.querySelector("img");
 
-renderCard(data.secure_url);
+if(img){
+
+img.src=data.secure_url;
+}
+
+localStorage.setItem(
+"duckjil-photocard-"+index,
+data.secure_url
+);
 };
-}
-
-function renderCard(url){
-
-const grid=
-document.getElementById("photocard-grid")
-|| document.querySelector(".grid");
-
-if(!grid)return;
-
-const card=document.createElement("div");
-
-card.className="photocard rounded-xl overflow-hidden border border-pink-500/20";
-
-card.innerHTML=`
-<img
-src="${url}"
-style="
-width:100%;
-height:190px;
-object-fit:cover;
-"
-/>
-`;
-
-grid.prepend(card);
-}
-
-async function loadCards(){
-
-try{
-
-const snap=await getDocs(collection(db,"photocards"));
-
-snap.forEach(doc=>{
-
-const data=doc.data();
-
-if(data.image){
-renderCard(data.image);
-}
 });
 
-}catch(e){
-console.log(e);
+/* restore saved */
+
+cards.forEach((card,index)=>{
+
+const saved=
+localStorage.getItem(
+"duckjil-photocard-"+index
+);
+
+if(saved){
+
+let img=card.querySelector("img");
+
+if(img){
+img.src=saved;
 }
 }
+});
+}
 
-loadCards();
+/* =========================
+   DOUBLE TAP BLOCK
+========================= */
 
-/* 확대 방지 */
-
-document.addEventListener("dblclick",e=>{
-e.preventDefault();
-},{passive:false});
+document.addEventListener(
+"dblclick",
+e=>e.preventDefault(),
+{passive:false}
+);
 
 let lastTouchEnd=0;
 
-document.addEventListener("touchend",(e)=>{
+document.addEventListener(
+"touchend",
+function(e){
 
 const now=(new Date()).getTime();
 
@@ -2770,32 +2810,40 @@ e.preventDefault();
 
 lastTouchEnd=now;
 
-},false);
+},
+false
+);
 
-/* 랜덤 답신 */
+/* =========================
+   RANDOM REPLY
+========================= */
 
 const replies=[
 "오늘도 와줘서 고마워 💖",
-"편지 읽고 진짜 힘났어!",
-"항상 응원 고마워 🥺",
-"다음에도 또 와줘!",
-"나도 보고싶었어 💕"
+"편지 읽었어!!",
+"진짜 힘났어 🥺",
+"나도 보고싶었어",
+"항상 응원 고마워 ✨",
+"다음에도 또 와줘 💕"
 ];
 
 setTimeout(()=>{
 
-const textarea=document.querySelector("textarea");
+const textarea=
+document.querySelector("textarea");
 
-if(!textarea)return;
+const buttons=[
+...document.querySelectorAll("button")
+];
 
-const buttons=[...document.querySelectorAll("button")];
-
-const sendBtn=buttons.find(
-b=>b.innerText.includes("보내")
-|| b.innerText.includes("편지")
+const sendBtn=
+buttons.find(btn=>
+btn.innerText.includes("보내")
+|| btn.innerText.includes("편지")
+|| btn.innerText.includes("작성")
 );
 
-if(!sendBtn)return;
+if(!textarea || !sendBtn)return;
 
 sendBtn.addEventListener("click",()=>{
 
@@ -2816,13 +2864,18 @@ if(count>=3 && Math.random()>0.5){
 
 setTimeout(()=>{
 
-const pop=document.createElement("div");
+const popup=
+document.createElement("div");
 
-pop.innerHTML=
+popup.innerHTML=
 "💌 최애 답장<br><br>"+
-replies[Math.floor(Math.random()*replies.length)];
+replies[
+Math.floor(
+Math.random()*replies.length
+)
+];
 
-pop.style.cssText=`
+popup.style.cssText=`
 position:fixed;
 left:50%;
 bottom:100px;
@@ -2836,24 +2889,19 @@ text-align:center;
 box-shadow:0 0 25px rgba(255,42,122,.5);
 `;
 
-document.body.appendChild(pop);
+document.body.appendChild(popup);
 
 setTimeout(()=>{
-pop.remove();
+popup.remove();
 },4500);
 
 },1200);
 }
 });
 
-},1500);
+},1200);
 
-/* 자동 관리자 유지 */
-
-if(localStorage.getItem("duckjil-admin")==="true"){
-enableAdminFeatures();
-}
-
+});
 </script>
 
 </body></html>
