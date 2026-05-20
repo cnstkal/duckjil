@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
   <title>IDOL CARD UNIVERSE PRO</title>
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Noto+Sans+KR:wght@400;500;700&display=swap');
@@ -288,13 +290,13 @@
       <div class="space-y-2">
         <h3 class="text-xs font-bold text-gray-400">데이터베이스 실시간 현황 목록</h3>
         
-        <div class="flex items-center justify-between bg-purple-950/20 border border-purple-900/50 p-2.5 rounded-xl text-xs">
+        <div class="flex items-center justify-between bg-purple-950/20 border border-purple-900 px-2.5 py-2.5 rounded-xl text-xs">
           <label class="flex items-center space-x-2 cursor-pointer select-none">
             <input type="checkbox" id="admin-select-all" onclick="toggleSelectAllAdminCards(this)" class="accent-pink-500 w-3.5 h-3.5 rounded">
             <span class="text-gray-400 font-medium text-[11px]">전체 선택</span>
           </label>
           <div class="flex space-x-1">
-            <button onclick="deleteSelectedCards()" class="bg-red-950/60 border border-red-800/50 text-red-400 px-2.5 py-1 rounded-md text-[10px] hover:bg-red-900/50 transition">선택 삭제</button>
+            <button onclick="deleteSelectedCards()" class="bg-red-950/60 border border-red-800 text-red-400 px-2.5 py-1 rounded-md text-[10px] hover:bg-red-900/50 transition">선택 삭제</button>
             <button onclick="deleteAllCards()" class="bg-red-600 hover:bg-red-700 text-white font-bold px-2.5 py-1 rounded-md text-[10px] transition">전체 삭제</button>
           </div>
         </div>
@@ -465,7 +467,7 @@
         });
       }
 
-      // ⭐ [수정] 관리자 목록 UI 렌더링에 체크박스 연동 바인딩
+      // 관리자 목록 UI 렌더링에 체크박스 연동 바인딩
       const adminList = document.getElementById("admin-cards-list");
       adminList.innerHTML = "";
       allPhotocards.forEach(card => {
@@ -529,7 +531,7 @@
         const temp = [];
         snapshot.forEach(doc => temp.push({ id: doc.id, ...doc.data() }));
         if(temp.length > 0) { allPhotocards = temp; localStorage.setItem("local_photocards_v2", JSON.stringify(allPhotocards)); }
-      } catch(err) { console.warn("원격 DB 연결 오류 -> 로컬 샌드박스로 가동됩니다.", err); }
+      } catch(err) { console.warn("원격 DB 연결 오류 -> 로컬 모드로 작동합니다.", err); }
       syncMainUI();
     }
 
@@ -542,9 +544,9 @@
     }
 
     window.resetCollection = async function() {
-      if(!confirm("포토북 수집 내역만 완전히 지우고 처음부터 다시 시작하시겠습니까?\n(🤍 하트는 소모 및 초기화되지 않고 영구히 유지됩니다.)")) return;
+      if(!confirm("포토북 수집 내역만 완전히 지우고 처음부터 다시 시작하시겠습니까?\n(⚠️ 하트는 소모 및 초기화되지 않고 유지됩니다.)")) return;
       unlockedCards = []; await syncUserToServer(); syncMainUI();
-      alert("하트 자산 보유량은 유지되며 포토북 목록만 초기화되었습니다!");
+      alert("하트 보유량은 유지되며 포토북 목록만 초기화되었습니다!");
     };
 
     window.resetChatHistory = function() {
@@ -572,13 +574,11 @@
       });
     }
 
-    // ⭐ [수정] 1. 이름 비우고 등록 시 자동 폴백 지정 모듈 가동
+    // 이름 비우고 등록 시 자동 폴백 지정 모듈 가동
     window.handleAdminSubmit = async function() {
       const idInput = document.getElementById("admin-card-id").value;
       const rawName = document.getElementById("admin-card-name").value.trim();
-      
-      // 기입 정보가 없으면 공백 자동 배정 문자열 매칭 처리 수행
-      const nameInput = rawName || "[미공개] 새 포토카드";
+      const nameInput = rawName || "[미공개] 새 포토카드"; // 💡 공백 시 자동 디폴트 이름 배정
       
       const raritySelect = document.getElementById("admin-card-rarity").value;
       const fileInput = document.getElementById("admin-card-file");
@@ -641,91 +641,45 @@
       } catch(e) { alert("삭제 실패: " + e.message); }
     };
 
-    // ⭐ [추가] 2. 관리자 탭 전체선택 토글 작동 엔진 스크립트
     window.toggleSelectAllAdminCards = function(masterCanvasCheckbox) {
       const listCheckboxes = document.querySelectorAll(".admin-card-checkbox");
       listCheckboxes.forEach(box => box.checked = masterCanvasCheckbox.checked);
     };
 
-    // ⭐ [추가] 2. 체크된 리스트 항목만 골라서 부분 일괄 삭제 기믹
     window.deleteSelectedCards = async function() {
       const checkedBoxes = document.querySelectorAll(".admin-card-checkbox:checked");
       if(checkedBoxes.length === 0) { alert("삭제할 포토카드를 왼쪽 체크박스로 선택해 주세요."); return; }
-      
-      if(!confirm(`선택된 총 ${checkedBoxes.length}개의 포토카드를 일괄 삭제하시겠습니까?\n이 작업은 데이터베이스에서 즉시 집계 소멸됩니다.`)) return;
+      if(!confirm(`선택된 총 ${checkedBoxes.length}개의 포토카드를 일괄 삭제하시겠습니까?`)) return;
       
       const idsToDelete = Array.from(checkedBoxes).map(box => box.dataset.id);
-      
       for(const targetId of idsToDelete) {
-        try {
-          if(db) { await deleteDoc(doc(db, "photocards_v2", targetId)); }
-        } catch(e) { console.error(e); }
+        try { if(db) { await deleteDoc(doc(db, "photocards_v2", targetId)); } } catch(e){}
         allPhotocards = allPhotocards.filter(c => c.id !== targetId);
         unlockedCards = unlockedCards.filter(cId => cId !== targetId);
       }
-
       localStorage.setItem("local_photocards_v2", JSON.stringify(allPhotocards));
-      document.getElementById("admin-select-all").checked = false; // 마스터 상태 원복 리셋
+      document.getElementById("admin-select-all").checked = false;
       await syncUserToServer(); syncMainUI();
-      alert(`선택한 포토카드 ${checkedBoxes.length}개가 정상 일괄 삭제 정산되었습니다.`);
+      alert(`선택한 포토카드 ${checkedBoxes.length}개가 삭제되었습니다.`);
     };
 
-    // ⭐ [추가] 2. 원클릭 가차 풀 완전 초기화 (전체 데이터 삭제)
     window.deleteAllCards = async function() {
       if(allPhotocards.length === 0) { alert("삭제할 수 있는 포토카드 목록이 존재하지 않습니다."); return; }
-      if(!confirm("⚠️ 치명적인 경고: 시스템 데이터베이스 상의 모든 포토카드를 일괄 영구 삭제하시겠습니까?\n이 작업은 되돌릴 수 없으며 유저 도감 연동도 전부 자물쇠 락 처리됩니다.")) return;
+      if(!confirm("⚠️ 치명적 경고: 정말 시스템 내의 모든 포토카드를 일괄 영구 삭제하시겠습니까?")) return;
       
       for(const card of allPhotocards) {
-        try {
-          if(db) { await deleteDoc(doc(db, "photocards_v2", card.id)); }
-        } catch(e){}
+        try { if(db) { await deleteDoc(doc(db, "photocards_v2", card.id)); } } catch(e){}
       }
-      
       allPhotocards = []; unlockedCards = [];
       localStorage.setItem("local_photocards_v2", JSON.stringify(allPhotocards));
       document.getElementById("admin-select-all").checked = false;
       await syncUserToServer(); syncMainUI();
-      alert("데이터베이스 풀 내의 모든 포토카드가 깨끗하게 완파 삭제되었습니다.");
-    };
-
-    window.sendLetter = async function() {
-      const input = document.getElementById("chat-input"); const text = input.value.trim(); if(!text) return;
-      chatHistory.push({ type: "user", text: text });
-      input.value = ""; letterCount++; renderChatBox(); await syncUserToServer();
-
-      if(letterCount % 3 === 0) {
-        const typingId = "typing_" + Date.now();
-        const chatBox = document.getElementById("chat-box");
-        chatBox.innerHTML += `
-          <div id="${typingId}" class="flex space-x-2 items-center">
-            <div class="w-7 h-7 rounded-full bg-pink-600 flex items-center justify-center text-[10px] font-bold">★</div>
-            <div class="bg-purple-900/40 p-2 rounded-xl text-gray-400 animate-pulse">최애 아이돌이 답장을 입력하고 있습니다...</div>
-          </div>`;
-        chatBox.scrollTop = chatBox.scrollHeight;
-
-        const replies = [
-          "우와.. 편지 정독했어! 보내준 따뜻한 마음 덕분에 오늘 무대 스케줄도 힘내서 마칠 수 있었어 🤍 항상 고마워 내 편!",
-          "보내준 이야기 다 내 다이어리에 적어두고 싶을 만큼 감동이야.. 너도 오늘 맛있는 거 꼭 챙겨 먹고 내 생각하기 약속! 🤙",
-          "진심이 듬뿍 담긴 글자 하나하나 다 느껴져서 눈물날 뻔했잖아.. 항상 같은 자리에서 응원해줘서 고마워, 사랑해!",
-          "헤헤, 타이밍 딱 맞았네! 나도 마침 유저님 생각하면서 연습실에서 쉬고 있었거든. 우리 완전히 텔레파시 통한 거 맞지? 🥰",
-          "똑똑- 소중한 편지 배달 완료 확인! 유저님이 보내준 응원 가사들 흥얼거리면서 내일 컴백 녹음도 예쁘게 해낼게! 대기하고 있어줘 🎤",
-          "요즘 스케줄 바빠서 조금 지쳤었는데, 신기하게 딱 유저님 글 읽자마자 피로가 사르르 녹아내리는 기분이야.. 넌 내 최고의 비타민이야 🤍",
-          "달이 되게 예쁘게 뜬 밤이다, 그치? 멀리 있어도 우리 같은 달을 보고 같은 음악을 들으며 소통하고 있다고 믿어. 오늘 밤 꿈에서 만나자 🌙",
-          "우와앙 격렬한 하트 감동! 다음 팬싸인회 때는 내가 먼저 유저님 알아보고 하트 오만 개 날려줄 거야. 약속 기억하고 있을게! 🪐"
-        ];
-
-        setTimeout(async () => {
-          const tNode = document.getElementById(typingId); if(tNode) tNode.remove();
-          const randomReply = replies[Math.floor(Math.random() * replies.length)];
-          chatHistory.push({ type: "idol", text: randomReply }); renderChatBox(); await syncUserToServer();
-        }, 1700);
-      }
+      alert("데이터베이스 안의 모든 카드가 완파 삭제되었습니다.");
     };
 
     // ==========================================
-    // 🕹️ 미니게임 구동 코어 엔진부
+    // 🕹️ 미니게임 구동 코어 엔진부 (버그 전면 쇄신)
     // ==========================================
-    let canvasElementBackup = null;
     window.initGame = function(gameId) {
       if (gameId === 6 && userPoints < 100) { alert(`올인 게임은 최소 100하트 이상 보유 시 가능합니다!\n현재 보유 하트: ${userPoints} 🤍`); return; }
       switchView('game-play');
@@ -733,7 +687,7 @@
       document.getElementById("game-score").innerText = currentScore;
 
       // ----------------------------------------
-      // 게임 1: 하트 캐칭 피버 (10초 긴박 타임어택)
+      // 게임 1: 하트 캐칭 피버 (너비 안전 장치 이식)
       // ----------------------------------------
       if (gameId === 1) {
         document.getElementById("game-title").innerText = "하트 캐칭 피버 💓 (난이도: 10초 가속)";
@@ -749,8 +703,12 @@
           const target = document.createElement("div");
           target.className = "absolute text-pink-500 text-4xl cursor-pointer p-4 heart-pop select-none z-30 flex items-center justify-center";
           target.innerHTML = `<i class="fa-solid fa-heart filter drop-shadow-[0_0_6px_#ff007f]"></i>`;
-          target.style.left = Math.random() * (canvas.clientWidth - 65) + "px";
-          target.style.top = Math.random() * (canvas.clientHeight - 65) + "px";
+          
+          // 💡 오작동 방지: 캔버스 크기 일시 오류 시 안전 규격(350x380)을 백업으로 활용
+          let canvasWidth = canvas.clientWidth || 350;
+          let canvasHeight = canvas.clientHeight || 380;
+          target.style.left = Math.random() * (canvasWidth - 70) + "px";
+          target.style.top = Math.random() * (canvasHeight - 70) + "px";
           
           target.addEventListener('pointerdown', (e) => {
             e.stopPropagation(); e.preventDefault(); currentScore += 20;
@@ -771,28 +729,28 @@
         spawnHeartFeverLoop();
 
       // ----------------------------------------
-      // 게임 2: 응원봉 타이밍 탭
+      // 게임 2: 응원봉 타이밍 탭 (Tailwind v3 패치로 완전 출력 보장)
       // ----------------------------------------
       } else if (gameId === 2) {
         document.getElementById("game-title").innerText = "응원봉 타이밍 탭 ⚡ (난이도: 보통)";
         currentTimer = 5; document.getElementById("game-timer").innerText = `기회: ${currentTimer}회`;
         canvas.innerHTML = `
-          <div class="w-full text-center space-y-4 px-4">
+          <div class="w-full text-center space-y-4 px-4 flex flex-col items-center">
             <p class="text-xs text-gray-400">움직이는 바가 연두색 세이프 존 정중앙에 올 때<br>[HIT] 버튼을 정확하게 탭하세요!</p>
-            <div class="w-full h-6 bg-gray-800 rounded-full relative overflow-hidden border border-purple-900">
-              <div class="absolute left-[42%] right-[42%] h-full bg-emerald-500/80"></div>
-              <div id="timing-bar" class="absolute left-0 top-0 w-2.5 h-full bg-pink-500 shadow-[0_0_8px_#ff007f]"></div>
+            <div class="w-full max-w-[280px] h-6 bg-gray-800 rounded-full relative overflow-hidden border border-purple-900 mt-2">
+              <div class="absolute left-[42%] right-[42%] h-full bg-emerald-500"></div>
+              <div id="timing-bar" class="absolute left-0 top-0 w-3 h-full bg-pink-500 shadow-md"></div>
             </div>
-            <button id="hit-btn" class="w-32 bg-cyan-600 font-bold py-3 rounded-xl text-xs active:scale-95 shadow-md">HIT !</button>
+            <button id="hit-btn" class="w-32 bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 rounded-xl text-xs active:scale-95 shadow-md mt-4">HIT !</button>
           </div>`;
         let barPos = 0; let direction = 1;
         gameLoopInterval = setInterval(() => {
-          barPos += (3.5 * direction); if(barPos >= 96 || barPos <= 0) direction *= -1;
+          barPos += (3.5 * direction); if(barPos >= 95 || barPos <= 0) direction *= -1;
           const bar = document.getElementById("timing-bar"); if(bar) bar.style.left = barPos + "%";
         }, 16);
         document.getElementById("hit-btn").onclick = () => {
-          if(barPos >= 40 && barPos <= 60) { currentScore += 40; alert("PERFECT!! 리듬 장인 +40점 적립 🥳"); }
-          else { alert("MISS! 타이밍을 아쉽게 놓쳤습니다! 😢"); }
+          if(barPos >= 40 && barPos <= 60) { currentScore += 40; alert("PERFECT!! +40점 적립 🥳"); }
+          else { alert("MISS! 타이밍을 놓쳤습니다! 😢"); }
           currentTimer--; document.getElementById("game-score").innerText = currentScore;
           document.getElementById("game-timer").innerText = `기회: ${currentTimer}회`;
           if(currentTimer <= 0) finishGameEngine();
@@ -851,7 +809,7 @@
         });
 
       // ----------------------------------------
-      // 게임 4: 팬덤 가사 타이핑
+      // 게임 4: 팬덤 가사 타이핑 (네이티브 폼 서브밋 구동 보장)
       // ----------------------------------------
       } else if (gameId === 4) {
         document.getElementById("game-title").innerText = "아이돌 팬덤 타이핑 ⌨️ (난이도: 중상)";
@@ -863,10 +821,10 @@
 
         canvas.innerHTML = `
           <div class="w-full h-full relative flex flex-col justify-between">
-            <div id="word-zone" class="w-full h-64 relative border-b border-purple-950"></div>
-            <form id="typing-submit-form" class="w-full flex space-x-1.5 p-0.5">
+            <div id="word-zone" class="w-full h-[240px] relative border-b border-purple-950/40 overflow-hidden"></div>
+            <form id="typing-submit-form" class="w-full flex space-x-1.5 p-0.5 mt-2">
               <input type="text" id="typing-input-box" autocomplete="off" placeholder="단어 고속 입력 후 엔터 또는 확인" class="flex-1 bg-purple-950/70 border border-purple-800 p-2.5 text-xs rounded-xl text-center text-white focus:outline-none focus:border-pink-500">
-              <button type="submit" class="bg-pink-600 px-4 rounded-xl text-xs font-bold active:scale-95">확인</button>
+              <button type="submit" class="bg-pink-600 hover:bg-pink-700 text-white px-4 rounded-xl text-xs font-bold active:scale-95">확인</button>
             </form>
           </div>`;
 
@@ -883,7 +841,7 @@
 
         gameLoopInterval = setInterval(() => {
           wordY += 2.9; wordEl.style.top = wordY + "px";
-          if(wordY >= 230) {
+          if(wordY >= 210) {
             wordY = 10; currentWord = dict[Math.floor(Math.random() * dict.length)];
             wordEl.innerText = currentWord; wordEl.style.top = wordY + "px";
             let fallbackWidth = wordZone.clientWidth || 300;
@@ -916,10 +874,10 @@
           <div class="text-center space-y-4">
             <p class="text-xs text-gray-400">컴백 라이브 대기실 멤버의 심리를 꿰뚫어 보세요!</p>
             <div class="text-4xl text-pink-500 animate-bounce" id="ai-status"><i class="fa-solid fa-user-astronaut"></i></div>
-            <div class="flex space-x-2 justify-center">
-              <button onclick="playRPS('✊')" class="bg-purple-900 border border-purple-600 px-3 py-2 rounded-lg text-sm active:scale-95">✊ 주먹</button>
-              <button onclick="playRPS('✋')" class="bg-purple-900 border border-purple-600 px-3 py-2 rounded-lg text-sm active:scale-95">✋ 보</button>
-              <button onclick="playRPS('✌️')" class="bg-purple-900 border border-purple-600 px-3 py-2 rounded-lg text-sm active:scale-95">✌️ 가위</button>
+            <div class="flex space-x-2 justify-center mt-4">
+              <button onclick="playRPS('✊')" class="bg-purple-900 border border-purple-600 text-white px-3 py-2 rounded-lg text-sm active:scale-95">✊ 주먹</button>
+              <button onclick="playRPS('✋')" class="bg-purple-900 border border-purple-600 text-white px-3 py-2 rounded-lg text-sm active:scale-95">✋ 보</button>
+              <button onclick="playRPS('✌️')" class="bg-purple-900 border border-purple-600 text-white px-3 py-2 rounded-lg text-sm active:scale-95">✌️ 가위</button>
             </div>
           </div>`;
         window.playRPS = function(userPick) {
@@ -939,13 +897,13 @@
         document.getElementById("game-title").innerText = "전액 올인! 인생역전 대박 🎰";
         document.getElementById("game-timer").innerText = "ALL-IN";
         canvas.innerHTML = `
-          <div class="text-center space-y-5 px-4 w-full">
-            <div class="w-16 h-16 bg-red-600/10 border border-red-500/30 rounded-full flex items-center justify-center mx-auto text-2xl text-red-500 animate-pulse"><i class="fa-solid fa-skull-crossbones"></i></div>
-            <div>
+          <div class="text-center space-y-5 px-4 w-full flex flex-col items-center">
+            <div class="w-16 h-16 bg-red-600/10 border border-red-500/30 rounded-full flex items-center justify-center text-2xl text-red-500 animate-pulse"><i class="fa-solid fa-skull-crossbones"></i></div>
+            <div class="mt-2">
               <h3 class="text-md font-bold text-red-400">🔥 리얼 하트 올인 소집령 🔥</h3>
               <p class="text-[11px] text-gray-400 mt-1 leading-relaxed">성공 시 보상은 정확히 <b class="text-green-400">2배 복사 (x2)</b>!<br>실패 시 보유 포인트는 즉시 <b class="text-red-500">0개 (완전 몰수)</b>!</p>
             </div>
-            <div id="gambling-panel"><button onclick="executeAllInGamble()" class="w-full bg-gradient-to-r from-red-600 to-purple-600 font-bold py-3.5 rounded-xl text-xs tracking-wider active:scale-95 transition">인생은 한방! 50% 확률 올인하기</button></div>
+            <div id="gambling-panel" class="w-full max-w-[240px] mt-4"><button onclick="executeAllInGamble()" class="w-full bg-gradient-to-r from-red-600 to-purple-600 text-white font-bold py-3.5 rounded-xl text-xs tracking-wider active:scale-95 transition">인생은 한방! 50% 확률 올인하기</button></div>
           </div>`;
 
         window.executeAllInGamble = function() {
@@ -957,18 +915,18 @@
             if (isWin) {
               userPoints = userPoints * 2; currentScore = 0;
               canvas.innerHTML = `
-                <div class="text-center space-y-4 px-4 animate-card-reveal">
+                <div class="text-center space-y-4 px-4 flex flex-col items-center">
                   <i class="fa-solid fa-champagne-glasses text-yellow-400 text-5xl animate-bounce"></i>
-                  <h3 class="text-lg font-black text-green-400">🎉 올인 대박 2배 성공! 🎉</h3>
-                  <button onclick="switchView('game-select')" class="bg-gray-800 border border-purple-900 px-4 py-2 text-[11px] rounded-lg">대기실로 퇴장</button>
+                  <h3 class="text-lg font-black text-green-400 mt-2">🎉 올인 대박 2배 성공! 🎉</h3>
+                  <button onclick="switchView('game-select')" class="bg-gray-800 border border-purple-900 text-white px-4 py-2 text-[11px] rounded-lg mt-2">대기실로 퇴장</button>
                 </div>`;
             } else {
               userPoints = 0; currentScore = 0;
               canvas.innerHTML = `
-                <div class="text-center space-y-4 px-4 animate-card-reveal">
+                <div class="text-center space-y-4 px-4 flex flex-col items-center">
                   <i class="fa-solid fa-heart-crack text-gray-600 text-5xl"></i>
-                  <h3 class="text-lg font-black text-red-500">😭 올인 실패.. 전액 몰수 😭</h3>
-                  <button onclick="switchView('game-select')" class="bg-gray-800 border border-purple-900 px-4 py-2 text-[11px] rounded-lg">처음부터 다시 충전하기</button>
+                  <h3 class="text-lg font-black text-red-500 mt-2">😭 올인 실패.. 전액 몰수 😭</h3>
+                  <button onclick="switchView('game-select')" class="bg-gray-800 border border-purple-900 text-white px-4 py-2 text-[11px] rounded-lg mt-2">처음부터 다시 충전하기</button>
                 </div>`;
             }
             document.getElementById("game-score").innerText = userPoints;
@@ -982,11 +940,11 @@
       clearInterval(gameLoopInterval); clearInterval(gameTimerInterval); clearTimeout(gameLoopInterval);
       userPoints += currentScore; await syncUserToServer(); syncMainUI();
       document.getElementById("game-canvas").innerHTML = `
-        <div class="text-center space-y-3">
+        <div class="text-center space-y-3 flex flex-col items-center justify-center">
           <i class="fa-solid fa-gift text-yellow-400 text-4xl animate-bounce"></i>
-          <h3 class="font-bold text-sm text-white">미니게임 완벽 클리어!</h3>
+          <h3 class="font-bold text-sm text-white mt-1">미니게임 완벽 클리어!</h3>
           <p class="text-xs text-gray-400">최종 획득 팬 하트 재화: <b class="text-pink-400">+${currentScore} 🤍</b></p>
-          <button onclick="switchView('game-select')" class="bg-gradient-to-r from-pink-500 to-purple-600 font-bold px-4 py-2 text-xs rounded-lg active:scale-95 transition">게임목록으로</button>
+          <button onclick="switchView('game-select')" class="bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold px-4 py-2 text-xs rounded-lg active:scale-95 transition mt-2">게임목록으로</button>
         </div>`;
     }
 
