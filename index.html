@@ -8,14 +8,14 @@
   <script src="https://cdn.tailwindcss.com"></script>
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
+  <style id="dynamic-theme-style">
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght=500;700;900&family=Noto+Sans+KR:wght=400;500;700&display=swap');
     body {
       font-family: 'Noto Sans KR', sans-serif;
       background: #09070f;
       color: #ffffff;
       -webkit-text-size-adjust: none;
-      transition: background 0.5s ease;
+      transition: all 0.5s ease;
     }
     .font-logo { font-family: 'Orbitron', sans-serif; }
     
@@ -85,7 +85,6 @@
     .scrollbar-none::-webkit-scrollbar { display: none; }
     .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* 🎬 1. 가챠 연출 강화 특수 애니메이션 CSS 설정 */
     @keyframes crtGlitchEffect {
       0% { transform: translate(2px, 1px) skewX(0deg); filter: hue-rotate(0deg) contrast(1.2); }
       20% { transform: translate(-2px, -1px) skewX(-3deg); filter: hue-rotate(180deg) brightness(1.5); }
@@ -104,7 +103,6 @@
     .ssr-shake-active { animation: screenVibrate 0.12s linear infinite; }
     .ssr-glitch-active { animation: crtGlitchEffect 0.15s linear infinite; }
 
-    /* 📸 1. 프리미엄 폴라로이드 프레임 스타일 시트 */
     .polaroid-frame-style {
       background: #ffffff !important;
       color: #111111 !important;
@@ -114,11 +112,40 @@
       border: 1px solid #dddddd !important;
       transform: rotate(-1.5deg);
     }
+
+    /* 🎨 테마 연동 커스텀 동적 인젝션 타겟 전용 클래스 모음 */
+    .theme-custom-box { transition: all 0.4s ease; }
+    .theme-custom-border { transition: all 0.4s ease; }
   </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between select-none pb-24">
 
   <div id="jackpot-flash-screen" class="fixed inset-0 pointer-events-none z-50 opacity-0"></div>
+
+  <!-- 💳 가상 결제창 연출 레이어 모달 팝업 추가 -->
+  <div id="virtual-payment-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white text-black w-full max-w-xs p-5 rounded-2xl space-y-4 text-center shadow-2xl">
+      <div class="flex justify-between items-center border-b pb-2">
+        <span class="font-logo font-black text-sm text-purple-600">💸 IDOL.UNI PAY SYSTEM</span>
+        <i class="fa-solid fa-shield-inverse text-emerald-500"></i>
+      </div>
+      <div class="py-2">
+        <p class="text-xs text-gray-500">안전 가상 보안 검증 매칭 완료</p>
+        <h3 id="pay-modal-package-name" class="font-bold text-base mt-0.5 text-gray-900">-</h3>
+        <div id="pay-modal-price" class="text-xl font-logo font-black text-pink-600 mt-2">-</div>
+      </div>
+      <div class="space-y-1.5">
+        <div class="bg-gray-100 p-2.5 rounded-xl text-left text-[11px] text-gray-600 space-y-0.5">
+          <div>• 본 결제는 테스트용 <b>가상 카드 시뮬레이션</b>입니다.</div>
+          <div>• 실제 금액은 결제되지 않으며 하루 1회만 가능합니다.</div>
+        </div>
+      </div>
+      <div class="flex space-x-2">
+        <button onclick="closeVirtualPayment()" class="flex-1 bg-gray-200 font-bold py-2 rounded-xl text-xs text-gray-700">취소</button>
+        <button onclick="executeVirtualPayment()" class="flex-1 bg-purple-600 hover:bg-purple-700 font-bold py-2 rounded-xl text-xs text-white shadow-md">안심 가상 결제</button>
+      </div>
+    </div>
+  </div>
 
   <header class="border-b border-purple-950 bg-purple-950/40 backdrop-blur-md sticky top-0 z-50 px-4 py-3">
     <div class="max-w-md mx-auto flex justify-between items-center">
@@ -136,33 +163,32 @@
   <main id="app-main-container" class="flex-1 max-w-md w-full mx-auto p-4 overflow-y-auto">
     
     <section id="view-lobby" class="view-section space-y-5">
-      <div class="bg-gradient-to-br from-purple-900/60 to-black border border-purple-500/20 rounded-2xl p-5 text-center space-y-2 shadow-2xl">
+      <div class="theme-custom-box bg-gradient-to-br from-purple-900/60 to-black border border-purple-500/20 rounded-2xl p-5 text-center space-y-2 shadow-2xl">
         <h2 class="text-lg font-bold tracking-tight">🪐 무한한 최애 컬렉션 세계관</h2>
         <p class="text-xs text-gray-400">포인트를 모아 5가지 등급의 스페셜 미공개 포카를 수집하세요!</p>
         <div class="pt-2 flex justify-center space-x-2">
-          <span class="text-[11px] bg-purple-950 border border-purple-500/30 px-3 py-1 rounded-full text-purple-300">
+          <span class="theme-custom-border text-[11px] bg-purple-950 border border-purple-500/30 px-3 py-1 rounded-full text-purple-300">
             도감 달성도: <span id="collection-progress" class="font-bold text-white">0/0</span>
           </span>
         </div>
       </div>
 
-      <!-- 🎨 3. 배경 테마 상점 진입용 버튼 배치를 포함한 2x2 반응형 격자망 재구성 -->
       <div class="grid grid-cols-2 gap-2">
-        <button onclick="switchView('game-select')" class="bg-purple-950/30 border border-purple-900/50 hover:border-pink-500/40 p-3 rounded-xl flex flex-col items-center justify-center space-y-1.5 transition active:scale-95">
+        <button onclick="switchView('game-select')" class="theme-custom-box bg-purple-950/30 border border-purple-900/50 hover:border-pink-500/40 p-3 rounded-xl flex flex-col items-center justify-center space-y-1.5 transition active:scale-95">
           <i class="fa-solid fa-gamepad text-pink-500 text-lg"></i>
           <span class="font-bold text-[11px]">미니게임</span>
         </button>
-        <button onclick="switchView('gacha')" class="bg-purple-950/30 border border-purple-900/50 hover:border-purple-500/40 p-3 rounded-xl flex flex-col items-center justify-center space-y-1.5 transition active:scale-95">
+        <button onclick="switchView('gacha')" class="theme-custom-box bg-purple-950/30 border border-purple-900/50 hover:border-purple-500/40 p-3 rounded-xl flex flex-col items-center justify-center space-y-1.5 transition active:scale-95">
           <i class="fa-solid fa-box-open text-cyan-400 text-lg"></i>
           <span class="font-bold text-[11px]">럭키 드로우</span>
         </button>
-        <button onclick="openRouletteView()" class="bg-purple-950/30 border border-purple-900/50 hover:border-yellow-500/40 p-3 rounded-xl flex flex-col items-center justify-center space-y-1.5 transition active:scale-95">
+        <button onclick="openRouletteView()" class="theme-custom-box bg-purple-950/30 border border-purple-900/50 hover:border-yellow-500/40 p-3 rounded-xl flex flex-col items-center justify-center space-y-1.5 transition active:scale-95">
           <i class="fa-solid fa-gift text-yellow-400 text-lg animate-pulse"></i>
           <span class="font-bold text-[11px]">출석 룰렛</span>
         </button>
-        <button onclick="switchView('themes')" class="bg-purple-950/30 border border-purple-900/50 hover:border-emerald-500/40 p-3 rounded-xl flex flex-col items-center justify-center space-y-1.5 transition active:scale-95">
-          <i class="fa-solid fa-palette text-emerald-400 text-lg"></i>
-          <span class="font-bold text-[11px]">배경 테마 상점</span>
+        <button onclick="switchView('themes')" class="theme-custom-box bg-purple-950/30 border border-purple-900/50 hover:border-emerald-500/40 p-3 rounded-xl flex flex-col items-center justify-center space-y-1.5 transition active:scale-95">
+          <i class="fa-solid fa-store text-emerald-400 text-lg"></i>
+          <span class="font-bold text-[11px]">상점 & 테마 커스텀</span>
         </button>
       </div>
 
@@ -172,16 +198,40 @@
       </div>
     </section>
 
-    <!-- 🎨 3. 배경 테마 상점 섹션 레이아웃 신규 추가 -->
+    <!-- 🎨 상점 & 배경 테마 통합 마켓 스페이스 개편 -->
     <section id="view-themes" class="view-section hidden space-y-4">
       <div class="flex justify-between items-center">
         <div>
-          <h2 class="text-md font-bold text-emerald-400">🎨 하이엔드 테마 커스텀 센터</h2>
-          <p class="text-[10px] text-gray-400">하트를 사용하여 영구 소장용 프리미엄 스킨을 해제하세요.</p>
+          <h2 class="text-md font-bold text-emerald-400">🏪 아이돌 유니버스 종합 상점</h2>
+          <p class="text-[10px] text-gray-400">하트 가상 충전 팩 구매 및 디자인 테마 변환 제어 센터</p>
         </div>
         <button onclick="switchView('lobby')" class="text-[10px] bg-purple-900 px-2.5 py-1 rounded-md text-gray-300">뒤로가기</button>
       </div>
-      <div id="themes-market-list" class="space-y-2"></div>
+      
+      <!-- 💳 가상 충전 상품 스케줄러 UI 리스트 블록 -->
+      <div class="bg-purple-950/40 border border-purple-900/60 p-3 rounded-2xl space-y-2">
+        <span class="text-xs font-bold text-pink-400 block"><i class="fa-solid fa-bolt mr-1"></i> 팬 하트 포인트 가상 충전소 (하루 1회 제한)</span>
+        <div class="grid grid-cols-3 gap-2 text-center text-xs">
+          <div onclick="openPaymentPopup(1000, '스타터 하트 패키지', '1,900원')" class="bg-black/50 border border-purple-900 p-2 rounded-xl cursor-pointer hover:border-pink-500 transition">
+            <div class="font-logo font-bold text-white text-[11px]">+1,000 🤍</div>
+            <div class="text-[9px] text-gray-400 mt-1">₩ 1,900</div>
+          </div>
+          <div onclick="openPaymentPopup(5000, '로얄 멤버십 하트 팩', '7,900원')" class="bg-black/50 border border-purple-900 p-2 rounded-xl cursor-pointer hover:border-pink-500 transition">
+            <div class="font-logo font-bold text-yellow-400 text-[11px]">+5,000 🤍</div>
+            <div class="text-[9px] text-gray-400 mt-1">₩ 7,900</div>
+          </div>
+          <div onclick="openPaymentPopup(10000, '맥시멈 빌리어네어 팩', '14,900원')" class="bg-black/50 border border-purple-900 p-2 rounded-xl cursor-pointer hover:border-pink-500 transition">
+            <div class="font-logo font-black text-cyan-400 text-[11px]">+10,000 🤍</div>
+            <div class="text-[9px] text-gray-400 mt-1">₩ 14,900</div>
+          </div>
+        </div>
+        <p id="payment-limit-msg" class="text-[9px] text-gray-500 text-center"></p>
+      </div>
+
+      <div class="space-y-1.5">
+        <span class="text-xs font-bold text-emerald-400 block px-1"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i> 전면 디자인 커스텀 테마 스킨</span>
+        <div id="themes-market-list" class="space-y-2"></div>
+      </div>
     </section>
 
     <section id="view-game-select" class="view-section hidden space-y-3">
@@ -293,26 +343,23 @@
     </section>
 
     <section id="view-gacha" class="view-section hidden text-center space-y-5">
-      <div>
-        <h2 class="text-xl font-black bg-gradient-to-r from-yellow-300 via-pink-400 to-purple-400 bg-clip-text text-transparent">스페셜 드로우 팩</h2>
-        <p class="text-[11px] text-gray-400">등급 가중 확률 적용 완료 (낮은 등급 확률 UP)</p>
+      <!-- 🪐 1. 하루 한정 드로우 가챠 안내 배너 영역 구현 -->
+      <div id="daily-limited-banner" class="bg-gradient-to-r from-purple-950 via-fuchsia-950 to-pink-950 border border-fuchsia-500/30 p-3 rounded-2xl text-left hidden space-y-1">
+        <span class="bg-gradient-to-r from-amber-400 to-yellow-500 text-black font-black text-[9px] px-1.5 py-0.5 rounded">TODAY'S PICKUP</span>
+        <h4 class="text-xs font-black tracking-tight text-white mt-1">오늘의 한정 포카 고확률 픽업 오픈!</h4>
+        <p id="daily-limited-card-name" class="text-[10px] text-yellow-400 font-medium font-mono">불러오는 중...</p>
       </div>
 
       <div class="flex items-center justify-center space-x-2 max-w-xs mx-auto">
-        <label class="text-xs text-gray-400 font-bold">오픈 수량 선택 :</label>
-        <select id="gacha-amount" class="bg-purple-950 border border-purple-900 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-pink-500">
-          <option value="1">1장 연속 오픈 (100 🤍)</option>
-          <option value="2">2장 연속 오픈 (200 🤍)</option>
-          <option value="3">3장 연속 오픈 (300 🤍)</option>
-          <option value="4">4장 연속 오픈 (400 🤍)</option>
-          <option value="5">5장 연속 오픈 (500 🤍)</option>
-          <option value="6">6장 연속 오픈 (600 🤍)</option>
-          <option value="7">7장 연속 오픈 (700 🤍)</option>
-          <option value="8">8장 연쇄 오픈 (800 🤍)</option>
+        <label class="text-xs text-gray-400 font-bold">오픈 드로우 선택 :</label>
+        <select id="gacha-amount" class="bg-purple-950 border border-purple-900 rounded-xl px-2 py-1.5 text-xs text-white focus:outline-none focus:border-pink-500">
+          <option value="1">일반 드로우 팩 1장 (100 🤍)</option>
+          <option value="5">일반 드로우 팩 5장 연쇄 (500 🤍)</option>
+          <!-- 🪐 하루 한정 드로우 트리거 모듈 옵션 삽입 -->
+          <option value="daily_limited">🔥 [오늘만 장전] 한정 픽업 스페셜 팩 (200 🤍)</option>
         </select>
       </div>
 
-      <!-- 🎬 1. 가챠 연출 강화를 위해 ID 부여 및 상대 위치 조절 베이스 확보 -->
       <div id="gacha-outer-frame" class="relative w-full max-w-[320px] h-[360px] mx-auto bg-gradient-to-b from-purple-600 to-pink-600 rounded-2xl p-1 shadow-2xl flex items-center justify-center overflow-hidden">
         <div id="gacha-card-container" class="w-full h-full bg-[#110e1c] rounded-xl flex flex-col items-center justify-center p-3 transition-all duration-300">
           <div id="gacha-display-default" class="space-y-2">
@@ -337,6 +384,12 @@
           <span class="text-xs text-gray-400" id="collection-count">보유: 0개</span>
           <button onclick="resetCollection()" class="text-[10px] bg-red-950 border border-red-800 text-red-400 px-2 py-0.5 rounded-md hover:bg-red-900 transition">포카 리셋</button>
         </div>
+      </div>
+
+      <!-- 💰 중복 전체 일괄 판매 제어 유닛 바 -->
+      <div class="bg-purple-950/30 border border-purple-900/60 p-2 rounded-xl flex justify-between items-center text-xs">
+        <span class="text-gray-400 text-[11px]"><i class="fa-solid fa-coins text-amber-500 mr-1"></i> 중복 잔여분 일괄 처리 청산</span>
+        <button onclick="sellAllDuplicates()" class="bg-gradient-to-r from-amber-600 to-yellow-600 text-black font-black px-3 py-1 rounded-lg text-[11px] shadow hover:brightness-110 transition">중복 카드 일괄 판매 💰</button>
       </div>
 
       <div class="flex space-x-1 overflow-x-auto pb-1 text-[11px] scrollbar-none" style="-webkit-overflow-scrolling: touch;">
@@ -371,6 +424,19 @@
 
     <section id="view-admin" class="view-section hidden space-y-4">
       <div class="bg-purple-950/30 border border-purple-900 p-4 rounded-xl"><h2 class="font-bold text-pink-400 text-xs"><i class="fa-solid fa-sliders mr-1"></i> 관리자 데이터 수집 제어 센터 (CRUD)</h2></div>
+      
+      <!-- 🛠️ 4. 포인트 무한 치트 스위치 컴포넌트 추가 -->
+      <div class="bg-cyan-950/50 border border-cyan-800 p-3 rounded-xl flex justify-between items-center text-xs">
+        <div>
+          <span class="font-bold text-cyan-400 block">⚙️ 디버깅 전용: 포인트 무한 모드 (Infinite Stars)</span>
+          <p class="text-[10px] text-gray-400 mt-0.5">활성화 시 하트 999k 고정 및 모든 가챠/상점 차감 해제</p>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer select-none">
+          <input type="checkbox" id="admin-infinite-cheat-toggle" onclick="toggleInfiniteCheat(this)" class="sr-only peer">
+          <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-500"></div>
+        </label>
+      </div>
+
       <div class="bg-purple-950/50 p-4 rounded-xl border border-purple-900 space-y-3 text-xs">
         <h3 id="admin-form-title" class="font-bold text-cyan-400">새 포토카드 등록</h3>
         <input type="hidden" id="admin-card-id">
@@ -481,27 +547,61 @@
     let lastRouletteDate = ""; 
     let newlyUnlockedCards = []; 
 
-    // 🎨 3. 커스텀 테마 메타 데이터 풀 설정 (기본테마 외 8종 독립 설계)
+    // 🛠️ 4.6. 신규 로컬 상태 변수 컴포넌트 선언부
+    let favoritedCards = []; // ⭐ 즐겨찾기 ID 배열
+    let isInfiniteCheatActive = false; // ⚙️ 무한 포인트 플래그
+    let lastPaymentDate = ""; // 💳 일일 가상 결제 잠금용
+    let pendingVirtualPoints = 0; // 결제 시퀀스 임시 보존
+
     let currentTheme = "default";
     let unlockedThemes = ["default"];
+
+    // 🎨 2. 테마 메타 데이터 풀 입체 리빌딩 (보더 두께, 발광 반경, 투명 박스 일괄 주입)
     const themeMetadata = {
-      default: { name: "기본 오리지널 사이버 다크", cost: 0, css: "#09070f" },
-      theme_y2k: { name: "🛸 Y2K 메탈릭 크롬 퓨처", cost: 200, css: "linear-gradient(135deg, #111625, #1c2640)" },
-      theme_pastel: { name: "🍭 마카롱 솜사탕 파스텔", cost: 300, css: "linear-gradient(135deg, #2b1a2f, #3d1e36)" },
-      theme_arcade: { name: "👾 8비트 레트로 네온 아케이드", cost: 400, css: "linear-gradient(135deg, #050515, #150525)" },
-      theme_space: { name: "🌌 은하수 오로라 딥 스페이스", cost: 500, css: "linear-gradient(135deg, #0a1917, #0f2d24)" },
-      theme_gyaru: { name: "🌺 시부야 갸루 하트 핫핑크", cost: 600, css: "linear-gradient(135deg, #2b0c1b, #421026)" },
-      theme_minimal: { name: "🖤 미니멀 매트 제트 블랙", cost: 200, css: "linear-gradient(135deg, #121214, #1a1a1e)" },
-      theme_stage: { name: "✨ 골든 아레나 콘서트 스테이지", cost: 700, css: "linear-gradient(135deg, #241c0a, #382a0e)" },
-      theme_dream: { name: "🔮 몽환 동화 판타지 드림벨", cost: 800, css: "linear-gradient(135deg, #131124, #26163a)" }
+      default: { 
+        name: "오리지널 사이버 다크", cost: 0, 
+        bodyBg: "#09070f", boxBg: "rgba(124, 58, 237, 0.15)", borderStyle: "1px solid rgba(168, 85, 247, 0.3)", shadowStyle: "0 0 10px rgba(168, 85, 247, 0.1)"
+      },
+      theme_y2k: { 
+        name: "🛸 Y2K 메탈릭 사이버 크롬", cost: 200, 
+        bodyBg: "linear-gradient(135deg, #121824, #1b2234)", boxBg: "rgba(255, 255, 255, 0.05)", borderStyle: "3px dashed #22d3ee", shadowStyle: "0 0 25px rgba(34, 211, 238, 0.4)"
+      },
+      theme_pastel: { 
+        name: "🍭 마카롱 솜사탕 파스텔 푸딩", cost: 300, 
+        bodyBg: "linear-gradient(135deg, #2a1b35, #351c30)", boxBg: "rgba(244, 63, 94, 0.1)", borderStyle: "2px solid #f472b6", shadowStyle: "0 0 15px rgba(244, 114, 182, 0.3)"
+      },
+      theme_arcade: { 
+        name: "👾 8비트 레트로 네온 아케이드", cost: 400, 
+        bodyBg: "linear-gradient(180deg, #050510, #120520)", boxBg: "rgba(16, 185, 129, 0.08)", borderStyle: "2px solid #34d399", shadowStyle: "0 0 30px #10b981"
+      },
+      theme_space: { 
+        name: "🌌 은하수 오로라 딥 스페이스", cost: 500, 
+        bodyBg: "linear-gradient(135deg, #051412, #0d2a24)", boxBg: "rgba(6, 182, 212, 0.1)", borderStyle: "1px solid #22d3ee", shadowStyle: "0 0 20px rgba(6, 182, 212, 0.5)"
+      },
+      theme_gyaru: { 
+        name: "🌺 시부야 갸루 하트 레오파드", cost: 600, 
+        bodyBg: "linear-gradient(135deg, #320a1c, #4a0e28)", boxBg: "rgba(236, 72, 153, 0.15)", borderStyle: "3px solid #ec4899", shadowStyle: "0 0 35px #f43f5e"
+      },
+      theme_minimal: { 
+        name: "🖤 미니멀 매트 제트 무광 블랙", cost: 200, 
+        bodyBg: "#0a0a0a", boxBg: "#161616", borderStyle: "1px solid #262626", shadowStyle: "none"
+      },
+      theme_stage: { 
+        name: "✨ 골든 아레나 레이저 스포트라이트", cost: 700, 
+        bodyBg: "linear-gradient(135deg, #1c160c, #2d2210)", boxBg: "rgba(245, 158, 11, 0.08)", borderStyle: "2px solid #fbbf24", shadowStyle: "0 0 25px #f59e0b"
+      },
+      theme_dream: { 
+        name: "🔮 몽환 동화 갤럭시 판타지", cost: 800, 
+        bodyBg: "linear-gradient(135deg, #110e26, #211336)", boxBg: "rgba(139, 92, 246, 0.12)", borderStyle: "2px dashed #a78bfa", shadowStyle: "0 0 20px #8b5cf6"
+      }
     };
 
     const rarityMeta = {
-      Normal: { ko: "일반", color: "bg-slate-700", score: 1 },
-      Rare: { ko: "레어 ✨", color: "bg-cyan-600", score: 2 },
-      SuperRare: { ko: "슈퍼레어 🔥", color: "bg-yellow-600", score: 3 },
-      UltraRare: { ko: "울트라레어 🔮", color: "bg-purple-600", score: 4 },
-      Mythic: { ko: "시크릿 미스틱 👑", color: "bg-gradient-to-r from-pink-600 to-yellow-500", score: 5 }
+      Normal: { ko: "일반", color: "bg-slate-700", score: 1, sellValue: 10 },
+      Rare: { ko: "레어 ✨", color: "bg-cyan-600", score: 2, sellValue: 30 },
+      SuperRare: { ko: "슈퍼레어 🔥", color: "bg-yellow-600", score: 3, sellValue: 60 },
+      UltraRare: { ko: "울트라레어 🔮", color: "bg-purple-600", score: 4, sellValue: 150 },
+      Mythic: { ko: "시크릿 미스틱 👑", color: "bg-gradient-to-r from-pink-600 to-yellow-500", score: 5, sellValue: 400 }
     };
 
     // 📱 iOS/안드로이드 터치 하드웨어 제스처 연타 확대 잠금 가로채기
@@ -530,6 +630,7 @@
       if(viewId === 'gacha') {
         document.getElementById("gacha-display-default").classList.remove("hidden");
         document.getElementById("gacha-display-result").classList.add("hidden");
+        checkDailyLimitedFeaturedCard(); // 🪐 픽업 배너 초기화 검사
       }
       if(viewId === 'themes') { renderThemesMarket(); }
     };
@@ -567,13 +668,31 @@
       syncMainUI();
     };
 
-    // 🎨 3. 테마 스타일 바디 강제 제어 주입 모듈
+    // 🎨 2. 테마 스타일 인젝터 고도화 개조 (CSS 변수 및 클래스 재정의)
     function applyGlobalThemeStyle(themeId) {
       const meta = themeMetadata[themeId] || themeMetadata["default"];
-      document.body.style.background = meta.css;
+      document.body.style.background = meta.bodyBg;
+      
+      const styleTag = document.getElementById("dynamic-theme-style");
+      const subOverrides = `
+        .theme-custom-box {
+          background: ${meta.boxBg} !important;
+          border: ${meta.borderStyle} !important;
+          box-shadow: ${meta.shadowStyle} !important;
+        }
+        .theme-custom-border {
+          border: ${meta.borderStyle} !important;
+        }
+      `;
+      // 기본 CSS 파일 하단에 실시간 결합 가두기
+      if(!styleTag.innerHTML.includes(".theme-custom-box")) {
+        styleTag.innerHTML += subOverrides;
+      } else {
+        const basePart = styleTag.innerHTML.split(".theme-custom-box")[0];
+        styleTag.innerHTML = basePart + subOverrides;
+      }
     }
 
-    // 🎨 3. 테마 상점 리스트 뷰 빌더 구현
     function renderThemesMarket() {
       const container = document.getElementById("themes-market-list");
       container.innerHTML = "";
@@ -594,12 +713,16 @@
         container.innerHTML += `
           <div class="bg-purple-950/40 border border-purple-900 p-3 rounded-xl flex justify-between items-center">
             <div class="flex items-center space-x-2.5">
-              <div class="w-5 h-5 rounded-full border border-white/20" style="background: ${item.css.includes('linear') ? item.css.split(',')[1].replace(')','') : item.css}"></div>
+              <div class="w-5 h-5 rounded-full border border-white/20" style="background: ${item.bodyBg}"></div>
               <span class="text-xs font-bold text-gray-200">${item.name}</span>
             </div>
             <div>${actionBtnMarkup}</div>
           </div>`;
       });
+
+      // 결제 리미트 문구 노출 처리 
+      const todayStr = getRouletteDateKey();
+      document.getElementById("payment-limit-msg").innerText = (lastPaymentDate === todayStr) ? "⚠️ 오늘의 가상 충전 한도가 소모되었습니다 (내일 리셋)." : "💡 각 패키지는 하루에 한 번만 가상 현질 승인이 허용됩니다.";
     }
 
     window.activateTheme = async function(themeId) {
@@ -612,10 +735,10 @@
     window.buyTheme = async function(themeId) {
       const item = themeMetadata[themeId];
       if (!item) return;
-      if (userPoints < item.cost) { alert(`하트 포인트가 부족합니다! 필요 포인트: ${item.cost} 🤍`); return; }
+      if (!isInfiniteCheatActive && userPoints < item.cost) { alert(`하트 포인트가 부족합니다! 필요 포인트: ${item.cost} 🤍`); return; }
       
-      if (confirm(`'${item.name}' 테마를 영구 잠금 해제하시겠습니까?`)) {
-        userPoints -= item.cost;
+      if (confirm(`'${item.name}' 전면 레이아웃 테마 스킨을 잠금 해제하시겠습니까?`)) {
+        if(!isInfiniteCheatActive) userPoints -= item.cost;
         unlockedThemes.push(themeId);
         currentTheme = themeId;
         applyGlobalThemeStyle(themeId);
@@ -626,7 +749,121 @@
       }
     };
 
-    // ♻️ 2. 중복 카드 교환 비즈니스 로직 연동
+    // 💳 3. 가상 현질 팝업 제어 모듈 함수들
+    window.openPaymentPopup = function(points, name, priceLabel) {
+      const todayStr = getRouletteDateKey();
+      if(lastPaymentDate === todayStr) { alert("⚠️ 하루 일일 제한 규칙: 오늘은 이미 가상 충전을 이용하셨습니다. 자정 이후 이용바랍니다!"); return; }
+      
+      pendingVirtualPoints = points;
+      document.getElementById("pay-modal-package-name").innerText = name;
+      document.getElementById("pay-modal-price").innerText = priceLabel;
+      document.getElementById("virtual-payment-modal").classList.remove("hidden");
+    };
+
+    window.closeVirtualPayment = function() {
+      document.getElementById("virtual-payment-modal").classList.add("hidden");
+    };
+
+    window.executeVirtualPayment = async function() {
+      userPoints += pendingVirtualPoints;
+      lastPaymentDate = getRouletteDateKey();
+      closeVirtualPayment();
+      await syncUserToServer();
+      syncMainUI();
+      renderThemesMarket();
+      alert(`🎉 가상 안심 결제 승인 완료!\n보너스 팬 하트 🤍 ${pendingVirtualPoints}개가 정상 충전 매칭되었습니다.`);
+    };
+
+    // 🛠️ 4. 어드민 치트 모드 활성화 변조기
+    window.toggleInfiniteCheat = function(elem) {
+      isInfiniteCheatActive = elem.checked;
+      if (isInfiniteCheatActive) {
+        userPoints = 999999;
+      } else {
+        userPoints = 300;
+      }
+      syncMainUI();
+      syncUserToServer();
+    };
+
+    // ⭐ 6. 즐겨찾기(Favorites) 온오프 토글 함수 구현
+    window.toggleFavoriteCard = async function(cardId, event) {
+      if(event) event.stopPropagation();
+      if(favoritedCards.includes(cardId)) {
+        favoritedCards = favoritedCards.filter(id => id !== cardId);
+      } else {
+        favoritedCards.push(cardId);
+      }
+      await syncUserToServer();
+      syncMainUI();
+    };
+
+    // 💰 5. 중복 단일 카드 원하는 만큼 수량 분할 판매 처리 기믹
+    window.sellDuplicateCard = async function(cardId, maxSellable, valueEach, event) {
+      if(event) event.stopPropagation();
+      const inputQty = parseInt(document.getElementById(`sell-qty-${cardId}`).value) || 1;
+      
+      if(inputQty < 1 || inputQty > maxSellable) {
+        alert(`판매 가능한 유효 수량 범위를 초과했습니다. (1 ~ ${maxSellable}개 선택 가능)`);
+        return;
+      }
+
+      const totalEarned = inputQty * valueEach;
+      if(confirm(`선택한 중복 포토카드 ${inputQty}장 매도를 확정하시겠습니까?\n화전 보상 재화: +${totalEarned} 🤍 하트 충전`)) {
+        let itemsRemoved = 0;
+        unlockedCards = unlockedCards.filter(id => {
+          if(id === cardId && itemsRemoved < inputQty) {
+            itemsRemoved++;
+            return false;
+          }
+          return true;
+        });
+
+        userPoints += totalEarned;
+        await syncUserToServer();
+        syncMainUI();
+        alert(`💰 판매 청산 완료!\n하트 포인트가 +${totalEarned}개 증식되었습니다.`);
+      }
+    };
+
+    // 💰 5. 보유한 모든 중복 물량 파기 환전 매도 처리 (올킬 엔진)
+    window.sellAllDuplicates = async function() {
+      if(unlockedCards.length === 0) { alert("도감에 보유한 카드가 없습니다."); return; }
+      
+      // 고유 아이템 종류 카운터 세팅
+      const counts = {};
+      unlockedCards.forEach(id => counts[id] = (counts[id] || 0) + 1);
+      
+      let totalEarnedValue = 0;
+      let totalSoldUnits = 0;
+      const cleanKeptPool = [];
+
+      Object.keys(counts).forEach(cId => {
+        const totalQty = counts[cId];
+        const cardMeta = allPhotocards.find(c => c.id === cId);
+        
+        // 1개는 무조건 영구 소장 원본 보존 처리
+        cleanKeptPool.push(cId); 
+        
+        if (totalQty > 1 && cardMeta) {
+          const sellableQty = totalQty - 1;
+          const priceEach = rarityMeta[cardMeta.rarity]?.sellValue || 10;
+          totalEarnedValue += (sellableQty * priceEach);
+          totalSoldUnits += sellableQty;
+        }
+      });
+
+      if(totalSoldUnits === 0) { alert("현재 환전 매도 가능한 중복 수량 카드가 단 1장도 없습니다!"); return; }
+
+      if(confirm(`[⚠️ 중복 올킬 일괄 처리 안내]\n\n마이 포토북 수집본 1장씩만 마스터 잠금 보존하고,\n나머지 모든 잉여 중복본 총 ${totalSoldUnits}장을 일괄 일시 매도하겠습니까?\n\n💰 환산 충전 예정 하트 포인트: +${totalEarnedValue} 🤍`)) {
+        unlockedCards = cleanKeptPool;
+        userPoints += totalEarnedValue;
+        await syncUserToServer();
+        syncMainUI();
+        alert(`💰 일괄 청산 대성공!\n중복 카드 ${totalSoldUnits}장이 파기되고 하트 +${totalEarnedValue}개가 일제 입금되었습니다.`);
+      }
+    };
+
     window.exchangeDuplicates = async function(cardId, event) {
       if(event) event.stopPropagation();
       const originCard = allPhotocards.find(c => c.id === cardId);
@@ -634,7 +871,7 @@
 
       const sameRarityPool = allPhotocards.filter(c => c.rarity === originCard.rarity);
       if (sameRarityPool.length <= 1) {
-        alert("죄송합니다! 동일 등급 풀에 교환 가능한 교체용 대체 카드가 데이터베이스에 존재하지 않습니다.");
+        alert("죄송합니다! 동일 등급 풀에 교환 가능한 대체재 카드가 없습니다.");
         return;
       }
 
@@ -660,10 +897,37 @@
       }
     };
 
+    // 🪐 1. 하루 한정 픽업 카드 알고리즘 추출기 함수 
+    function getDailyLimitedFeaturedCard() {
+      if (allPhotocards.length === 0) return null;
+      const highPool = allPhotocards.filter(c => c.rarity === "UltraRare" || c.rarity === "Mythic");
+      if (highPool.length === 0) return allPhotocards[0]; // 없으면 대안책 피정
+      
+      const todayStr = getRouletteDateKey();
+      const dateSeed = parseInt(todayStr.replace(/-/g, '')) || 20260101;
+      const index = dateSeed % highPool.length;
+      return highPool[index];
+    }
+
+    function checkDailyLimitedFeaturedCard() {
+      const banner = document.getElementById("daily-limited-banner");
+      const text = document.getElementById("daily-limited-card-name");
+      const featured = getDailyLimitedFeaturedCard();
+      if(featured) {
+        banner.classList.remove("hidden");
+        text.innerText = `[${featured.rarity}] ${featured.member ? '['+featured.member+'] ' : ''}${featured.name} 🌟 (본 팩 개봉 시 최하 UR 확정!)`;
+      } else {
+        banner.classList.add("hidden");
+      }
+    }
+
     function syncMainUI() {
+      // 무한 치트 토글 UI 동시 보존 싱크
+      document.getElementById("admin-infinite-cheat-toggle").checked = isInfiniteCheatActive;
+      if (isInfiniteCheatActive) userPoints = 999999;
+
       document.getElementById("global-points").innerText = userPoints;
       
-      // 중복을 배제한 순수 종류 개수 집계 패치
       const uniqueOwnedCount = [...new Set(unlockedCards)].length;
       document.getElementById("collection-progress").innerText = `${uniqueOwnedCount}/${allPhotocards.length}`;
       document.getElementById("collection-count").innerText = `보유 종류: ${uniqueOwnedCount}종`;
@@ -692,7 +956,13 @@
       if(allPhotocards.length === 0) {
         grid.innerHTML = `<div class="col-span-2 text-center py-10 text-xs text-gray-500">관리자 탭에서 포토카드를 먼저 올려주세요!</div>`;
       } else {
+        // ⭐ 6. 정렬 가중치 부여 알고리즘 개조 (즐겨찾기 카드 무조건 최우선순위 핀 스왑)
         const sortedPhotocards = [...allPhotocards].sort((a, b) => {
+          const aFav = favoritedCards.includes(a.id) ? 1 : 0;
+          const bFav = favoritedCards.includes(b.id) ? 1 : 0;
+          
+          if (aFav !== bFav) return bFav - aFav; // 즐겨찾기 켠 게 최상단 탑재
+          
           const scoreA = rarityMeta[a.rarity]?.score || 0;
           const scoreB = rarityMeta[b.rarity]?.score || 0;
           return scoreA - scoreB;
@@ -705,20 +975,40 @@
 
           const duplicateAmount = unlockedCards.filter(id => id === card.id).length;
           const isOwn = duplicateAmount > 0;
-          const meta = rarityMeta[card.rarity] || { ko: card.rarity, color: "bg-gray-600" };
+          const meta = rarityMeta[card.rarity] || { ko: card.rarity, color: "bg-gray-600", sellValue: 10 };
           const displayMember = card.member ? `[${card.member}] ` : '';
 
           if(isOwn) {
             const isNewCard = newlyUnlockedCards.includes(card.id);
             const newTagMarkup = isNewCard ? `<span class="absolute top-2.5 right-2.5 bg-red-500 text-white font-black text-[9px] px-1.5 py-0.5 rounded shadow z-20 animate-bounce">NEW</span>` : '';
             
-            // ♻️ 2. 중복 보유 개수 표기 및 5개 이상일 시 전용 교환 인터페이스 트리거 바인딩
+            // ⭐ 6. 즐겨찾기 별 기믹 제어 마크업 구성
+            const isFav = favoritedCards.includes(card.id);
+            const favStarClass = isFav ? "fa-solid fa-star text-yellow-400" : "fa-regular fa-star text-gray-400";
+            const favButtonMarkup = `<button onclick="toggleFavoriteCard('${card.id}', event)" class="absolute top-2.5 left-2.5 bg-black/60 p-1.5 rounded-full z-30 transition hover:scale-110"><i class="${favStarClass} text-xs"></i></button>`;
+
             const duplicateBadge = duplicateAmount > 1 ? `<span class="absolute bottom-2.5 left-2.5 bg-black/80 border border-pink-500/40 text-pink-400 font-bold text-[9px] px-1.5 py-0.5 rounded z-20">보유: ${duplicateAmount}개</span>` : '';
-            const exchangeBtnMarkup = duplicateAmount >= 5 ? `<button onclick="exchangeDuplicates('${card.id}', event)" class="mt-2 w-full bg-gradient-to-r from-purple-800 to-pink-700 hover:brightness-110 text-white font-black text-[10px] py-1 rounded-lg transition-all z-20 relative">중복 5개 교환 ♻️</button>` : '';
+            const exchangeBtnMarkup = duplicateAmount >= 5 ? `<button onclick="exchangeDuplicates('${card.id}', event)" class="mt-1 w-full bg-gradient-to-r from-purple-800 to-pink-700 text-white font-black text-[9px] py-1 rounded transition-all z-20 relative shadow">중복 5개 교환 ♻️</button>` : '';
+
+            // 💰 5. 중복 소유 시 분할 판매 UI 패키지 동적 팩 인젝션
+            let sellSectionMarkup = "";
+            if (duplicateAmount > 1) {
+              const maxRemovableUnits = duplicateAmount - 1;
+              sellSectionMarkup = `
+                <div class="mt-1.5 border-t border-purple-900/40 pt-1.5 flex items-center justify-between space-x-1 z-20 relative">
+                  <div class="flex items-center bg-black/40 rounded px-1 border border-purple-900/50">
+                    <span class="text-[9px] text-gray-400 mr-1">수량:</span>
+                    <input type="number" id="sell-qty-${card.id}" value="1" min="1" max="${maxRemovableUnits}" class="w-7 bg-transparent text-center text-[10px] text-white focus:outline-none">
+                  </div>
+                  <button onclick="sellDuplicateCard('${card.id}', ${maxRemovableUnits}, ${meta.sellValue}, event)" class="bg-amber-600/30 border border-amber-500/40 text-amber-300 font-bold text-[9px] px-1.5 py-1 rounded hover:bg-amber-600 transition">판매 (+${meta.sellValue}🤍)</button>
+                </div>
+              `;
+            }
 
             grid.innerHTML += `
               <div class="clickable-card bg-gradient-to-b from-purple-950 to-black p-1.5 rounded-xl border border-purple-900 grade-${card.rarity} flex flex-col justify-between cursor-pointer active:scale-95 transition-all relative" onclick="openCardModal('${card.imageUrl}', '${displayMember}${card.name}', '${card.rarity}')">
                 ${newTagMarkup}
+                ${favButtonMarkup}
                 <div class="relative w-full h-44 overflow-hidden rounded-lg">
                   <img src="${card.imageUrl}" class="w-full h-full object-cover z-10 relative pointer-events-none">
                   ${duplicateBadge}
@@ -727,6 +1017,7 @@
                   <span class="text-[8px] text-white px-2 py-0.5 rounded-full font-bold ${meta.color}">${meta.ko}</span>
                   <p class="text-xs font-bold text-gray-200 truncate mt-1">${displayMember}${card.name}</p>
                   ${exchangeBtnMarkup}
+                  ${sellSectionMarkup}
                 </div>
               </div>`;
           } else {
@@ -766,43 +1057,6 @@
           </div>`;
       });
     }
-
-    window.handleBatchUpdate = async function() {
-      const checkedBoxes = document.querySelectorAll(".admin-card-checkbox:checked");
-      if(checkedBoxes.length === 0) { alert("일괄 수정 변경할 포토카드를 왼쪽 목록에서 체크해 주세요."); return; }
-      
-      const batchNameVal = document.getElementById("admin-batch-name").value.trim();
-      const batchMemberVal = document.getElementById("admin-batch-member").value;
-      
-      if(!batchNameVal && !batchMemberVal) { alert("변경할 새로운 일괄 제목명 또는 변경할 멤버 카테고리 중 최소 하나를 세팅해 주세요."); return; }
-      if(!confirm(`선택한 총 ${checkedBoxes.length}개의 포토카드를 설정하신 일관된 속성 정보로 동시 변경하겠습니까?`)) return;
-      
-      const targetIds = Array.from(checkedBoxes).map(box => box.dataset.id);
-      
-      for(const tId of targetIds) {
-        const targetIndex = allPhotocards.findIndex(c => c.id === tId);
-        if(targetIndex > -1) {
-          if(batchNameVal) allPhotocards[targetIndex].name = batchNameVal;
-          if(batchMemberVal) allPhotocards[targetIndex].member = batchMemberVal;
-          
-          if(db) {
-            try {
-              await setDoc(doc(db, "photocards_v2", tId), {
-                ...(batchNameVal && { name: batchNameVal }),
-                ...(batchMemberVal && { member: batchMemberVal })
-              }, { merge: true });
-            } catch(ex){ console.error("Firestore 일괄 동기화 패치:", ex); }
-          }
-        }
-      }
-      
-      localStorage.setItem("local_photocards_v2", JSON.stringify(allPhotocards));
-      document.getElementById("admin-select-all").checked = false;
-      document.getElementById("admin-batch-name").value = "";
-      document.getElementById("admin-batch-member").value = "";
-      syncMainUI();
-      alert(`성공적으로 ${checkedBoxes.length}개 카드의 정보가 일괄 변조 완료되었습니다.`);
-    };
 
     function renderChatBox() {
       const chatBox = document.getElementById("chat-box"); chatBox.innerHTML = "";
@@ -928,7 +1182,11 @@
       letterCount = parseInt(localStorage.getItem(`letters_v2_${userId}`)) || 0;
       lastRouletteDate = localStorage.getItem(`roulette_date_v2_${userId}`) || ""; 
       
-      // 🎨 3. 테마 로컬 세팅 로딩 유닛 처리
+      // 🛠️ 신규 확장 변수 로컬 동기화 복원 로딩
+      lastPaymentDate = localStorage.getItem(`pay_date_v2_${userId}`) || "";
+      isInfiniteCheatActive = localStorage.getItem(`cheat_inf_v2_${userId}`) === "true";
+      try { favoritedCards = JSON.parse(localStorage.getItem(`fav_cards_v2_${userId}`)) || []; } catch(e) { favoritedCards = []; }
+
       currentTheme = localStorage.getItem(`cur_theme_v2_${userId}`) || "default";
       try { unlockedThemes = JSON.parse(localStorage.getItem(`unlocked_themes_v2_${userId}`)) || ["default"]; } catch(e) { unlockedThemes = ["default"]; }
       applyGlobalThemeStyle(currentTheme);
@@ -954,11 +1212,15 @@
           lastRouletteDate = d.lastRouletteDate || lastRouletteDate;
           currentTheme = d.currentTheme || currentTheme;
           unlockedThemes = d.unlockedThemes || unlockedThemes;
+          favoritedCards = d.favoritedCards || favoritedCards;
+          isInfiniteCheatActive = d.isInfiniteCheatActive || isInfiniteCheatActive;
+          lastPaymentDate = d.lastPaymentDate || lastPaymentDate;
           applyGlobalThemeStyle(currentTheme);
         } else { 
           await setDoc(doc(db, "users_v2", userId), { 
             points: userPoints, unlockedCards: unlockedCards, letterCount: letterCount, 
-            lastRouletteDate: lastRouletteDate, currentTheme: currentTheme, unlockedThemes: unlockedThemes 
+            lastRouletteDate: lastRouletteDate, currentTheme: currentTheme, unlockedThemes: unlockedThemes,
+            favoritedCards: favoritedCards, isInfiniteCheatActive: isInfiniteCheatActive, lastPaymentDate: lastPaymentDate
           }); 
         }
         const snapshot = await getDocs(collection(db, "photocards_v2"));
@@ -967,11 +1229,10 @@
         if(temp.length > 0) { allPhotocards = temp; localStorage.setItem("local_photocards_v2", JSON.stringify(allPhotocards)); }
       } catch(err) { console.warn("로컬 모드로 로드 완료.", err); }
       
-      // 🎁 4. 장기간 미접속 여부 탐지 및 보상 처리 모듈화
       const nowTs = Date.now();
       const lastActiveTs = parseInt(localStorage.getItem(`last_active_ts_v2_${userId}`)) || nowTs;
       const inactivityDuration = nowTs - lastActiveTs;
-      const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000; // 일주일 기준 수치 계산 
+      const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000; 
       
       if (inactivityDuration >= SEVEN_DAYS_MS && allPhotocards.length > 0) {
         const highTierPool = allPhotocards.filter(c => c.rarity !== "Normal");
@@ -999,12 +1260,18 @@
       localStorage.setItem(`cur_theme_v2_${userId}`, currentTheme);
       localStorage.setItem(`unlocked_themes_v2_${userId}`, JSON.stringify(unlockedThemes));
       localStorage.setItem(`last_active_ts_v2_${userId}`, Date.now().toString());
+      
+      localStorage.setItem(`pay_date_v2_${userId}`, lastPaymentDate);
+      localStorage.setItem(`cheat_inf_v2_${userId}`, isInfiniteCheatActive);
+      localStorage.setItem(`fav_cards_v2_${userId}`, JSON.stringify(favoritedCards));
+
       if(db) { 
         try { 
           await setDoc(doc(db, "users_v2", userId), { 
             points: userPoints, unlockedCards: unlockedCards, letterCount: letterCount, 
             lastRouletteDate: lastRouletteDate, currentTheme: currentTheme, unlockedThemes: unlockedThemes,
-            lastActiveTimestamp: Date.now()
+            lastActiveTimestamp: Date.now(),
+            favoritedCards: favoritedCards, isInfiniteCheatActive: isInfiniteCheatActive, lastPaymentDate: lastPaymentDate
           }, {merge: true}); 
         } catch(e){} 
       }
@@ -1012,7 +1279,7 @@
 
     window.resetCollection = async function() {
       if(!confirm("포토북 수집 내역만 완전히 지우고 처음부터 다시 시작하시겠습니까?\n(⚠️ 하트는 소모 및 초기화되지 않고 유지됩니다.)")) return;
-      unlockedCards = []; await syncUserToServer(); syncMainUI();
+      unlockedCards = []; favoritedCards = []; await syncUserToServer(); syncMainUI();
       alert("하트 보유량은 유지되며 포토북 목록만 초기화되었습니다!");
     };
 
@@ -1111,6 +1378,7 @@
       try {
         if(db) { await deleteDoc(doc(db, "photocards_v2", id)); }
         allPhotocards = allPhotocards.filter(c => c.id !== id); unlockedCards = unlockedCards.filter(cId => cId !== id);
+        favoritedCards = favoritedCards.filter(cId => cId !== id);
         localStorage.setItem("local_photocards_v2", JSON.stringify(allPhotocards));
         await syncUserToServer(); syncMainUI(); alert("포토카드가 정상 삭제되었습니다.");
       } catch(e) { alert("삭제 실패: " + e.message); }
@@ -1131,6 +1399,7 @@
         try { if(db) { await deleteDoc(doc(db, "photocards_v2", targetId)); } } catch(e){}
         allPhotocards = allPhotocards.filter(c => c.id !== targetId);
         unlockedCards = unlockedCards.filter(cId => cId !== targetId);
+        favoritedCards = favoritedCards.filter(cId => cId !== targetId);
       }
       localStorage.setItem("local_photocards_v2", JSON.stringify(allPhotocards));
       document.getElementById("admin-select-all").checked = false;
@@ -1145,7 +1414,7 @@
       for(const card of allPhotocards) {
         try { if(db) { await deleteDoc(doc(db, "photocards_v2", card.id)); } } catch(e){}
       }
-      allPhotocards = []; unlockedCards = [];
+      allPhotocards = []; unlockedCards = []; favoritedCards = [];
       localStorage.setItem("local_photocards_v2", JSON.stringify(allPhotocards));
       document.getElementById("admin-select-all").checked = false;
       await syncUserToServer(); syncMainUI();
@@ -1163,9 +1432,7 @@
       currentScore = 0; 
       document.getElementById("game-score").innerText = currentScore;
 
-      // ----------------------------------------
-      // 게임 1: 하트 캐칭 피버 (10초 긴박 타임어택)
-      // ----------------------------------------
+      // 1. 하트 캐칭 피버
       if (gameId === 1) {
         document.getElementById("game-title").innerText = "하트 캐칭 피버 💓 (난이도: 10초 가속)";
         currentTimer = 10; document.getElementById("game-timer").innerText = currentTimer + "s";
@@ -1204,9 +1471,7 @@
         }
         spawnHeartFeverLoop();
 
-      // ----------------------------------------
-      // 게임 2: 응원봉 타이밍 탭
-      // ----------------------------------------
+      // 2. 응원봉 타이밍 탭
       } else if (gameId === 2) {
         document.getElementById("game-title").innerText = "응원봉 타이밍 탭 ⚡ (난이도: 보통)";
         currentTimer = 5; document.getElementById("game-timer").innerText = `기회: ${currentTimer}회`;
@@ -1232,9 +1497,7 @@
           if(currentTimer <= 0) finishGameEngine();
         };
 
-      // ----------------------------------------
-      // 게임 3: 기억력 카드 매칭
-      // ----------------------------------------
+      // 3. 기억력 카드 매칭
       } else if (gameId === 3) {
         document.getElementById("game-title").innerText = "기억력 카드 매칭 🃏 (난이도: 최상)";
         currentTimer = 15; document.getElementById("game-timer").innerText = currentTimer + "s";
@@ -1284,9 +1547,7 @@
           holder.appendChild(card);
         });
 
-      // ----------------------------------------
-      // 게임 4: 간단한 숫자 퍼즐 
-      // ----------------------------------------
+      // 4. 간단한 숫자 퍼즐
       } else if (gameId === 4) {
         document.getElementById("game-title").innerText = "간단한 숫자 퍼즐 🧩 (난이도: 타임어택)";
         currentTimer = 12; document.getElementById("game-timer").innerText = currentTimer + "s";
@@ -1328,9 +1589,7 @@
           pGrid.appendChild(btn);
         });
 
-      // ----------------------------------------
-      // 게임 5: 대기실 가위바위보
-      // ----------------------------------------
+      // 5. 대기실 가위바위보
       } else if (gameId === 5) {
         document.getElementById("game-title").innerText = "대기실 가위바위보 ✊ (난이도: 쉬움)";
         currentTimer = 3; document.getElementById("game-timer").innerText = `남은판: ${currentTimer}판`;
@@ -1354,9 +1613,7 @@
           if(currentTimer <= 0) finishGameEngine();
         };
 
-      // ----------------------------------------
-      // 게임 6: 리얼 전액 올인 도박
-      // ----------------------------------------
+      // 6. 리얼 올인 도박
       } else if (gameId === 6) {
         document.getElementById("game-title").innerText = "전액 올인! 인생역전 대박 🎰";
         document.getElementById("game-timer").innerText = "ALL-IN";
@@ -1398,9 +1655,7 @@
           }, 1500);
         };
 
-      // ----------------------------------------
-      // 게임 7: 초고속 티켓팅 예매 
-      // ----------------------------------------
+      // 7. 초고속 티켓팅 예매
       } else if (gameId === 7) {
         document.getElementById("game-title").innerText = "초고속 티켓팅 예매 🎫 (순발력)";
         document.getElementById("game-timer").innerText = "대기중";
@@ -1478,37 +1733,28 @@
       }
     };
 
-    async function finishGameEngine() {
-      clearInterval(gameLoopInterval); clearInterval(gameTimerInterval); clearTimeout(gameLoopInterval);
-      userPoints += currentScore; await syncUserToServer(); syncMainUI();
-      document.getElementById("game-canvas").innerHTML = `
-        <div class="text-center space-y-3 flex flex-col items-center justify-center">
-          <i class="fa-solid fa-gift text-yellow-400 text-4xl animate-bounce"></i>
-          <h3 class="font-bold text-sm text-white mt-1">미니게임 완벽 클리어!</h3>
-          <p class="text-xs text-gray-400">최종 획득 팬 하트 재화: <b class="text-pink-400">+${currentScore} 🤍</b></p>
-          <button onclick="switchView('game-select')" class="bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold px-4 py-2 text-xs rounded-lg active:scale-95 transition mt-2">게임목록으로</button>
-        </div>`;
-    }
-
-    function getWeightedRandomCard() {
-      const rarityWeights = { Normal: 50, Rare: 25, SuperRare: 15, UltraRare: 8, Mythic: 2 };
-      const weightedPool = allPhotocards.map(card => ({ card: card, weight: rarityWeights[card.rarity] || 10 }));
-      const totalWeight = weightedPool.reduce((sum, item) => sum + item.weight, 0);
-      let randomValue = Math.random() * totalWeight;
-      for (const item of weightedPool) {
-        randomValue -= item.weight;
-        if (randomValue <= 0) return item.card;
-      }
-      return allPhotocards[Math.floor(Math.random() * allPhotocards.length)];
-    }
-
     window.drawCard = async function() {
-      const amount = parseInt(document.getElementById("gacha-amount").value) || 1;
-      const requiredPoints = amount * 100;
-      if(userPoints < requiredPoints) { alert(`하트 포인트가 부족합니다! 필요 하트: ${requiredPoints} 🤍`); return; }
+      const gachaModeStr = document.getElementById("gacha-amount").value;
+      let amount = 1;
+      let requiredPoints = 100;
+      let isDailyPickMode = false;
+
+      // 🪐 1. 뽑기 연동 가격 책정 및 모드 감지 파싱 개조
+      if (gachaModeStr === "daily_limited") {
+        amount = 1;
+        requiredPoints = 200;
+        isDailyPickMode = true;
+      } else {
+        amount = parseInt(gachaModeStr) || 1;
+        requiredPoints = amount * 100;
+      }
+
+      if(!isInfiniteCheatActive && userPoints < requiredPoints) { alert(`하트 포인트가 부족합니다! 필요 하트: ${requiredPoints} 🤍`); return; }
       if(allPhotocards.length === 0) { alert("등록된 카드가 없습니다. 관리자 탭에서 먼저 올려주세요!"); return; }
 
-      userPoints -= requiredPoints; syncMainUI();
+      if(!isInfiniteCheatActive) userPoints -= requiredPoints;
+      syncMainUI();
+      
       const def = document.getElementById("gacha-display-default"); const resContainer = document.getElementById("gacha-display-result");
       const container = document.getElementById("gacha-card-container");
       
@@ -1522,27 +1768,40 @@
         resContainer.innerHTML = "";
         let staggerDelay = 0;
         let triggeredJackpot = false;
-        let containsSSR = false; // 🎬 1. SSR 포함 유무 판단용 트리거
+        let containsSSR = false; 
 
         newlyUnlockedCards = []; 
 
         const drawnResultsPool = [];
-        for (let i = 0; i < amount; i++) {
-          const pickedCard = getWeightedRandomCard();
-          drawnResultsPool.push(pickedCard);
-          if (pickedCard.rarity === "UltraRare" || pickedCard.rarity === "Mythic") {
+        
+        // 🪐 1. 하루 한정 드로우 팩 보상 지급 제어 연산 기믹 스위칭
+        if (isDailyPickMode) {
+          const featured = getDailyLimitedFeaturedCard();
+          // 픽업 한정 확률 보정: 60% 확률로 오늘의 카드 다이렉트 출격, 40%는 무작위 고등급 보장
+          if (Math.random() < 0.60 && featured) {
+            drawnResultsPool.push(featured);
             containsSSR = true;
+          } else {
+            const highPool = allPhotocards.filter(c => c.rarity === "UltraRare" || c.rarity === "Mythic");
+            const fallbackCard = highPool.length > 0 ? highPool[Math.floor(Math.random() * highPool.length)] : getWeightedRandomCard();
+            drawnResultsPool.push(fallbackCard);
+            containsSSR = true;
+          }
+        } else {
+          for (let i = 0; i < amount; i++) {
+            const pickedCard = getWeightedRandomCard();
+            drawnResultsPool.push(pickedCard);
+            if (pickedCard.rarity === "UltraRare" || pickedCard.rarity === "Mythic") {
+              containsSSR = true;
+            }
           }
         }
 
-        // 🎬 1. SSR 등급 당첨 시 화면 흔들림 및 CRT 글리치 클래스 강제 강타 연출 가동
         if (containsSSR) {
           const appContainer = document.getElementById("app-main-container");
           const outerFrame = document.getElementById("gacha-outer-frame");
-          
           appContainer.classList.add("ssr-shake-active");
           outerFrame.classList.add("ssr-glitch-active");
-          
           setTimeout(() => {
             appContainer.classList.remove("ssr-shake-active");
             outerFrame.classList.remove("ssr-glitch-active");
@@ -1560,14 +1819,12 @@
           const meta = rarityMeta[pickedCard.rarity] || { ko: pickedCard.rarity, color: "bg-gray-600" };
           const displayMember = pickedCard.member ? `[${pickedCard.member}] ` : '';
           
-          // ♻️ 2. 결과 드로우 패키지 내부에서의 중복 카운트 추출 연산
           const currentDupInOwn = unlockedCards.filter(id => id === pickedCard.id).length;
           const duplicateLabel = currentDupInOwn > 1 ? `<div class="text-[8px] font-bold text-pink-600 mt-0.5">누적 보유: ${currentDupInOwn}개</div>` : '';
 
-          // 📸 1. SSR 등급일 때 폴라로이드 프레임 스타일 클래스 변형 스위칭 주입
-          const isSSR = pickedCard.rarity === "UltraRare" || pickedCard.rarity === "Mythic";
-          const cardFrameClass = isSSR ? "polaroid-frame-style" : `bg-purple-950/40 border border-purple-800/50 p-2 grade-${pickedCard.rarity}`;
-          const textTitleColor = isSSR ? "text-gray-900" : "text-gray-200";
+          const isOriginalSSR = pickedCard.rarity === "UltraRare" || pickedCard.rarity === "Mythic";
+          const cardFrameClass = isOriginalSSR ? "polaroid-frame-style" : `bg-purple-950/40 border border-purple-800/50 p-2 grade-${pickedCard.rarity}`;
+          const textTitleColor = isOriginalSSR ? "text-gray-900" : "text-gray-200";
 
           resContainer.innerHTML += `
             <div class="${cardFrameClass} rounded-xl text-center flex flex-col justify-between items-center opacity-0 animate-card-reveal" style="animation-delay: ${staggerDelay}ms">
