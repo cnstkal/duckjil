@@ -79,6 +79,10 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+    
+    /* 스크롤바 숨기기 전용 */
+    .scrollbar-none::-webkit-scrollbar { display: none; }
+    .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between select-none pb-24">
@@ -111,14 +115,18 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-3">
-        <button onclick="switchView('game-select')" class="bg-purple-950/30 border border-purple-900/50 hover:border-pink-500/40 p-4 rounded-xl flex flex-col items-center justify-center space-y-2 transition active:scale-95">
-          <i class="fa-solid fa-gamepad text-pink-500 text-2xl"></i>
-          <span class="font-bold text-xs">미니게임 (6종)</span>
+      <div class="grid grid-cols-3 gap-2">
+        <button onclick="switchView('game-select')" class="bg-purple-950/30 border border-purple-900/50 hover:border-pink-500/40 p-3 rounded-xl flex flex-col items-center justify-center space-y-2 transition active:scale-95">
+          <i class="fa-solid fa-gamepad text-pink-500 text-xl"></i>
+          <span class="font-bold text-[11px]">미니게임</span>
         </button>
-        <button onclick="switchView('gacha')" class="bg-purple-950/30 border border-purple-900/50 hover:border-purple-500/40 p-4 rounded-xl flex flex-col items-center justify-center space-y-2 transition active:scale-95">
-          <i class="fa-solid fa-box-open text-cyan-400 text-2xl"></i>
-          <span class="font-bold text-xs">랜덤 럭키 드로우</span>
+        <button onclick="switchView('gacha')" class="bg-purple-950/30 border border-purple-900/50 hover:border-purple-500/40 p-3 rounded-xl flex flex-col items-center justify-center space-y-2 transition active:scale-95">
+          <i class="fa-solid fa-box-open text-cyan-400 text-xl"></i>
+          <span class="font-bold text-[11px]">럭키 드로우</span>
+        </button>
+        <button onclick="openRouletteView()" class="bg-purple-950/30 border border-purple-900/50 hover:border-yellow-500/40 p-3 rounded-xl flex flex-col items-center justify-center space-y-2 transition active:scale-95">
+          <i class="fa-solid fa-gift text-yellow-400 text-xl animate-pulse"></i>
+          <span class="font-bold text-[11px]">출석 룰렛</span>
         </button>
       </div>
 
@@ -151,7 +159,7 @@
           </div>
           <i class="fa-solid fa-chevron-right text-xs text-gray-500"></i>
         </div>
-        <div onclick="initGame(3)" class="bg-purple-950/40 border border-purple-900 p-4 rounded-xl flex justify-between items-center cursor-pointer hover:border-cyan-500/40 transition">
+        <div onclick="initGame(3)" class="bg-purple-950/40 border border-cyan-500/40 transition p-4 rounded-xl flex justify-between items-center cursor-pointer border-purple-900">
           <div class="flex items-center space-x-3">
             <div class="w-10 h-10 rounded-lg bg-cyan-500/10 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-clone text-cyan-400"></i></div>
             <div>
@@ -161,16 +169,19 @@
           </div>
           <i class="fa-solid fa-chevron-right text-xs text-gray-500"></i>
         </div>
-        <div onclick="initGame(4)" class="bg-purple-950/40 border border-purple-900 p-4 rounded-xl flex justify-between items-center cursor-pointer hover:border-purple-500/40 transition">
+        
+        <!-- 🧩 신규 퍼즐 게임 (구 4번 가사 게임 대체 탑재) -->
+        <div onclick="initGame(4)" class="bg-purple-950/40 border border-blue-900 p-4 rounded-xl flex justify-between items-center cursor-pointer hover:border-blue-500/40 transition">
           <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-keyboard text-purple-400"></i></div>
+            <div class="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-puzzle-piece text-blue-400"></i></div>
             <div>
-              <div class="flex items-center space-x-1.5"><h3 class="text-sm font-bold">4. 팬덤 가사 타이핑</h3><span class="text-[9px] bg-purple-600/20 text-purple-400 px-1.5 py-0.5 rounded font-bold">20초 고속구동</span></div>
-              <p class="text-[11px] text-gray-400">가상 키보드 엔터 완벽 지원! 단어 격파시 +50포인트</p>
+              <div class="flex items-center space-x-1.5"><h3 class="text-sm font-bold text-blue-400">4. 간단한 숫자 퍼즐</h3><span class="text-[9px] bg-blue-600/20 text-blue-400 px-1.5 py-0.5 rounded font-bold">12초 타임어택</span></div>
+              <p class="text-[11px] text-gray-400">1부터 9까지 랜덤 배치된 퍼즐 숫자를 순서대로 탭! (+60포인트)</p>
             </div>
           </div>
-          <i class="fa-solid fa-chevron-right text-xs text-gray-500"></i>
+          <i class="fa-solid fa-chevron-right text-xs text-blue-500"></i>
         </div>
+
         <div onclick="initGame(5)" class="bg-purple-950/40 border border-emerald-900 p-4 rounded-xl flex justify-between items-center cursor-pointer hover:border-emerald-500/40 transition">
           <div class="flex items-center space-x-3">
             <div class="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-hand-scissors text-emerald-400"></i></div>
@@ -191,6 +202,18 @@
           </div>
           <i class="fa-solid fa-chevron-right text-xs text-red-500"></i>
         </div>
+
+        <!-- 🎫 신규 초고속 티켓팅 게임 -->
+        <div onclick="initGame(7)" class="bg-purple-950/40 border border-fuchsia-950 p-4 rounded-xl flex justify-between items-center cursor-pointer hover:border-fuchsia-500/40 transition bg-gradient-to-r from-purple-950/20 to-fuchsia-950/20">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-lg bg-fuchsia-600/20 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-ticket text-fuchsia-400 text-base animate-pulse"></i></div>
+            <div>
+              <div class="flex items-center space-x-1.5"><h3 class="text-sm font-bold text-fuchsia-400">7. 초고속 티켓팅 예매</h3><span class="text-[9px] bg-fuchsia-600 text-white px-1.5 py-0.5 rounded font-bold">순발력 테스트</span></div>
+              <p class="text-[11px] text-gray-300">포도알 오픈 즉시 탭! 빠를수록 최대 +200하트 차등 지급 (1.3초 제한)</p>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right text-xs text-fuchsia-500"></i>
+        </div>
       </div>
     </section>
 
@@ -201,7 +224,27 @@
         <div class="text-right"><span class="text-[10px] text-gray-400 block">TIME / CHANCE</span><span id="game-timer" class="font-logo text-lg font-black text-yellow-400">0</span></div>
       </div>
       <div id="game-canvas" class="relative w-full h-[380px] bg-black/60 border border-purple-800 rounded-2xl overflow-hidden shadow-inner flex flex-col items-center justify-center p-4">
+      </div>
+    </section>
+
+    <!-- 🎁 출석체크 룰렛 섹션 뷰 -->
+    <section id="view-roulette" class="view-section hidden text-center space-y-5">
+      <div>
+        <h2 class="text-xl font-black bg-gradient-to-r from-yellow-300 via-amber-400 to-orange-500 bg-clip-text text-transparent">출석체크 행운 룰렛 🎁</h2>
+        <p class="text-[11px] text-gray-400">매일 밤 00시 자동 초기화! 하루에 한 번 돌릴 수 있습니다.</p>
+      </div>
+      <div class="w-full max-w-[260px] h-[260px] mx-auto bg-purple-950/40 border border-purple-900 rounded-full flex items-center justify-center relative shadow-2xl overflow-hidden">
+        <div id="roulette-wheel-display" class="w-36 h-36 rounded-full bg-gradient-to-br from-pink-600 to-purple-800 flex flex-col items-center justify-center border-4 border-purple-500/60 p-2 shadow-inner transition-transform duration-[2500ms] ease-out">
+          <span id="roulette-prize-text" class="text-white font-bold text-xs tracking-tight text-center leading-tight">과연 오늘의<br>보너스는?</span>
         </div>
+        <div class="absolute top-3 text-yellow-400 text-lg animate-bounce"><i class="fa-solid fa-caret-down"></i></div>
+      </div>
+      <div class="max-w-xs mx-auto space-y-1">
+        <button id="roulette-spin-btn" onclick="spinRoulette()" class="w-full bg-gradient-to-r from-yellow-500 to-amber-600 text-black font-black py-3.5 rounded-xl text-sm shadow-lg hover:brightness-110 active:scale-95 transition">
+          룰렛 돌리기
+        </button>
+        <p id="roulette-status-msg" class="text-[10px] text-gray-500 pt-1"></p>
+      </div>
     </section>
 
     <section id="view-gacha" class="view-section hidden text-center space-y-5">
@@ -249,6 +292,20 @@
           <button onclick="resetCollection()" class="text-[10px] bg-red-950 border border-red-800 text-red-400 px-2 py-0.5 rounded-md hover:bg-red-900 transition">포카 리셋</button>
         </div>
       </div>
+
+      <!-- 📑 멤버별 개별 정렬 필터 바 -->
+      <div class="flex space-x-1 overflow-x-auto pb-1 text-[11px] scrollbar-none" style="-webkit-overflow-scrolling: touch;">
+        <button onclick="setMemberFilter('All')" id="tab-member-All" class="member-filter-btn bg-pink-600 text-white px-2.5 py-1 rounded-full flex-shrink-0 font-bold">전체</button>
+        <button onclick="setMemberFilter('션린위')" id="tab-member-션린위" class="member-filter-btn bg-purple-950 border border-purple-900 text-gray-400 px-2.5 py-1 rounded-full flex-shrink-0">션린위</button>
+        <button onclick="setMemberFilter('해인')" id="tab-member-해인" class="member-filter-btn bg-purple-950 border border-purple-900 text-gray-400 px-2.5 py-1 rounded-full flex-shrink-0">해인</button>
+        <button onclick="setMemberFilter('로아')" id="tab-member-로아" class="member-filter-btn bg-purple-950 border border-purple-900 text-gray-400 px-2.5 py-1 rounded-full flex-shrink-0">로아</button>
+        <button onclick="setMemberFilter('남해주')" id="tab-member-남해주" class="member-filter-btn bg-purple-950 border border-purple-900 text-gray-400 px-2.5 py-1 rounded-full flex-shrink-0">남해주</button>
+        <button onclick="setMemberFilter('로은')" id="tab-member-로은" class="member-filter-btn bg-purple-950 border border-purple-900 text-gray-400 px-2.5 py-1 rounded-full flex-shrink-0">로은</button>
+        <button onclick="setMemberFilter('서도윤')" id="tab-member-서도윤" class="member-filter-btn bg-purple-950 border border-purple-900 text-gray-400 px-2.5 py-1 rounded-full flex-shrink-0">서도윤</button>
+        <button onclick="setMemberFilter('루이')" id="tab-member-루이" class="member-filter-btn bg-purple-950 border border-purple-900 text-gray-400 px-2.5 py-1 rounded-full flex-shrink-0">루이</button>
+        <button onclick="setMemberFilter('범지유')" id="tab-member-범지유" class="member-filter-btn bg-purple-950 border border-purple-900 text-gray-400 px-2.5 py-1 rounded-full flex-shrink-0">범지유</button>
+      </div>
+
       <div id="collection-grid" class="grid grid-cols-2 gap-3"></div>
     </section>
 
@@ -273,14 +330,22 @@
         <h3 id="admin-form-title" class="font-bold text-cyan-400">새 포토카드 등록</h3>
         <input type="hidden" id="admin-card-id">
         <div><label class="block text-gray-400 mb-1">포토카드 명칭 (미설정 시 공백 자동 배정)</label><input type="text" id="admin-card-name" placeholder="예: 미입력 시 '[미공개] 새 포토카드'로 설정됨" class="w-full bg-black/40 border border-purple-900 rounded-lg px-3 py-2 text-white"></div>
+        
         <div class="grid grid-cols-2 gap-2">
           <div><label class="block text-gray-400 mb-1">5단계 등급 세팅</label>
             <select id="admin-card-rarity" class="w-full bg-black/40 border border-purple-900 rounded-lg px-2 py-2 text-white">
               <option value="Normal">Normal (일반)</option><option value="Rare">Rare (레어)</option><option value="SuperRare">Super Rare (SR)</option><option value="UltraRare">Ultra Rare (UR)</option><option value="Mythic">Secret Mythic (신화)</option>
             </select>
           </div>
-          <div><label class="block text-gray-400 mb-1">포토카드 고화질 파일</label><input type="file" id="admin-card-file" accept="image/*" class="w-full text-[10px] text-gray-400 mt-1"></div>
+          <!-- 👤 멤버 선택 카테고리 추가 -->
+          <div><label class="block text-gray-400 mb-1">멤버 카테고리</label>
+            <select id="admin-card-member" class="w-full bg-black/40 border border-purple-900 rounded-lg px-2 py-2 text-white">
+              <option value="션린위">션린위</option><option value="해인">해인</option><option value="로아">로아</option><option value="남해주">남해주</option><option value="로은">로은</option><option value="서도윤">서도윤</option><option value="루이">루이</option><option value="범지유">범지유</option>
+            </select>
+          </div>
         </div>
+        <div><label class="block text-gray-400 mb-1">포토카드 고화질 파일</label><input type="file" id="admin-card-file" accept="image/*" class="w-full text-[10px] text-gray-400 mt-1"></div>
+        
         <div class="flex space-x-2 pt-1">
           <button onclick="handleAdminSubmit()" id="admin-btn-submit" class="flex-1 bg-pink-600 font-bold py-2 rounded-lg hover:bg-pink-700 transition">등록 / 업데이트</button>
           <button onclick="resetAdminForm()" id="admin-btn-cancel" class="hidden bg-gray-700 px-3 font-bold rounded-lg">취소</button>
@@ -345,11 +410,13 @@
       appId: "1:744761377245:web:3ddaee14f184716eeef634"
     };
 
-    // ⚡ [핵심 수정] 엄격 모드 크래시 방지를 위한 인게임 스코어 및 타이머 변수 선언부 최상단 완벽 배치
+    // ⚡ 변수 선언부
     let db = null; let userId = ""; let userPoints = 300; let unlockedCards = []; let allPhotocards = []; let letterCount = 0;
     let gameLoopInterval = null; let gameTimerInterval = null;
-    let currentScore = 0; let currentTimer = 0; // 키워드 선언 완료!
+    let currentScore = 0; let currentTimer = 0; 
     let chatHistory = []; 
+    let currentMemberFilter = "All"; // 🔍 멤버 도감 필터 상태 변수 추가
+    let lastRouletteDate = ""; // 📅 룰렛 일일 초기화 체크 변수 추가
 
     const rarityMeta = {
       Normal: { ko: "일반", color: "bg-slate-700", score: 1 },
@@ -409,6 +476,19 @@
       setTimeout(() => { flashLayer.className = "fixed inset-0 pointer-events-none z-50 opacity-0"; }, 850);
     }
 
+    // 🔍 멤버 개별 보기 변경 이벤트
+    window.setMemberFilter = function(member) {
+      currentMemberFilter = member;
+      document.querySelectorAll(".member-filter-btn").forEach(btn => {
+        if(btn.id === `tab-member-${member}`) {
+          btn.className = "member-filter-btn bg-pink-600 text-white px-2.5 py-1 rounded-full flex-shrink-0 font-bold";
+        } else {
+          btn.className = "member-filter-btn bg-purple-950 border border-purple-900 text-gray-400 px-2.5 py-1 rounded-full flex-shrink-0";
+        }
+      });
+      syncMainUI();
+    };
+
     function syncMainUI() {
       document.getElementById("global-points").innerText = userPoints;
       document.getElementById("collection-progress").innerText = `${unlockedCards.length}/${allPhotocards.length}`;
@@ -444,16 +524,23 @@
           return scoreA - scoreB;
         });
 
+        let renderedCount = 0;
         sortedPhotocards.forEach(card => {
+          // 🔍 개별 멤버 필터링 적용 처리
+          if(currentMemberFilter !== "All" && card.member !== currentMemberFilter) return;
+          renderedCount++;
+
           const isOwn = unlockedCards.includes(card.id);
           const meta = rarityMeta[card.rarity] || { ko: card.rarity, color: "bg-gray-600" };
+          const displayMember = card.member ? `[${card.member}] ` : '';
+
           if(isOwn) {
             grid.innerHTML += `
-              <div class="clickable-card bg-gradient-to-b from-purple-950 to-black p-1.5 rounded-xl border border-purple-900 grade-${card.rarity} flex flex-col justify-between cursor-pointer active:scale-95 transition-all" onclick="openCardModal('${card.imageUrl}', '${card.name}', '${card.rarity}')">
+              <div class="clickable-card bg-gradient-to-b from-purple-950 to-black p-1.5 rounded-xl border border-purple-900 grade-${card.rarity} flex flex-col justify-between cursor-pointer active:scale-95 transition-all" onclick="openCardModal('${card.imageUrl}', '${displayMember}${card.name}', '${card.rarity}')">
                 <img src="${card.imageUrl}" class="w-full h-44 object-cover rounded-lg shadow-md z-10 relative pointer-events-none">
                 <div class="mt-2 p-1 z-10 relative">
                   <span class="text-[8px] text-white px-2 py-0.5 rounded-full font-bold ${meta.color}">${meta.ko}</span>
-                  <p class="text-xs font-bold text-gray-200 truncate mt-1">${card.name}</p>
+                  <p class="text-xs font-bold text-gray-200 truncate mt-1">${displayMember}${card.name}</p>
                 </div>
               </div>`;
           } else {
@@ -467,17 +554,23 @@
               </div>`;
           }
         });
+
+        if(renderedCount === 0) {
+          grid.innerHTML = `<div class="col-span-2 text-center py-10 text-xs text-gray-500">${currentMemberFilter} 멤버로 등록된 카드가 없습니다.</div>`;
+        }
       }
 
       const adminList = document.getElementById("admin-cards-list");
       adminList.innerHTML = "";
       allPhotocards.forEach(card => {
+        const memberTag = card.member ? `<span class="text-[9px] text-cyan-400 bg-cyan-950 px-1 rounded">${card.member}</span>` : '';
         adminList.innerHTML += `
           <div class="bg-black/40 border border-purple-950 px-3 py-2 rounded-lg flex justify-between items-center text-xs">
             <div class="flex items-center space-x-2 truncate">
               <input type="checkbox" class="admin-card-checkbox accent-pink-500 w-3.5 h-3.5 rounded" data-id="${card.id}">
               <img src="${card.imageUrl}" class="w-7 h-7 object-cover rounded pointer-events-none">
               <span class="text-[10px] font-mono text-pink-400 flex-shrink-0">[${card.rarity}]</span>
+              ${memberTag}
               <span class="truncate text-gray-200">${card.name}</span>
             </div>
             <div class="flex space-x-1 flex-shrink-0">
@@ -500,6 +593,107 @@
       chatBox.scrollTop = chatBox.scrollHeight;
     }
 
+    // 📅 00시 기준 정밀 날짜 문자열 빌더
+    function getRouletteDateKey() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    // 🎁 출석체크 룰렛 상태 동기화 및 뷰 전환
+    window.openRouletteView = function() {
+      switchView('roulette');
+      const todayStr = getRouletteDateKey();
+      const btn = document.getElementById("roulette-spin-btn");
+      const msg = document.getElementById("roulette-status-msg");
+      
+      if(lastRouletteDate === todayStr) {
+        btn.disabled = true;
+        btn.innerText = "오늘 출석 완료 ✓";
+        btn.className = "w-full bg-purple-950 border border-purple-900 text-gray-500 font-bold py-3.5 rounded-xl text-sm cursor-not-allowed";
+        msg.innerText = "⚠️ 오늘 출석 룰렛 보상을 이미 획득했습니다. 밤 00시에 다시 리셋됩니다!";
+      } else {
+        btn.disabled = false;
+        btn.innerText = "룰렛 돌리기";
+        btn.className = "w-full bg-gradient-to-r from-yellow-500 to-amber-600 text-black font-black py-3.5 rounded-xl text-sm shadow-lg hover:brightness-110 active:scale-95 transition";
+        msg.innerText = "🎁 하트 최대 500개 또는 미공개 도감 다이렉트 해제 확률 탑재!";
+      }
+    };
+
+    // 🎁 출석체크 룰렛 기믹 구동 코어
+    window.spinRoulette = function() {
+      const todayStr = getRouletteDateKey();
+      if(lastRouletteDate === todayStr) { alert("오늘은 이미 참여하셨습니다!"); return; }
+      
+      const btn = document.getElementById("roulette-spin-btn");
+      btn.disabled = true;
+      
+      const pool = [
+        { type: 'empty', label: '꽝 😢', weight: 10 },
+        { type: 'heart', amount: 20, label: '하트 +20개 🤍', weight: 20 },
+        { type: 'heart', amount: 50, label: '하트 +50개 🤍', weight: 20 },
+        { type: 'heart', amount: 100, label: '하트 +100개 🤍', weight: 15 },
+        { type: 'heart', amount: 200, label: '하트 +200개 🤍', weight: 10 },
+        { type: 'heart', amount: 500, label: '하트 +500개 🤍', weight: 5 },
+        { type: 'card_low', label: '일반/레어 포카 획득! ✨', weight: 18 },
+        { type: 'card_high', label: '신화/UR 고등급 포카! 👑', weight: 2 }
+      ];
+
+      const totalWeight = pool.reduce((sum, item) => sum + item.weight, 0);
+      let randomValue = Math.random() * totalWeight;
+      let selectedPrize = pool[0];
+      
+      for (const item of pool) {
+        randomValue -= item.weight;
+        if (randomValue <= 0) { selectedPrize = item; break; }
+      }
+
+      const wheel = document.getElementById("roulette-wheel-display");
+      const prizeText = document.getElementById("roulette-prize-text");
+      
+      wheel.style.transform = "rotate(1440deg)";
+      let counter = 0;
+      
+      const txtInterval = setInterval(() => {
+        prizeText.innerText = pool[counter % pool.length].label;
+        counter++;
+      }, 90);
+
+      setTimeout(async () => {
+        clearInterval(txtInterval);
+        wheel.style.transform = "rotate(0deg)";
+        prizeText.innerHTML = selectedPrize.label.replace(" ", "<br>");
+
+        if(selectedPrize.type === 'heart') {
+          userPoints += selectedPrize.amount;
+          alert(`[출석 체크 완료]\n${selectedPrize.label} 당첨되셨습니다!`);
+        } else if(selectedPrize.type === 'card_low' || selectedPrize.type === 'card_high') {
+          if(allPhotocards.length === 0) {
+            userPoints += 100;
+            alert("[출석 체크 완료]\n등록된 카드가 없어 대체 보상 하트 +100개가 지급되었습니다!");
+          } else {
+            let filteredPool = [];
+            if(selectedPrize.type === 'card_low') {
+              filteredPool = allPhotocards.filter(c => c.rarity === 'Normal' || c.rarity === 'Rare');
+            } else {
+              filteredPool = allPhotocards.filter(c => c.rarity === 'SuperRare' || c.rarity === 'UltraRare' || c.rarity === 'Mythic');
+            }
+            if(filteredPool.length === 0) filteredPool = allPhotocards;
+            
+            const randomCard = filteredPool[Math.floor(Math.random() * filteredPool.length)];
+            if(!unlockedCards.includes(randomCard.id)) unlockedCards.push(randomCard.id);
+            alert(`[출석 체크 완료]\n보상 포토카드 [${randomCard.name}] 획득에 성공했습니다! 도감을 확인하세요.`);
+          }
+        } else {
+          alert("[출석 체크 완료]\n아쉽게도 꽝입니다! 내일의 행운을 기대해 주세요!");
+        }
+
+        lastRouletteDate = todayStr;
+        await syncUserToServer();
+        syncMainUI();
+        openRouletteView();
+      }, 2500);
+    };
+
     async function setupAppEngine() {
       if (localStorage.getItem("idol_app_uid_v2")) {
         userId = localStorage.getItem("idol_app_uid_v2");
@@ -509,6 +703,7 @@
       }
       userPoints = parseInt(localStorage.getItem(`pts_v2_${userId}`)) || 300;
       letterCount = parseInt(localStorage.getItem(`letters_v2_${userId}`)) || 0;
+      lastRouletteDate = localStorage.getItem(`roulette_date_v2_${userId}`) || ""; // 룰렛 불러오기
       try { unlockedCards = JSON.parse(localStorage.getItem(`cards_v2_${userId}`)) || []; } catch(e) { unlockedCards = []; }
       allPhotocards = JSON.parse(localStorage.getItem("local_photocards_v2")) || [];
 
@@ -527,7 +722,8 @@
           userPoints = d.points !== undefined ? d.points : userPoints;
           unlockedCards = d.unlockedCards || unlockedCards;
           letterCount = d.letterCount || letterCount;
-        } else { await setDoc(doc(db, "users_v2", userId), { points: userPoints, unlockedCards: unlockedCards, letterCount: letterCount }); }
+          lastRouletteDate = d.lastRouletteDate || lastRouletteDate;
+        } else { await setDoc(doc(db, "users_v2", userId), { points: userPoints, unlockedCards: unlockedCards, letterCount: letterCount, lastRouletteDate: lastRouletteDate }); }
         const snapshot = await getDocs(collection(db, "photocards_v2"));
         const temp = [];
         snapshot.forEach(doc => temp.push({ id: doc.id, ...doc.data() }));
@@ -541,7 +737,8 @@
       localStorage.setItem(`cards_v2_${userId}`, JSON.stringify(unlockedCards));
       localStorage.setItem(`letters_v2_${userId}`, letterCount);
       localStorage.setItem(`chat_history_v2_${userId}`, JSON.stringify(chatHistory));
-      if(db) { try { await setDoc(doc(db, "users_v2", userId), { points: userPoints, unlockedCards: unlockedCards, letterCount: letterCount }, {merge: true}); } catch(e){} }
+      localStorage.setItem(`roulette_date_v2_${userId}`, lastRouletteDate);
+      if(db) { try { await setDoc(doc(db, "users_v2", userId), { points: userPoints, unlockedCards: unlockedCards, letterCount: letterCount, lastRouletteDate: lastRouletteDate }, {merge: true}); } catch(e){} }
     }
 
     window.resetCollection = async function() {
@@ -581,6 +778,7 @@
       const nameInput = rawName || "[미공개] 새 포토카드"; 
       
       const raritySelect = document.getElementById("admin-card-rarity").value;
+      const memberSelect = document.getElementById("admin-card-member").value; // 👤 멤버 추출
       const fileInput = document.getElementById("admin-card-file");
       const btn = document.getElementById("admin-btn-submit");
       
@@ -599,12 +797,17 @@
         }
         if(!imageUrl) { throw new Error("포토카드 사진 이미지를 등록해야 합니다."); }
         if(idInput) {
-          if(db) { await setDoc(doc(db, "photocards_v2", idInput), { name: nameInput, rarity: raritySelect, imageUrl: imageUrl }, {merge: true}); }
+          if(db) { await setDoc(doc(db, "photocards_v2", idInput), { name: nameInput, rarity: raritySelect, member: memberSelect, imageUrl: imageUrl }, {merge: true}); }
           const targetIndex = allPhotocards.findIndex(c => c.id === idInput);
-          if(targetIndex > -1) { allPhotocards[targetIndex].name = nameInput; allPhotocards[targetIndex].rarity = raritySelect; allPhotocards[targetIndex].imageUrl = imageUrl; }
+          if(targetIndex > -1) { 
+            allPhotocards[targetIndex].name = nameInput; 
+            allPhotocards[targetIndex].rarity = raritySelect; 
+            allPhotocards[targetIndex].member = memberSelect; 
+            allPhotocards[targetIndex].imageUrl = imageUrl; 
+          }
           alert("포토카드 수정이 완료되었습니다.");
         } else {
-          const newDocData = { name: nameInput, rarity: raritySelect, imageUrl: imageUrl, createdAt: new Date().toISOString() };
+          const newDocData = { name: nameInput, rarity: raritySelect, member: memberSelect, imageUrl: imageUrl, createdAt: new Date().toISOString() };
           let generatedId = "c_" + Date.now();
           if(db) { const docRef = await addDoc(collection(db, "photocards_v2"), newDocData); generatedId = docRef.id; }
           allPhotocards.push({ id: generatedId, ...newDocData });
@@ -621,6 +824,7 @@
       document.getElementById("admin-card-id").value = card.id;
       document.getElementById("admin-card-name").value = card.name === "[미공개] 새 포토카드" ? "" : card.name;
       document.getElementById("admin-card-rarity").value = card.rarity;
+      document.getElementById("admin-card-member").value = card.member || "션린위"; // 멤버 할당
       document.getElementById("admin-btn-cancel").classList.remove("hidden");
       document.getElementById("admin-card-name").focus();
     };
@@ -628,6 +832,8 @@
     window.resetAdminForm = function() {
       document.getElementById("admin-form-title").innerText = "새 포토카드 등록";
       document.getElementById("admin-card-id").value = ""; document.getElementById("admin-card-name").value = "";
+      document.getElementById("admin-card-rarity").value = "Normal";
+      document.getElementById("admin-card-member").value = "션린위"; // 멤버 초기화
       document.getElementById("admin-card-file").value = ""; document.getElementById("admin-btn-cancel").classList.add("hidden");
     };
 
@@ -685,7 +891,6 @@
       switchView('game-play');
       const canvas = document.getElementById("game-canvas"); canvas.innerHTML = ""; 
       
-      // 변수 초기화 부문 스케줄 정상 연동
       currentScore = 0; 
       document.getElementById("game-score").innerText = currentScore;
 
@@ -811,60 +1016,48 @@
         });
 
       // ----------------------------------------
-      // 게임 4: 팬덤 가사 타이핑
+      // 🧩 게임 4: 간단한 숫자 퍼즐 (신규 추가)
       // ----------------------------------------
       } else if (gameId === 4) {
-        document.getElementById("game-title").innerText = "아이돌 팬덤 타이핑 ⌨️ (난이도: 중상)";
-        currentTimer = 20; document.getElementById("game-timer").innerText = currentTimer + "s";
+        document.getElementById("game-title").innerText = "간단한 숫자 퍼즐 🧩 (난이도: 타임어택)";
+        currentTimer = 12; document.getElementById("game-timer").innerText = currentTimer + "s";
+        
         gameTimerInterval = setInterval(() => {
           currentTimer--; document.getElementById("game-timer").innerText = currentTimer + "s";
           if(currentTimer <= 0) finishGameEngine();
         }, 1000);
 
         canvas.innerHTML = `
-          <div class="w-full h-full relative flex flex-col justify-between">
-            <div id="word-zone" class="w-full h-[240px] relative border-b border-purple-950/40 overflow-hidden"></div>
-            <form id="typing-submit-form" class="w-full flex space-x-1.5 p-0.5 mt-2">
-              <input type="text" id="typing-input-box" autocomplete="off" placeholder="단어 고속 입력 후 엔터 또는 확인" class="flex-1 bg-purple-950/70 border border-purple-800 p-2.5 text-xs rounded-xl text-center text-white focus:outline-none focus:border-pink-500">
-              <button type="submit" class="bg-pink-600 hover:bg-pink-700 text-white px-4 rounded-xl text-xs font-bold active:scale-95">확인</button>
-            </form>
+          <div class="text-center space-y-2 w-full flex flex-col items-center">
+            <p class="text-[11px] text-gray-400">1부터 9까지 무작위 배치된 숫자를 순서대로 터치하세요!</p>
+            <div class="text-xs text-pink-400 font-bold">다음 타깃 숫자: <span id="puzzle-next-num" class="text-sm font-black text-white bg-pink-600 px-2 py-0.5 rounded-full">1</span></div>
+            <div class="grid grid-cols-3 gap-2 w-full max-w-[240px] mt-2" id="puzzle-grid-holder"></div>
           </div>`;
-
-        const dict = [
-          "포토카드", "뮤직비디오", "올어라운더", "엔딩요정", "밀리언셀러", "쇼케이스", "음원차트", "본방사수", 
-          "덕질인생", "최애멤버", "직캠영상", "공식응원봉", "팬사인회", "스트리밍", "선공개곡", "단독콘서트", 
-          "칼군무", "비주얼센터", "공식팬클럽", "글로벌차트", "인기가요", "뮤직뱅크", "숨스밍", "음방투표", "올팬덤"
-        ];
-        let wordY = 10; const wordZone = document.getElementById("word-zone");
-        let currentWord = dict[Math.floor(Math.random() * dict.length)];
-        const wordEl = document.createElement("div");
-        wordEl.className = "absolute left-1/4 bg-pink-900/80 border border-pink-500/30 px-3 py-1 rounded-lg text-xs font-bold text-white whitespace-nowrap shadow-md";
-        wordEl.innerText = currentWord; wordZone.appendChild(wordEl);
-
-        gameLoopInterval = setInterval(() => {
-          wordY += 2.9; wordEl.style.top = wordY + "px";
-          if(wordY >= 210) {
-            wordY = 10; currentWord = dict[Math.floor(Math.random() * dict.length)];
-            wordEl.innerText = currentWord; wordEl.style.top = wordY + "px";
-            let fallbackWidth = wordZone.clientWidth || 300;
-            wordEl.style.left = Math.random() * (fallbackWidth - 110) + "px";
-          }
-        }, 30);
-
-        const subForm = document.getElementById("typing-submit-form"); const subInput = document.getElementById("typing-input-box");
-        setTimeout(() => subInput.focus(), 150);
-
-        subForm.onsubmit = (e) => {
-          e.preventDefault();
-          if(subInput.value.trim() === wordEl.innerText.trim()) {
-            currentScore += 50; document.getElementById("game-score").innerText = currentScore;
-            wordY = 10; currentWord = dict[Math.floor(Math.random() * dict.length)];
-            wordEl.innerText = currentWord; wordEl.style.top = wordY + "px";
-            let fallbackWidth = wordZone.clientWidth || 300;
-            wordEl.style.left = Math.random() * (fallbackWidth - 110) + "px";
-          }
-          subInput.value = ""; subInput.focus();
-        };
+        
+        const pGrid = document.getElementById("puzzle-grid-holder");
+        const nums = [1, 2, 3, 4, 5, 6, 7, 8, 9].sort(() => Math.random() - 0.5);
+        let nextExpected = 1;
+        
+        nums.forEach(n => {
+          const btn = document.createElement("button");
+          btn.className = "w-full h-14 bg-purple-900 border border-purple-700 text-white font-bold text-base rounded-xl transition active:scale-90 flex items-center justify-center";
+          btn.innerText = n;
+          btn.onclick = () => {
+            if (n === nextExpected) {
+              btn.className = "w-full h-14 bg-emerald-600/40 border border-emerald-500 text-emerald-300 font-bold text-base rounded-xl opacity-50 cursor-not-allowed flex items-center justify-center";
+              btn.onclick = null;
+              nextExpected++;
+              if (nextExpected > 9) {
+                currentScore = 60;
+                clearInterval(gameTimerInterval);
+                finishGameEngine();
+              } else {
+                document.getElementById("puzzle-next-num").innerText = nextExpected;
+              }
+            }
+          };
+          pGrid.appendChild(btn);
+        });
 
       // ----------------------------------------
       // 게임 5: 대기실 가위바위보
@@ -935,6 +1128,62 @@
             await syncUserToServer(); syncMainUI();
           }, 1500);
         };
+
+      // ----------------------------------------
+      // 🎫 게임 7: 초고속 티켓팅 예매 (신규 추가)
+      // ----------------------------------------
+      } else if (gameId === 7) {
+        document.getElementById("game-title").innerText = "초고속 티켓팅 예매 🎫 (순발력)";
+        document.getElementById("game-timer").innerText = "대기중";
+        
+        canvas.innerHTML = `
+          <div class="text-center space-y-4 px-2 w-full h-full flex flex-col items-center justify-center">
+            <div id="ticket-loading-icon" class="text-4xl text-fuchsia-500"><i class="fa-solid fa-spinner animate-spin"></i></div>
+            <h3 id="ticket-prompt-text" class="text-xs font-bold text-gray-300 leading-relaxed">서버 트래픽 조율 대기 중...<br><span class="text-fuchsia-400 text-[10px] animate-pulse">잠시 후 포도알 [예매하기] 단추가 무작위 활성화됩니다!</span></h3>
+            <div id="ticket-action-slot" class="w-full max-w-[180px] h-32 flex items-center justify-center relative mt-2"></div>
+          </div>`;
+        
+        const randomDelay = 1500 + Math.random() * 2000;
+        let openTime = 0;
+        
+        gameLoopInterval = setTimeout(() => {
+          document.getElementById("ticket-loading-icon").className = "text-4xl text-emerald-400 animate-bounce";
+          document.getElementById("ticket-prompt-text").innerHTML = "<b class='text-emerald-400 text-sm font-black animate-pulse'>포도알 오픈!!! 지금 터치하세요!!!</b>";
+          
+          const slot = document.getElementById("ticket-action-slot");
+          const grapeBtn = document.createElement("button");
+          grapeBtn.className = "w-28 h-28 bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-black text-sm rounded-3xl border-4 border-fuchsia-400 shadow-2xl active:scale-95 transition flex items-center justify-center";
+          grapeBtn.innerText = "예매하기";
+          
+          openTime = Date.now();
+          grapeBtn.onclick = () => {
+            const clickInterval = (Date.now() - openTime) / 1000;
+            let finalReward = 0;
+            let logMsg = "";
+            
+            if (clickInterval > 1.3) {
+              finalReward = 0;
+              logMsg = `😭 예매 실패! 이미 선택된 좌석입니다. (기록: ${clickInterval}초)`;
+            } else if (clickInterval < 0.2) {
+              finalReward = 200;
+              logMsg = `🥳 매크로급 신의 손! 플로어 1열 중앙 안착! (+200하트 / ${clickInterval}초)`;
+            } else if (clickInterval < 0.5) {
+              finalReward = 100;
+              logMsg = `🔥 대성공! 선예매 VIP 구역 사수! (+100하트 / ${clickInterval}초)`;
+            } else if (clickInterval < 1.0) {
+              finalReward = 50;
+              logMsg = `👍 성공! 일반 지정석 예매 성공! (+50하트 / ${clickInterval}초)`;
+            } else {
+              finalReward = 10;
+              logMsg = `🎯 성공! 간신히 시야제한석 취켓팅 확보! (+10하트 / ${clickInterval}초)`;
+            }
+            
+            currentScore = finalReward;
+            alert(logMsg);
+            finishGameEngine();
+          };
+          slot.appendChild(grapeBtn);
+        }, randomDelay);
       }
     };
 
@@ -992,13 +1241,14 @@
 
           if(!unlockedCards.includes(pickedCard.id)) unlockedCards.push(pickedCard.id);
           const meta = rarityMeta[pickedCard.rarity] || { ko: pickedCard.rarity, color: "bg-gray-600" };
+          const displayMember = pickedCard.member ? `[${pickedCard.member}] ` : '';
           
           resContainer.innerHTML += `
             <div class="bg-purple-950/40 border border-purple-800/50 p-2 rounded-xl text-center flex flex-col justify-between items-center opacity-0 animate-card-reveal grade-${pickedCard.rarity}" style="animation-delay: ${staggerDelay}ms">
               <img src="${pickedCard.imageUrl}" class="${amount === 1 ? 'h-52' : 'h-24'} w-full object-cover rounded-lg shadow-md pointer-events-none">
               <div class="mt-1.5 w-full truncate">
                 <span class="text-[7px] text-white px-2 py-0.5 rounded-full font-bold ${meta.color}">${meta.ko}</span>
-                <p class="text-[10px] font-bold text-gray-200 truncate mt-0.5">${pickedCard.name}</p>
+                <p class="text-[10px] font-bold text-gray-200 truncate mt-0.5">${displayMember}${pickedCard.name}</p>
               </div>
             </div>`;
           staggerDelay += 180;
