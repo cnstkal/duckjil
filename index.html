@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
   <title>IDOL CARD UNIVERSE PRO</title>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -12,15 +12,26 @@
       font-family: 'Noto Sans KR', sans-serif;
       background: #09070f;
       color: #ffffff;
+      -webkit-text-size-adjust: none;
     }
     .font-logo { font-family: 'Orbitron', sans-serif; }
     
-    /* 📱 더블 탭 확대 부작용 방지를 위한 글로벌 터치 바인딩 규격 선언 */
-    body, button, input, select, div, i, span, img {
-      touch-action: manipulation;
+    /* 📱 광클 연타 시 확대 및 푸른색 선택 블록 현상을 원천 방지하는 터치 제어 규칙 */
+    #game-canvas, button, .nav-tab, i, span, img {
+      touch-action: none !important;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
     
-    /* 하트 캐칭 피버용 명확한 팝업 애니메이션 */
+    /* 텍스트 입력창은 정상 타이핑이 가능하도록 예외 허용 */
+    input[type="text"], select, textarea {
+      touch-action: manipulation !important;
+      -webkit-user-select: text !important;
+      user-select: text !important;
+    }
+    
+    /* 하트 피버 게임용 팝업 애니메이션 */
     @keyframes gentlePop {
       0% { transform: scale(0.3); opacity: 0; }
       15% { transform: scale(1.1); opacity: 1; }
@@ -32,7 +43,7 @@
       animation: gentlePop 1.3s ease-out forwards;
     }
 
-    /* 최고 등급 카드 신화 홀로그램 효과 */
+    /* 시크릿 미스틱 등급 전용 실시간 홀로그램 광채 효과 */
     .grade-Mythic {
       position: relative; overflow: hidden;
       border: 2px solid #ff007f !important;
@@ -55,7 +66,7 @@
     <div class="max-w-md mx-auto flex justify-between items-center">
       <div class="flex items-center space-x-2 cursor-pointer" onclick="switchView('lobby')">
         <i class="fa-solid fa-star text-pink-500 animate-spin" style="animation-duration: 3s"></i>
-        <span class="font-logo font-black text-xl tracking-widest bg-gradient-to-r from-pink-500 via-purple-400 to-cyan-400 bg-clip-text text-transparent">IDOL.UNI V2.2</span>
+        <span class="font-logo font-black text-xl tracking-widest bg-gradient-to-r from-pink-500 via-purple-400 to-cyan-400 bg-clip-text text-transparent">IDOL.UNI PRO</span>
       </div>
       <div class="flex items-center space-x-2 bg-black/40 border border-purple-500/30 px-3 py-1 rounded-full">
         <i class="fa-solid fa-heart text-pink-500 text-xs"></i>
@@ -101,8 +112,8 @@
           <div class="flex items-center space-x-3">
             <div class="w-10 h-10 rounded-lg bg-pink-500/10 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-heart text-pink-500"></i></div>
             <div>
-              <div class="flex items-center space-x-1.5"><h3 class="text-sm font-bold">1. 하트 캐칭 피버</h3><span class="text-[9px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">가속 변동</span></div>
-              <p class="text-[11px] text-gray-400">갈수록 대량 폭풍 스폰! 탭당 +20점</p>
+              <div class="flex items-center space-x-1.5"><h3 class="text-sm font-bold">1. 하트 캐칭 피버</h3><span class="text-[9px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">시간가속형</span></div>
+              <p class="text-[11px] text-gray-400">갈수록 폭풍 스폰! 탭당 +20포인트</p>
             </div>
           </div>
           <i class="fa-solid fa-chevron-right text-xs text-gray-500"></i>
@@ -112,7 +123,7 @@
             <div class="w-10 h-10 rounded-lg bg-yellow-500/10 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-wand-magic-sparkles text-yellow-500"></i></div>
             <div>
               <div class="flex items-center space-x-1.5"><h3 class="text-sm font-bold">2. 응원봉 타이밍 탭</h3><span class="text-[9px] bg-slate-600 text-gray-300 px-1.5 py-0.5 rounded">보통</span></div>
-              <p class="text-[11px] text-gray-400">움직이는 바를 가운데 조준! 성공시 +40점</p>
+              <p class="text-[11px] text-gray-400">네온 바 정중앙 타격! 성공시 +40포인트</p>
             </div>
           </div>
           <i class="fa-solid fa-chevron-right text-xs text-gray-500"></i>
@@ -121,8 +132,8 @@
           <div class="flex items-center space-x-3">
             <div class="w-10 h-10 rounded-lg bg-cyan-500/10 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-clone text-cyan-400"></i></div>
             <div>
-              <div class="flex items-center space-x-1.5"><h3 class="text-sm font-bold">3. 기억력 카드 매칭</h3><span class="text-[9px] bg-red-600/20 text-red-400 px-1.5 py-0.5 rounded font-bold">15초 헬난이도</span></div>
-              <p class="text-[11px] text-gray-400">순간 기억력 극대화 서바이벌! 세트당 +80점</p>
+              <div class="flex items-center space-x-1.5"><h3 class="text-sm font-bold">3. 기억력 카드 매칭</h3><span class="text-[9px] bg-red-600/20 text-red-400 px-1.5 py-0.5 rounded font-bold">15초 타임어택</span></div>
+              <p class="text-[11px] text-gray-400">순간 기억력 극대화! 맞출 때마다 세트당 +80포인트</p>
             </div>
           </div>
           <i class="fa-solid fa-chevron-right text-xs text-gray-500"></i>
@@ -131,8 +142,8 @@
           <div class="flex items-center space-x-3">
             <div class="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-keyboard text-purple-400"></i></div>
             <div>
-              <div class="flex items-center space-x-1.5"><h3 class="text-sm font-bold">4. 팬덤 가사 타이핑</h3><span class="text-[9px] bg-purple-600/20 text-purple-400 px-1.5 py-0.5 rounded font-bold">20초 고속</span></div>
-              <p class="text-[11px] text-gray-400">낙하 속도 대폭 업그레이드! 단어당 +50점</p>
+              <div class="flex items-center space-x-1.5"><h3 class="text-sm font-bold">4. 팬덤 가사 타이핑</h3><span class="text-[9px] bg-purple-600/20 text-purple-400 px-1.5 py-0.5 rounded font-bold">20초 고속구동</span></div>
+              <p class="text-[11px] text-gray-400">가상 키보드 엔터 완벽 지원! 단어 격파시 +50포인트</p>
             </div>
           </div>
           <i class="fa-solid fa-chevron-right text-xs text-gray-500"></i>
@@ -141,8 +152,8 @@
           <div class="flex items-center space-x-3">
             <div class="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-hand-scissors text-emerald-400"></i></div>
             <div>
-              <div class="flex items-center space-x-1.5"><h3 class="text-sm font-bold">5. 대기실 가위바위보</h3><span class="text-[9px] bg-emerald-600/20 text-emerald-400 px-1.5 py-0.5 rounded">쉬움/운</span></div>
-              <p class="text-[11px] text-gray-400">멤버와 가벼운 눈치게임! 승리시 +30점</p>
+              <div class="flex items-center space-x-1.5"><h3 class="text-sm font-bold">5. 대기실 가위바위보</h3><span class="text-[9px] bg-emerald-600/20 text-emerald-400 px-1.5 py-0.5 rounded">쉬움</span></div>
+              <p class="text-[11px] text-gray-400">최애 멤버와 즐기는 눈치 대결! 승리시 +30포인트</p>
             </div>
           </div>
           <i class="fa-solid fa-chevron-right text-xs text-gray-500"></i>
@@ -267,10 +278,22 @@
       Mythic: { ko: "시크릿 미스틱 👑", color: "bg-gradient-to-r from-pink-600 to-yellow-500" }
     };
 
+    // 📱 [수정본 이식] iOS/안드로이드 하드웨어 더블탭 확대 강제 무력화 스크립트 락 안정적 결합
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function (event) {
+      const now = (new Date()).getTime();
+      if (now - lastTouchEnd <= 280) {
+        if(event.target.tagName !== "INPUT" && event.target.tagName !== "SELECT" && event.target.tagName !== "TEXTAREA") {
+          event.preventDefault();
+        }
+      }
+      lastTouchEnd = now;
+    }, { passive: false });
+
     window.switchView = function(viewId) {
       clearInterval(gameTimerInterval);
       clearInterval(gameLoopInterval);
-      clearTimeout(gameLoopInterval); // 가속화 타임아웃 서스펜드 완전 해제 보장
+      clearTimeout(gameLoopInterval);
       
       document.querySelectorAll(".view-section").forEach(sec => sec.classList.add("hidden"));
       document.getElementById(`view-${viewId}`).classList.remove("hidden");
@@ -330,7 +353,7 @@
               </div>`;
           } else {
             grid.innerHTML += `
-              <div class="bg-purple-950/20 border border-purple-950 p-1.5 rounded-xl relative opacity-40">
+              <div class="bg-purple-950/20 border border-purple-900 p-1.5 rounded-xl relative opacity-40">
                 <div class="absolute inset-0 bg-black/70 z-10 rounded-xl flex flex-col items-center justify-center space-y-1">
                   <i class="fa-solid fa-lock text-purple-400 text-sm"></i><span class="text-[9px] text-gray-400">LOCKED</span>
                 </div>
@@ -391,7 +414,7 @@
           localStorage.setItem("local_photocards_v2", JSON.stringify(allPhotocards));
         }
       } catch(err) {
-        console.warn("로컬 모드로 자동 백업 구동됩니다.", err);
+        console.warn("로컬 스토리지 데이터 백업 모드로 완벽 전환 구동됩니다.", err);
       }
       syncMainUI();
     }
@@ -404,12 +427,13 @@
     }
 
     window.resetCollection = async function() {
-      if(!confirm("포토북 수집 내역만 완전히 지우고 처음부터 새롭게 리셋하시겠습니까?")) return;
+      if(!confirm("포토북 수집 내역만 완전히 지고 처음부터 다시 시작하시겠습니까?")) return;
       unlockedCards = []; userPoints = 300;
       await syncUserToServer(); syncMainUI();
-      alert("포토북 수집 내역이 안전하게 초기화되었습니다!");
+      alert("포토북 목록이 완전 초기화되었습니다!");
     };
 
+    // ⚡ 고화질 해상도 무손실 초고속 브라우저 Canvas 압축 모듈
     function resizeAndCompressImage(file) {
       return new Promise((resolve) => {
         const reader = new FileReader(); reader.readAsDataURL(file);
@@ -519,7 +543,7 @@
     };
 
     // ==========================================
-    // 🕹️ 미니게임 구동 코어 엔진 통합 모듈 (V2.2 밸런싱)
+    // 🕹️ 미니게임 통합 구동 코어 엔진부
     // ==========================================
     let currentScore = 0; let currentTimer = 0;
 
@@ -530,7 +554,7 @@
       document.getElementById("game-score").innerText = currentScore;
 
       // ----------------------------------------
-      // 게임 1: 하트 캐칭 피버 [🔥 끝에 다다를수록 미친 듯이 스폰 가속화]
+      // 게임 1: 하트 캐칭 피버 (가속 주기 적용)
       // ----------------------------------------
       if (gameId === 1) {
         document.getElementById("game-title").innerText = "하트 캐칭 피버 💓 (난이도: 가속)";
@@ -541,7 +565,6 @@
           if(currentTimer <= 0) finishGameEngine();
         }, 1000);
 
-        // 가속형 동적 타임아웃 루프 구조 설계 적용
         function spawnHeartFeverLoop() {
           if (currentTimer <= 0) return;
           
@@ -553,7 +576,7 @@
           
           target.onclick = (e) => {
             e.stopPropagation();
-            currentScore += 20; // 밸런스 패치: 변동형 난이도 반영 개당 +20점
+            currentScore += 20;
             document.getElementById("game-score").innerText = currentScore;
             
             target.onclick = null;
@@ -565,20 +588,16 @@
           canvas.appendChild(target);
           setTimeout(() => { if(target && target.parentNode && target.tagName === "DIV") target.remove(); }, 1200);
 
-          // 💡 핵심 요구사항: 끝에 가까워질수록 스폰 주기 가속 연출 파싱
-          let nextSpawnDelay = 600; // 초반부 속도 (0.6초당 1개)
-          if (currentTimer <= 6) {
-            nextSpawnDelay = 220;   // 후반 피버 마무리스퍼트 6초 수평선 (0.22초당 1개 폭풍 드로우)
-          } else if (currentTimer <= 13) {
-            nextSpawnDelay = 380;   // 중반부 가속 존 (0.38초당 1개)
-          }
+          let nextSpawnDelay = 600;
+          if (currentTimer <= 6) { nextSpawnDelay = 220; } 
+          else if (currentTimer <= 13) { nextSpawnDelay = 380; }
           
           gameLoopInterval = setTimeout(spawnHeartFeverLoop, nextSpawnDelay);
         }
         spawnHeartFeverLoop();
 
       // ----------------------------------------
-      // 게임 2: 응원봉 타이밍 탭 (보통 난이도)
+      // 게임 2: 응원봉 타이밍 탭
       // ----------------------------------------
       } else if (gameId === 2) {
         document.getElementById("game-title").innerText = "응원봉 타이밍 탭 ⚡ (난이도: 보통)";
@@ -606,11 +625,11 @@
         };
 
       // ----------------------------------------
-      // 게임 3: 기억력 카드 매칭 [🔥 수정: 15초 긴박 타임어택 + 난이도 최상 세트당 +80점]
+      // 게임 3: 기억력 카드 매칭 (15초 타임어택)
       // ----------------------------------------
       } else if (gameId === 3) {
         document.getElementById("game-title").innerText = "기억력 카드 매칭 🃏 (난이도: 최상)";
-        currentTimer = 15; document.getElementById("game-timer").innerText = currentTimer + "s"; // 💡 15초 스케줄 스정 완료
+        currentTimer = 15; document.getElementById("game-timer").innerText = currentTimer + "s";
         
         gameTimerInterval = setInterval(() => {
           currentTimer--; document.getElementById("game-timer").innerText = currentTimer + "s";
@@ -639,8 +658,7 @@
                 if (c1.dataset.icon === c2.dataset.icon) {
                   c1.dataset.matched = "true"; c2.dataset.matched = "true";
                   c1.classList.add("border-green-400", "animate-pulse"); c2.classList.add("border-green-400", "animate-pulse");
-                  currentScore += 80; // 💡 난이도 최상 패치: 매칭 성공시 대폭 상향된 무려 +80점 부여!
-                  document.getElementById("game-score").innerText = currentScore;
+                  currentScore += 80; document.getElementById("game-score").innerText = currentScore;
                   choice = [];
                   if (holder.querySelectorAll('[data-matched="false"]').length === 0) { setTimeout(() => finishGameEngine(), 500); }
                 } else {
@@ -660,16 +678,26 @@
         });
 
       // ----------------------------------------
-      // 게임 4: 팬덤 가사 타이핑 [🔥 수정: 20초 단축 타임어택 + 낙하 속도 증가 단어당 +50점]
+      // 게임 4: 팬덤 가사 타이핑 (20초 타임어택 & 모바일 폼 전송)
       // ----------------------------------------
       } else if (gameId === 4) {
         document.getElementById("game-title").innerText = "아이돌 팬덤 타이핑 ⌨️ (난이도: 중상)";
-        currentTimer = 20; document.getElementById("game-timer").innerText = currentTimer + "s"; // 💡 20초 셋업 스정 완료
+        currentTimer = 20; document.getElementById("game-timer").innerText = currentTimer + "s";
         
         gameTimerInterval = setInterval(() => {
           currentTimer--; document.getElementById("game-timer").innerText = currentTimer + "s";
           if(currentTimer <= 0) finishGameEngine();
         }, 1000);
+
+        // [수정 완료 이식] 네이티브 <form> 구조 결합하여 입력 전송 씹힘을 완벽하게 예방
+        canvas.innerHTML = `
+          <div class="w-full h-full relative flex flex-col justify-between">
+            <div id="word-zone" class="w-full h-64 relative border-b border-purple-950"></div>
+            <form id="typing-submit-form" class="w-full flex space-x-1.5 p-0.5">
+              <input type="text" id="typing-input-box" autocomplete="off" placeholder="단어 고속 입력 후 엔터 또는 확인" class="flex-1 bg-purple-950/70 border border-purple-800 p-2.5 text-xs rounded-xl text-center text-white focus:outline-none focus:border-pink-500">
+              <button type="submit" class="bg-pink-600 px-4 rounded-xl text-xs font-bold active:scale-95">확인</button>
+            </form>
+          </div>`;
 
         const dict = [
           "포토카드", "뮤직비디오", "올어라운더", "엔딩요정", "밀리언셀러", "쇼케이스", "음원차트", "본방사수", 
@@ -683,30 +711,35 @@
         wordEl.innerText = currentWord; wordZone.appendChild(wordEl);
 
         gameLoopInterval = setInterval(() => {
-          wordY += 2.9; // 💡 밸런스 패치: 타임아웃 단축에 맞춰 낙하 가속도 엔진 증폭 상향 수정 (2.2 -> 2.9)
-          wordEl.style.top = wordY + "px";
+          wordY += 2.9; wordEl.style.top = wordY + "px";
           if(wordY >= 230) {
             wordY = 10; currentWord = dict[Math.floor(Math.random() * dict.length)];
             wordEl.innerText = currentWord; wordEl.style.top = wordY + "px";
-            wordEl.style.left = Math.random() * (wordZone.clientWidth - 110) + "px";
+            let fallbackWidth = wordZone.clientWidth || 300;
+            wordEl.style.left = Math.random() * (fallbackWidth - 110) + "px";
           }
         }, 30);
 
-        document.getElementById("typing-input").onkeydown = (e) => {
-          if(e.key === 'Enter') {
-            if(e.target.value.trim() === wordEl.innerText) {
-              currentScore += 50; // 💡 난이도 다변화 반영: 단어 매칭 격파 성공 시 깔끔하게 +50점 폭풍 제공
-              document.getElementById("game-score").innerText = currentScore;
-              wordY = 10; currentWord = dict[Math.floor(Math.random() * dict.length)];
-              wordEl.innerText = currentWord; wordEl.style.top = wordY + "px";
-              wordEl.style.left = Math.random() * (wordZone.clientWidth - 110) + "px";
-            }
-            e.target.value = "";
+        const subForm = document.getElementById("typing-submit-form");
+        const subInput = document.getElementById("typing-input-box");
+        
+        setTimeout(() => subInput.focus(), 150);
+
+        subForm.onsubmit = (e) => {
+          e.preventDefault();
+          if(subInput.value.trim() === wordEl.innerText.trim()) {
+            currentScore += 50; document.getElementById("game-score").innerText = currentScore;
+            wordY = 10; currentWord = dict[Math.floor(Math.random() * dict.length)];
+            wordEl.innerText = currentWord; wordEl.style.top = wordY + "px";
+            let fallbackWidth = wordZone.clientWidth || 300;
+            wordEl.style.left = Math.random() * (fallbackWidth - 110) + "px";
           }
+          subInput.value = "";
+          subInput.focus();
         };
 
       // ----------------------------------------
-      // 게임 5: 대기실 가위바위보 (쉬움 난이도)
+      // 게임 5: 대기실 가위바위보
       // ----------------------------------------
       } else if (gameId === 5) {
         document.getElementById("game-title").innerText = "대기실 가위바위보 ✊ (난이도: 쉬움)";
@@ -723,8 +756,8 @@
           </div>`;
         window.playRPS = function(userPick) {
           const rpsArr = ['✊', '✋', '✌️']; const aiPick = rpsArr[Math.floor(Math.random() * rpsArr.length)];
-          if(userPick === aiPick) { currentScore += 10; alert(`아이돌도 [${aiPick}]! 비겼습니다! (+10점)`); }
-          else if((userPick==='✊'&&aiPick==='✌️') || (userPick==='✋'&&aiPick==='✊') || (userPick==='✌️'&&aiPick==='✋')) { currentScore += 30; alert(`아이돌은 [${aiPick}]! 가볍게 승리! (+30점) 🎉`); }
+          if(userPick === aiPick) { currentScore += 10; alert("아이돌도 무승부! 비겼습니다! (+10점)"); }
+          else if((userPick==='✊'&&aiPick==='✌️') || (userPick==='✋'&&aiPick==='✊') || (userPick==='✌️'&&aiPick==='✋')) { currentScore += 30; alert(`아이돌은 [${aiPick}]! 완벽한 단독 승리! (+30점) 🎉`); }
           else { alert(`아이돌은 [${aiPick}]! 패배했습니다.. (0점)`); }
           currentTimer--; document.getElementById("game-score").innerText = currentScore;
           document.getElementById("game-timer").innerText = `남은판: ${currentTimer}판`;
