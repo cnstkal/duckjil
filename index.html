@@ -345,9 +345,11 @@
       appId: "1:744761377245:web:3ddaee14f184716eeef634"
     };
 
+    // ⚡ [핵심 수정] 엄격 모드 크래시 방지를 위한 인게임 스코어 및 타이머 변수 선언부 최상단 완벽 배치
     let db = null; let userId = ""; let userPoints = 300; let unlockedCards = []; let allPhotocards = []; let letterCount = 0;
-    let chatHistory = []; 
     let gameLoopInterval = null; let gameTimerInterval = null;
+    let currentScore = 0; let currentTimer = 0; // 키워드 선언 완료!
+    let chatHistory = []; 
 
     const rarityMeta = {
       Normal: { ko: "일반", color: "bg-slate-700", score: 1 },
@@ -467,7 +469,6 @@
         });
       }
 
-      // 관리자 목록 UI 렌더링에 체크박스 연동 바인딩
       const adminList = document.getElementById("admin-cards-list");
       adminList.innerHTML = "";
       allPhotocards.forEach(card => {
@@ -531,7 +532,7 @@
         const temp = [];
         snapshot.forEach(doc => temp.push({ id: doc.id, ...doc.data() }));
         if(temp.length > 0) { allPhotocards = temp; localStorage.setItem("local_photocards_v2", JSON.stringify(allPhotocards)); }
-      } catch(err) { console.warn("원격 DB 연결 오류 -> 로컬 모드로 작동합니다.", err); }
+      } catch(err) { console.warn("로컬 모드로 로드 완료.", err); }
       syncMainUI();
     }
 
@@ -574,11 +575,10 @@
       });
     }
 
-    // 이름 비우고 등록 시 자동 폴백 지정 모듈 가동
     window.handleAdminSubmit = async function() {
       const idInput = document.getElementById("admin-card-id").value;
       const rawName = document.getElementById("admin-card-name").value.trim();
-      const nameInput = rawName || "[미공개] 새 포토카드"; // 💡 공백 시 자동 디폴트 이름 배정
+      const nameInput = rawName || "[미공개] 새 포토카드"; 
       
       const raritySelect = document.getElementById("admin-card-rarity").value;
       const fileInput = document.getElementById("admin-card-file");
@@ -678,16 +678,19 @@
     };
 
     // ==========================================
-    // 🕹️ 미니게임 구동 코어 엔진부 (버그 전면 쇄신)
+    // 🕹️ 미니게임 구동 코어 엔진부
     // ==========================================
     window.initGame = function(gameId) {
       if (gameId === 6 && userPoints < 100) { alert(`올인 게임은 최소 100하트 이상 보유 시 가능합니다!\n현재 보유 하트: ${userPoints} 🤍`); return; }
       switchView('game-play');
-      const canvas = document.getElementById("game-canvas"); canvas.innerHTML = ""; currentScore = 0;
+      const canvas = document.getElementById("game-canvas"); canvas.innerHTML = ""; 
+      
+      // 변수 초기화 부문 스케줄 정상 연동
+      currentScore = 0; 
       document.getElementById("game-score").innerText = currentScore;
 
       // ----------------------------------------
-      // 게임 1: 하트 캐칭 피버 (너비 안전 장치 이식)
+      // 게임 1: 하트 캐칭 피버 (10초 긴박 타임어택)
       // ----------------------------------------
       if (gameId === 1) {
         document.getElementById("game-title").innerText = "하트 캐칭 피버 💓 (난이도: 10초 가속)";
@@ -704,7 +707,6 @@
           target.className = "absolute text-pink-500 text-4xl cursor-pointer p-4 heart-pop select-none z-30 flex items-center justify-center";
           target.innerHTML = `<i class="fa-solid fa-heart filter drop-shadow-[0_0_6px_#ff007f]"></i>`;
           
-          // 💡 오작동 방지: 캔버스 크기 일시 오류 시 안전 규격(350x380)을 백업으로 활용
           let canvasWidth = canvas.clientWidth || 350;
           let canvasHeight = canvas.clientHeight || 380;
           target.style.left = Math.random() * (canvasWidth - 70) + "px";
@@ -729,7 +731,7 @@
         spawnHeartFeverLoop();
 
       // ----------------------------------------
-      // 게임 2: 응원봉 타이밍 탭 (Tailwind v3 패치로 완전 출력 보장)
+      // 게임 2: 응원봉 타이밍 탭
       // ----------------------------------------
       } else if (gameId === 2) {
         document.getElementById("game-title").innerText = "응원봉 타이밍 탭 ⚡ (난이도: 보통)";
@@ -809,7 +811,7 @@
         });
 
       // ----------------------------------------
-      // 게임 4: 팬덤 가사 타이핑 (네이티브 폼 서브밋 구동 보장)
+      // 게임 4: 팬덤 가사 타이핑
       // ----------------------------------------
       } else if (gameId === 4) {
         document.getElementById("game-title").innerText = "아이돌 팬덤 타이핑 ⌨️ (난이도: 중상)";
