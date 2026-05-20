@@ -43,7 +43,7 @@
       animation: gentlePop 1.3s ease-out forwards;
     }
 
-    /* ✨ [추가] 가차 럭키 카드 3D 회전 등장 모션 구현 효과 */
+    /* 가차 럭키 카드 3D 회전 등장 모션 구현 효과 */
     @keyframes cardReveal {
       0% { transform: scale(0.5) rotateY(-90deg); opacity: 0; }
       100% { transform: scale(1) rotateY(0deg); opacity: 1; }
@@ -100,7 +100,7 @@
       <div class="grid grid-cols-2 gap-3">
         <button onclick="switchView('game-select')" class="bg-purple-950/30 border border-purple-900/50 hover:border-pink-500/40 p-4 rounded-xl flex flex-col items-center justify-center space-y-2 transition active:scale-95">
           <i class="fa-solid fa-gamepad text-pink-500 text-2xl"></i>
-          <span class="font-bold text-xs">미니게임 (5종)</span>
+          <span class="font-bold text-xs">미니게임 (6종)</span>
         </button>
         <button onclick="switchView('gacha')" class="bg-purple-950/30 border border-purple-900/50 hover:border-purple-500/40 p-4 rounded-xl flex flex-col items-center justify-center space-y-2 transition active:scale-95">
           <i class="fa-solid fa-box-open text-cyan-400 text-2xl"></i>
@@ -121,8 +121,8 @@
           <div class="flex items-center space-x-3">
             <div class="w-10 h-10 rounded-lg bg-pink-500/10 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-heart text-pink-500"></i></div>
             <div>
-              <div class="flex items-center space-x-1.5"><h3 class="text-sm font-bold">1. 하트 캐칭 피버</h3><span class="text-[9px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">시간가속형</span></div>
-              <p class="text-[11px] text-gray-400">갈수록 폭풍 스폰! 탭당 +20포인트</p>
+              <div class="flex items-center space-x-1.5"><h3 class="text-sm font-bold">1. 하트 캐칭 피버</h3><span class="text-[9px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">터치 패치완료</span></div>
+              <p class="text-[11px] text-gray-400">초고속 반응식 터치 적용! 탭당 +20포인트</p>
             </div>
           </div>
           <i class="fa-solid fa-chevron-right text-xs text-gray-500"></i>
@@ -142,7 +142,7 @@
             <div class="w-10 h-10 rounded-lg bg-cyan-500/10 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-clone text-cyan-400"></i></div>
             <div>
               <div class="flex items-center space-x-1.5"><h3 class="text-sm font-bold">3. 기억력 카드 매칭</h3><span class="text-[9px] bg-red-600/20 text-red-400 px-1.5 py-0.5 rounded font-bold">15초 타임어택</span></div>
-              <p class="text-[11px] text-gray-400">순간 기억력 극대화! 맞출 때마다 세트당 +80포인트</p>
+              <p class="text-[11px] text-gray-400">순간 기억력 서바이벌! 맞출 때마다 세트당 +80포인트</p>
             </div>
           </div>
           <i class="fa-solid fa-chevron-right text-xs text-gray-500"></i>
@@ -166,6 +166,16 @@
             </div>
           </div>
           <i class="fa-solid fa-chevron-right text-xs text-gray-500"></i>
+        </div>
+        <div onclick="initGame(6)" class="bg-purple-950/40 border border-red-950 p-4 rounded-xl flex justify-between items-center cursor-pointer hover:border-red-500/40 transition bg-gradient-to-r from-purple-950/20 to-red-950/20">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-lg bg-red-600/20 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-dice text-red-500 text-lg animate-pulse"></i></div>
+            <div>
+              <div class="flex items-center space-x-1.5"><h3 class="text-sm font-bold text-red-400">6. 전액 올인! 인생은 한방</h3><span class="text-[9px] bg-red-600 text-white px-1.5 py-0.5 rounded font-bold">50% 도박</span></div>
+              <p class="text-[11px] text-gray-300">내 하트 2배 승튀 vs 0개 전액 몰수! (최소 100개 필요)</p>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right text-xs text-red-500"></i>
         </div>
       </div>
     </section>
@@ -206,8 +216,7 @@
             <i class="fa-solid fa-box-open text-pink-500 text-4xl animate-bounce"></i>
             <p class="font-logo text-xs tracking-widest text-purple-400">UNOPENED PACK</p>
           </div>
-          <div id="gacha-display-result" class="hidden w-full h-full overflow-y-auto grid gap-2 p-0.5">
-            </div>
+          <div id="gacha-display-result" class="hidden w-full h-full overflow-y-auto grid gap-2 p-0.5"></div>
         </div>
       </div>
       <div class="max-w-xs mx-auto space-y-1">
@@ -308,7 +317,7 @@
       Mythic: { ko: "시크릿 미스틱 👑", color: "bg-gradient-to-r from-pink-600 to-yellow-500" }
     };
 
-    // 📱 iOS/안드로이드 하드웨어 더블탭 확대 강제 무력화 스크립트 락 안정적 결합
+    // 📱 iOS/안드로이드 하드웨어 더블탭 확대 강제 무력화 스크립트 락
     let lastTouchEnd = 0;
     document.addEventListener('touchend', function (event) {
       const now = (new Date()).getTime();
@@ -444,7 +453,7 @@
           localStorage.setItem("local_photocards_v2", JSON.stringify(allPhotocards));
         }
       } catch(err) {
-        console.warn("로컬 스토리지 데이터 백업 모드로 완벽 전환 구동됩니다.", err);
+        console.warn("로컬 백업 모드로 전환 구동됩니다.", err);
       }
       syncMainUI();
     }
@@ -456,13 +465,11 @@
       if(db) { try { await setDoc(doc(db, "users_v2", userId), { points: userPoints, unlockedCards: unlockedCards, letterCount: letterCount }, {merge: true}); } catch(e){} }
     }
 
-    // 🤍 [수정] 포카 리셋을 진행해도 내가 보유중인 하트는 그대로 보존되는 예외 처리 스케줄 탑재
     window.resetCollection = async function() {
-      if(!confirm("포토북 수집 내역만 완전히 지우고 처음부터 새롭게 리셋하시겠습니까?\n(⚠️ 경고: 수집된 카드만 0개로 지워지며, 기존에 획득한 하트는 돌아오거나 복구되지 않고 유지됩니다.)")) return;
+      if(!confirm("포토북 수집 내역만 완전히 지우고 처음부터 새롭게 리셋하시겠습니까?\n(⚠️ 하트는 소모 및 초기화되지 않고 영구 보존됩니다.)")) return;
       unlockedCards = []; 
-      // userPoints 재화 자산 변동 없이 그대로 보존
       await syncUserToServer(); syncMainUI();
-      alert("보유 중인 하트 자산은 그대로 유지되며, 포토북 수집 도감만 완전히 리셋되었습니다!");
+      alert("하트는 유지되며, 포토북 도감 목록만 초기화되었습니다!");
     };
 
     function resizeAndCompressImage(file) {
@@ -574,16 +581,25 @@
     };
 
     // ==========================================
-    // 🕹️ 미니게임 통합 구동 코어 엔진부
+    // 🕹️ 미니게임 통합 구동 코어 엔진부 (V2.5 개조)
     // ==========================================
     let currentScore = 0; let currentTimer = 0;
 
     window.initGame = function(gameId) {
+      // 💥 게임 6 예외 안전 차단 처리 (최소 100하트 소모 방어 코드)
+      if (gameId === 6 && userPoints < 100) {
+        alert(`올인 게임은 최소 100하트 이상 보유 시 가능합니다!\n현재 보유 하트: ${userPoints} 🤍`);
+        return;
+      }
+
       switchView('game-play');
       const canvas = document.getElementById("game-canvas");
       canvas.innerHTML = ""; currentScore = 0;
       document.getElementById("game-score").innerText = currentScore;
 
+      // ----------------------------------------
+      // 게임 1: 하트 캐칭 피버 [🔥 수정: pointerdown 알고리즘 교체 + 범위확장]
+      // ----------------------------------------
       if (gameId === 1) {
         document.getElementById("game-title").innerText = "하트 캐칭 피버 💓 (난이도: 가속)";
         currentTimer = 20; document.getElementById("game-timer").innerText = currentTimer + "s";
@@ -597,21 +613,23 @@
           if (currentTimer <= 0) return;
           
           const target = document.createElement("div");
-          target.className = "absolute text-pink-500 text-3xl cursor-pointer p-2 heart-pop select-none z-30 flex items-center justify-center";
+          // [수정] 크기 증가(text-4xl) 및 터치 영역 강제 2배 확대(p-4) 배치
+          target.className = "absolute text-pink-500 text-4xl cursor-pointer p-4 heart-pop select-none z-30 flex items-center justify-center";
           target.innerHTML = `<i class="fa-solid fa-heart filter drop-shadow-[0_0_6px_#ff007f]"></i>`;
-          target.style.left = Math.random() * (canvas.clientWidth - 50) + "px";
-          target.style.top = Math.random() * (canvas.clientHeight - 50) + "px";
+          target.style.left = Math.random() * (canvas.clientWidth - 65) + "px";
+          target.style.top = Math.random() * (canvas.clientHeight - 65) + "px";
           
-          target.onclick = (e) => {
+          // [수정] 모바일 클릭 레이턴시 프리패스용 고성능 pointerdown 핸들러 바인딩 이식
+          target.addEventListener('pointerdown', (e) => {
             e.stopPropagation();
+            e.preventDefault();
             currentScore += 20;
             document.getElementById("game-score").innerText = currentScore;
             
-            target.onclick = null;
-            target.className = "absolute text-yellow-400 font-bold font-logo text-xl tracking-tight z-40 animate-ping";
+            target.className = "absolute text-yellow-400 font-bold font-logo text-2xl tracking-tight z-40 animate-ping";
             target.innerHTML = "+20";
             setTimeout(() => target.remove(), 400);
-          };
+          });
           
           canvas.appendChild(target);
           setTimeout(() => { if(target && target.parentNode && target.tagName === "DIV") target.remove(); }, 1200);
@@ -624,6 +642,9 @@
         }
         spawnHeartFeverLoop();
 
+      // ----------------------------------------
+      // 게임 2: 응원봉 타이밍 탭
+      // ----------------------------------------
       } else if (gameId === 2) {
         document.getElementById("game-title").innerText = "응원봉 타이밍 탭 ⚡ (난이도: 보통)";
         currentTimer = 5; document.getElementById("game-timer").innerText = `기회: ${currentTimer}회`;
@@ -649,6 +670,9 @@
           if(currentTimer <= 0) finishGameEngine();
         };
 
+      // ----------------------------------------
+      // 게임 3: 기억력 카드 매칭
+      // ----------------------------------------
       } else if (gameId === 3) {
         document.getElementById("game-title").innerText = "기억력 카드 매칭 🃏 (난이도: 최상)";
         currentTimer = 15; document.getElementById("game-timer").innerText = currentTimer + "s";
@@ -699,6 +723,9 @@
           holder.appendChild(card);
         });
 
+      // ----------------------------------------
+      // 게임 4: 팬덤 가사 타이핑
+      // ----------------------------------------
       } else if (gameId === 4) {
         document.getElementById("game-title").innerText = "아이돌 팬덤 타이핑 ⌨️ (난이도: 중상)";
         currentTimer = 20; document.getElementById("game-timer").innerText = currentTimer + "s";
@@ -756,12 +783,15 @@
           subInput.focus();
         };
 
+      // ----------------------------------------
+      // 게임 5: 대기실 가위바위보
+      // ----------------------------------------
       } else if (gameId === 5) {
         document.getElementById("game-title").innerText = "대기실 가위바위보 ✊ (난이도: 쉬움)";
         currentTimer = 3; document.getElementById("game-timer").innerText = `남은판: ${currentTimer}판`;
         canvas.innerHTML = `
           <div class="text-center space-y-4">
-            <p class="text-xs text-gray-400">컴백 라이브 대기실 멤버의 심리를 꿰뚫어 보세요!</p>
+            <p class="text-xs text-gray-400">컴백 라이브 대기실 멤버의 심리를 께뚫어 보세요!</p>
             <div class="text-4xl text-pink-500 animate-bounce" id="ai-status"><i class="fa-solid fa-user-astronaut"></i></div>
             <div class="flex space-x-2 justify-center">
               <button onclick="playRPS('✊')" class="bg-purple-900 border border-purple-600 px-3 py-2 rounded-lg text-sm active:scale-95">✊ 주먹</button>
@@ -778,6 +808,80 @@
           document.getElementById("game-timer").innerText = `남은판: ${currentTimer}판`;
           if(currentTimer <= 0) finishGameEngine();
         };
+
+      // ----------------------------------------
+      // 💥 신규 게임 6: 리얼 올인 도박 한방 레이스 기믹
+      // ----------------------------------------
+      } else if (gameId === 6) {
+        document.getElementById("game-title").innerText = "전액 올인! 인생역전 대박 🎰";
+        document.getElementById("game-timer").innerText = "ALL-IN";
+        
+        canvas.innerHTML = `
+          <div class="text-center space-y-5 px-4 w-full">
+            <div class="w-16 h-16 bg-red-600/10 border border-red-500/30 rounded-full flex items-center justify-center mx-auto text-2xl text-red-500 animate-pulse">
+              <i class="fa-solid fa-skull-crossbones"></i>
+            </div>
+            <div>
+              <h3 class="text-md font-bold text-red-400">🔥 리얼 하트 올인 소집령 🔥</h3>
+              <p class="text-[11px] text-gray-400 mt-1 leading-relaxed">
+                현재 가진 모든 자산 <b class="text-white text-xs">${userPoints} 🤍</b>를 전부 베팅합니다.<br>
+                성공 시 보상은 정확히 <b class="text-green-400 font-logo text-xs">2배 복사 (x2)</b>!<br>
+                실패 시 보유 포인트는 즉시 <b class="text-red-500 font-logo text-xs">0개 (완전 몰수)</b>!
+              </p>
+            </div>
+            <div id="gambling-panel">
+              <button onclick="executeAllInGamble()" class="w-full bg-gradient-to-r from-red-600 to-purple-600 font-bold py-3.5 rounded-xl text-xs tracking-wider active:scale-95 transition shadow-lg shadow-red-950/40">
+                인생은 한방! 50% 확률 올인하기
+              </button>
+            </div>
+          </div>
+        `;
+
+        window.executeAllInGamble = function() {
+          const panel = document.getElementById("gambling-panel");
+          panel.innerHTML = `
+            <div class="space-y-2 text-center py-2">
+              <i class="fa-solid fa-spinner text-pink-500 text-3xl animate-spin"></i>
+              <p class="text-[10px] text-pink-400 font-mono tracking-widest animate-pulse">BETTING COIN FLIPPING...</p>
+            </div>
+          `;
+
+          // 짜릿한 1.5초 서스펜스 딜레이 연출 부여
+          setTimeout(async () => {
+            const isWin = Math.random() < 0.5; // 정확한 50대50 승률 계산
+            
+            if (isWin) {
+              const oldPoints = userPoints;
+              userPoints = userPoints * 2; // 2배 복사 성공
+              currentScore = userPoints - oldPoints;
+              
+              canvas.innerHTML = `
+                <div class="text-center space-y-4 px-4 animate-card-reveal">
+                  <i class="fa-solid fa-champagne-glasses text-yellow-400 text-5xl animate-bounce"></i>
+                  <h3 class="text-lg font-black text-green-400">🎉 올인 대박 2배 성공! 🎉</h3>
+                  <p class="text-xs text-gray-300">하트 스와핑에 대성공했습니다!<br>최종 충전 재화: <b class="text-green-400">${userPoints} 🤍</b></p>
+                  <button onclick="switchView('game-select')" class="bg-gray-800 border border-purple-900 px-4 py-2 text-[11px] rounded-lg">대기실로 퇴장</button>
+                </div>
+              `;
+            } else {
+              userPoints = 0; // 전액 몰수 파쇄
+              currentScore = 0;
+              
+              canvas.innerHTML = `
+                <div class="text-center space-y-4 px-4 animate-card-reveal">
+                  <i class="fa-solid fa-heart-crack text-gray-600 text-5xl"></i>
+                  <h3 class="text-lg font-black text-red-500">😭 올인 실패.. 전액 몰수 😭</h3>
+                  <p class="text-xs text-gray-400">인생은 한방.. 모든 하트가 소멸했습니다.<br>남은 재화: <b class="text-red-500">0 🤍</b></p>
+                  <button onclick="switchView('game-select')" class="bg-gray-800 border border-purple-900 px-4 py-2 text-[11px] rounded-lg">처음부터 다시 충전하기</button>
+                </div>
+              `;
+            }
+            
+            document.getElementById("game-score").innerText = userPoints;
+            await syncUserToServer();
+            syncMainUI();
+          }, 1500);
+        };
       }
     };
 
@@ -793,92 +897,57 @@
         </div>`;
     }
 
-    // 🪐 [추가] 가중치 기반 확률형 랜덤 선택 코어 알고리즘
     function getWeightedRandomCard() {
       const rarityWeights = { Normal: 50, Rare: 25, SuperRare: 15, UltraRare: 8, Mythic: 2 };
-      
-      const weightedPool = allPhotocards.map(card => ({
-        card: card,
-        weight: rarityWeights[card.rarity] || 10
-      }));
-      
+      const weightedPool = allPhotocards.map(card => ({ card: card, weight: rarityWeights[card.rarity] || 10 }));
       const totalWeight = weightedPool.reduce((sum, item) => sum + item.weight, 0);
       let randomValue = Math.random() * totalWeight;
-      
       for (const item of weightedPool) {
         randomValue -= item.weight;
-        if (randomValue <= 0) {
-          return item.card;
-        }
+        if (randomValue <= 0) return item.card;
       }
       return allPhotocards[Math.floor(Math.random() * allPhotocards.length)];
     }
 
-    // 🪐 [수정 및 모션 고도화] 1~8장 수량 연쇄 가차 핸들러
     window.drawCard = async function() {
       const amount = parseInt(document.getElementById("gacha-amount").value) || 1;
       const requiredPoints = amount * 100;
-
       if(userPoints < requiredPoints) { 
-        alert(`하트 포인트가 부족합니다!\n필요 하트: ${requiredPoints} 🤍 / 보유 하트: ${userPoints} 🤍\n미니게임에서 하트를 모아오세요!`); 
+        alert(`하트 포인트가 부족합니다!\n필요 하트: ${requiredPoints} 🤍 / 보유 하트: ${userPoints} 🤍`); 
         return; 
       }
-      if(allPhotocards.length === 0) { 
-        alert("데이터베이스에 등록된 포토카드가 없습니다. 관리자 메뉴에서 등록부터 해주세요!"); 
-        return; 
-      }
+      if(allPhotocards.length === 0) { alert("등록된 카드가 없습니다. 관리자 탭에서 먼저 올려주세요!"); return; }
 
-      // 재화 소모 정산 반영
-      userPoints -= requiredPoints;
-      syncMainUI();
-
-      const def = document.getElementById("gacha-display-default"); 
-      const resContainer = document.getElementById("gacha-display-result");
+      userPoints -= requiredPoints; syncMainUI();
+      const def = document.getElementById("gacha-display-default"); const resContainer = document.getElementById("gacha-display-result");
       const container = document.getElementById("gacha-card-container");
       
-      // 팩 오픈 시그널 연출
       def.innerHTML = `<i class="fa-solid fa-compact-disc text-pink-500 text-4xl animate-spin"></i><p class="text-[10px] text-pink-400 font-mono mt-2">DREW PACK OPENING...</p>`;
-      resContainer.classList.add("hidden"); 
-      def.classList.remove("hidden"); 
-      container.classList.add("scale-95", "rotate-3");
+      resContainer.classList.add("hidden"); def.classList.remove("hidden"); container.classList.add("scale-95", "rotate-3");
 
       setTimeout(async () => {
-        def.classList.add("hidden"); 
-        resContainer.classList.remove("hidden"); 
-        container.classList.remove("scale-95", "rotate-3");
-
-        // 수량에 맞춰 그리드 클래스 동적 주입 스케일링
+        def.classList.add("hidden"); resContainer.classList.remove("hidden"); container.classList.remove("scale-95", "rotate-3");
         const colsClass = amount === 1 ? "grid-cols-1" : "grid-cols-2";
         resContainer.className = `w-full h-full overflow-y-auto grid ${colsClass} gap-2 p-0.5`;
         resContainer.innerHTML = "";
-
         let staggerDelay = 0;
 
         for (let i = 0; i < amount; i++) {
-          const pickedCard = getWeightedRandomCard(); // 확률형 연동 추출
-          
-          if(!unlockedCards.includes(pickedCard.id)) {
-            unlockedCards.push(pickedCard.id);
-          }
-
+          const pickedCard = getWeightedRandomCard();
+          if(!unlockedCards.includes(pickedCard.id)) unlockedCards.push(pickedCard.id);
           const meta = rarityMeta[pickedCard.rarity] || { ko: pickedCard.rarity, color: "bg-gray-600" };
           
-          // 3D 플립 스태거 타임아웃 레이아웃 카드 조합 빌드
-          const cardNodeHTML = `
+          resContainer.innerHTML += `
             <div class="bg-purple-950/40 border border-purple-800/50 p-2 rounded-xl text-center flex flex-col justify-between items-center opacity-0 animate-card-reveal grade-${pickedCard.rarity}" style="animation-delay: ${staggerDelay}ms">
               <img src="${pickedCard.imageUrl}" class="${amount === 1 ? 'h-52' : 'h-24'} w-full object-cover rounded-lg shadow-md pointer-events-none">
               <div class="mt-1.5 w-full truncate">
                 <span class="text-[7px] text-white px-2 py-0.5 rounded-full font-bold ${meta.color}">${meta.ko}</span>
                 <p class="text-[10px] font-bold text-gray-200 truncate mt-0.5">${pickedCard.name}</p>
               </div>
-            </div>
-          `;
-          resContainer.innerHTML += cardNodeHTML;
-          staggerDelay += 200; // 0.2초 간격의 차례대로 뒤집히는 입체 셔플 시차 부여
+            </div>`;
+          staggerDelay += 200;
         }
-
-        await syncUserToServer(); 
-        syncMainUI();
+        await syncUserToServer(); syncMainUI();
       }, 1200);
     };
 
