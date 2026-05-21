@@ -52,7 +52,8 @@
       100% { transform: scale(1) rotateY(0deg); opacity: 1; }
     }
     .animate-card-reveal {
-      animation: cardReveal 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      /* 🛠️ 오류 수정: forwards 대신 both 사용 */
+      animation: cardReveal 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
     }
 
     /* 최고존엄 대박 드로우 터질 때 화면 전체 네온 플래시 특수 이펙트 모션 */
@@ -1464,6 +1465,9 @@
         resContainer.classList.remove("hidden");
         resContainer.style.display = "grid"; 
         
+        // 🛠️ 오류 수정: 멈춰있던 뽑기 상자의 축소 및 기울기를 원상태로 복구합니다.
+        container.classList.remove("scale-95", "rotate-3");
+
         const colsClass = amount === 1 ? "grid-cols-1" : (amount <= 5 ? "grid-cols-2" : "grid-cols-3");
         // 🛠️ block 제거하여 레이아웃 무너짐 완전 방지
         resContainer.className = `w-full h-full overflow-y-auto grid ${colsClass} gap-2 p-1 text-white z-40 relative`;
@@ -1522,8 +1526,9 @@
           const cardFrameClass = isSSR ? "polaroid-frame-style" : `bg-purple-950/70 border border-purple-800/60 p-1.5 grade-${pickedCard.rarity}`;
           const textTitleColor = isSSR ? "text-gray-900" : "text-gray-200";
 
+          // 🛠️ 오류 수정: 클래스 목록에 있던 'opacity-0'을 제거했습니다. CSS의 'both' 속성이 알아서 처리합니다.
           resContainer.innerHTML += `
-            <div class="${cardFrameClass} rounded-lg text-center flex flex-col justify-between items-center opacity-0 animate-card-reveal" style="animation-delay: ${staggerDelay}ms">
+            <div class="${cardFrameClass} rounded-lg text-center flex flex-col justify-between items-center animate-card-reveal" style="animation-delay: ${staggerDelay}ms">
               <img src="${pickedCard.imageUrl}" class="${amount === 1 ? 'h-48' : 'h-24'} w-full object-cover rounded shadow-md pointer-events-none">
               <div class="mt-1 w-full truncate text-left px-0.5">
                 <span class="text-[7px] text-white px-1 py-0.5 rounded font-bold ${meta.color}">${meta.ko}</span>
