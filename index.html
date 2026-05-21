@@ -462,19 +462,30 @@
       <div class="bg-purple-950/50 p-4 rounded-xl border border-purple-900 space-y-3 text-xs">
         <h3 id="admin-form-title" class="font-bold text-cyan-400">새 포토카드 등록</h3>
         <input type="hidden" id="admin-card-id">
-        <div><label class="block text-gray-400 mb-1">포토카드 명칭 (미설정 시 공백 자동 배정)</label><input type="text" id="admin-card-name" placeholder="예: 미입력 시 '[미공개] 새 포토카드'로 설정됨" class="w-full bg-black/40 border border-purple-900 rounded-lg px-3 py-2 text-white"></div>
+        <div><label class="block text-gray-400 mb-1">포토카드 명칭 (미설정 시 아래 종류 명칭 자동 자동 배정)</label><input type="text" id="admin-card-name" placeholder="공백 시 선택한 종류의 이름으로 저장됩니다." class="w-full bg-black/40 border border-purple-900 rounded-lg px-3 py-2 text-white"></div>
         
         <div class="grid grid-cols-2 gap-2">
+          <div><label class="block text-gray-400 mb-1">포토카드 종류 지정</label>
+            <select id="admin-card-type" class="w-full bg-black/40 border border-purple-900 rounded-lg px-2 py-2 text-white">
+              <option value="앨범">앨범</option>
+              <option value="LUCKY DRAW">럭키 드로우</option>
+              <option value="응모 특전">응모 특전</option>
+              <option value="공방">공방</option>
+              <option value="입장 특전">입장 특전</option>
+              <option value="MD 특전">MD 특전</option>
+            </select>
+          </div>
           <div><label class="block text-gray-400 mb-1">5단계 등급 세팅</label>
             <select id="admin-card-rarity" class="w-full bg-black/40 border border-purple-900 rounded-lg px-2 py-2 text-white">
               <option value="Normal">Normal (일반)</option><option value="Rare">Rare (레어)</option><option value="SuperRare">Super Rare (SR)</option><option value="UltraRare">Ultra Rare (UR)</option><option value="Mythic">Secret Mythic (신화)</option>
             </select>
           </div>
-          <div><label class="block text-gray-400 mb-1">멤버 카테고리</label>
-            <select id="admin-card-member" class="w-full bg-black/40 border border-purple-900 rounded-lg px-2 py-2 text-white">
-              <option value="션린위">션린위</option><option value="해인">해인</option><option value="로아">로아</option><option value="남해주">남해주</option><option value="로은">로은</option><option value="서도윤">서도윤</option><option value="루이">루이</option><option value="범지유">범지유</option>
-            </select>
-          </div>
+        </div>
+        <div>
+          <label class="block text-gray-400 mb-1">멤버 카테고리</label>
+          <select id="admin-card-member" class="w-full bg-black/40 border border-purple-900 rounded-lg px-2 py-2 text-white">
+            <option value="션린위">션린위</option><option value="해인">해인</option><option value="로아">로아</option><option value="남해주">남해주</option><option value="로은">로은</option><option value="서도윤">서도윤</option><option value="루이">루이</option><option value="범지유">범지유</option>
+          </select>
         </div>
         <div><label class="block text-gray-400 mb-1">포토카드 고화질 파일</label><input type="file" id="admin-card-file" accept="image/*" class="w-full text-[10px] text-gray-400 mt-1"></div>
         
@@ -606,6 +617,49 @@
       Mythic: { ko: "시크릿 미스틱 👑", color: "bg-gradient-to-r from-pink-600 to-yellow-500", score: 5, sellValue: 400 }
     };
 
+    // 🔊 브라우저 가상 오디오 합성기 로직 탑재 (등장 효과음)
+    function playBeepSound(type) {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        
+        if (type === 'UltraRare') {
+          // 울트라 레어: 깔끔하고 경쾌한 2화음 신디사이징
+          let now = ctx.currentTime;
+          let osc1 = ctx.createOscillator(); let osc2 = ctx.createOscillator();
+          let gain = ctx.createGain();
+          osc1.type = 'triangle'; osc1.frequency.setValueAtTime(587.33, now); osc1.frequency.exponentialRampToValueAtTime(1174.66, now + 0.4);
+          osc2.type = 'sine'; osc2.frequency.setValueAtTime(698.46, now); osc2.frequency.exponentialRampToValueAtTime(1396.91, now + 0.4);
+          gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0.001, now + 0.4);
+          osc1.connect(gain); osc2.connect(gain); gain.connect(ctx.destination);
+          osc1.start(now); osc2.start(now); osc1.stop(now + 0.4); osc2.stop(now + 0.4);
+        } else if (type === 'Mythic') {
+          // 신화 등급: 한층 깊고 요란한 메탈릭 베이스 파형 알람음
+          let now = ctx.currentTime;
+          for(let i=0; i<3; i++) {
+            let osc = ctx.createOscillator(); let gain = ctx.createGain();
+            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(329.63 * (i + 1), now + (i * 0.1));
+            osc.frequency.exponentialRampToValueAtTime(880, now + (i * 0.1) + 0.3);
+            gain.gain.setValueAtTime(0.15, now + (i * 0.1)); gain.gain.linearRampToValueAtTime(0.001, now + (i * 0.1) + 0.3);
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.start(now + (i * 0.1)); osc.stop(now + (i * 0.1) + 0.3);
+          }
+        } else if (type === 'Fansign') {
+          // 팬싸인회: 가장 요란하고 강력한 축제 팡파르 피치 레이어음
+          let now = ctx.currentTime;
+          for (let j = 0; j < 6; j++) {
+            let osc = ctx.createOscillator(); let gain = ctx.createGain();
+            osc.type = 'square'; osc.frequency.setValueAtTime(440 + (j * 120), now + (j * 0.06));
+            osc.frequency.linearRampToValueAtTime(1760 - (j * 100), now + (j * 0.06) + 0.5);
+            gain.gain.setValueAtTime(0.2, now + (j * 0.06)); gain.gain.linearRampToValueAtTime(0.001, now + (j * 0.06) + 0.5);
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.start(now + (j * 0.06)); osc.stop(now + (j * 0.06) + 0.5);
+          }
+        }
+      } catch(e) {}
+    }
+
     function getWeightedRandomCard() {
       if (allPhotocards.length === 0) return null;
       const weights = { Normal: 50, Rare: 30, SuperRare: 13, UltraRare: 6, Mythic: 1 };
@@ -711,6 +765,7 @@
       const flashLayer = document.getElementById("jackpot-flash-screen");
       flashLayer.className = "fixed inset-0 pointer-events-none z-50 special-jackpot-flash";
       setTimeout(() => { flashLayer.className = "fixed inset-0 pointer-events-none z-50 opacity-0"; }, 850);
+      playBeepSound(rarity);
     }
 
     window.setMemberFilter = function(member) {
@@ -812,13 +867,6 @@
     window.toggleInfiniteCheat = function(elem) {
       isInfiniteCheatActive = elem.checked; userPoints = isInfiniteCheatActive ? 999999 : 300;
       syncMainUI(); syncUserToServer();
-    };
-
-    window.toggleFavoriteCard = async function(cardId, event) {
-      if(event) event.stopPropagation();
-      if(favoritedCards.includes(cardId)) { favoritedCards = favoritedCards.filter(id => id !== cardId); } 
-      else { favoritedCards.push(cardId); }
-      await syncUserToServer(); syncMainUI();
     };
 
     window.openShippingCartModal = function() {
@@ -1032,9 +1080,6 @@
         grid.innerHTML = `<div class="col-span-2 text-center py-10 text-xs text-gray-500">관리자에서 카드를 먼저 등록해 주세요.</div>`;
       } else {
         const sortedPhotocards = [...allPhotocards].sort((a, b) => {
-          const aFav = favoritedCards.includes(a.id) ? 1 : 0;
-          const bFav = favoritedCards.includes(b.id) ? 1 : 0;
-          if (aFav !== bFav) return bFav - aFav;
           const scoreA = rarityMeta[a.rarity]?.score || 0;
           const scoreB = rarityMeta[b.rarity]?.score || 0;
           return scoreA - scoreB;
@@ -1052,11 +1097,8 @@
             const isNewCard = newlyUnlockedCards.includes(card.id);
             const newTagMarkup = isNewCard ? `<span class="absolute top-0 right-0 bg-red-600 text-white font-bold text-[8px] px-1.5 py-0.5 rounded-bl-lg shadow-md z-30">NEW</span>` : '';
             
-            const isFav = favoritedCards.includes(card.id);
-            const favStarClass = isFav ? "fa-solid fa-star text-yellow-400" : "fa-regular fa-star text-gray-400";
-            const favButtonMarkup = `<button onclick="toggleFavoriteCard('${card.id}', event)" class="absolute top-2.5 left-2.5 bg-black/60 p-1.5 rounded-full z-30 transition hover:scale-110"><i class="${favStarClass} text-xs"></i></button>`;
-
-            const shipCheckMarkup = `<label class="absolute top-2.5 right-2.5 bg-black/60 p-1.5 rounded-md z-30 flex items-center justify-center border border-white/20" onclick="event.stopPropagation()"><input type="checkbox" class="shipping-selector-check accent-pink-500 w-3.5 h-3.5" data-id="${card.id}"></label>`;
+            // 🛠 3. 기존의 즐겨찾기 버튼(별 아이콘)을 완전히 삭제하고, 체크박스 위치를 왼쪽 상단(left-2.5)으로 영구 이동
+            const shipCheckMarkup = `<label class="absolute top-2.5 left-2.5 bg-black/60 p-1.5 rounded-md z-30 flex items-center justify-center border border-white/20" onclick="event.stopPropagation()"><input type="checkbox" class="shipping-selector-check accent-pink-500 w-3.5 h-3.5" data-id="${card.id}"></label>`;
 
             const duplicateBadge = duplicateAmount > 1 ? `<span class="absolute bottom-2.5 left-2.5 bg-black/80 border border-pink-500/40 text-pink-400 font-bold text-[9px] px-1.5 py-0.5 rounded z-20">보유: ${duplicateAmount}개</span>` : '';
             const exchangeBtnMarkup = duplicateAmount >= 5 ? `<button onclick="exchangeDuplicates('${card.id}', event)" class="mt-1 w-full bg-gradient-to-r from-purple-800 to-pink-700 text-white font-black text-[9px] py-1 rounded z-20 relative">중복 5개 교환 ♻️</button>` : '';
@@ -1076,7 +1118,6 @@
             grid.innerHTML += `
               <div class="clickable-card bg-gradient-to-b from-purple-950 to-black p-1.5 rounded-xl border border-purple-900 grade-${card.rarity} flex flex-col justify-between cursor-pointer active:scale-95 transition-all relative" onclick="openCardModal('${card.imageUrl}', '${displayMember}${card.name}', '${card.rarity}')">
                 ${newTagMarkup}
-                ${favButtonMarkup}
                 ${shipCheckMarkup}
                 <div class="relative w-full h-44 overflow-hidden rounded-lg">
                   <img src="${card.imageUrl}" class="w-full h-full object-cover z-10 relative pointer-events-none">
@@ -1474,7 +1515,9 @@
           staggerDelay += 80;
         }
 
+        // 🛠 2. 대망의 팬싸인회 골든 응모권 당첨 연출 시 최고 수준의 요란한 전용 효과음 재생
         if(wonFansignTicketThisTurn) {
+          playBeepSound('Fansign');
           resContainer.innerHTML += `
             <div class="bg-gradient-to-r from-yellow-500 via-amber-400 to-yellow-600 text-black border-2 border-yellow-300 p-2 rounded-xl text-center flex flex-col justify-center items-center font-logo animate-pulse col-span-full mt-2 shadow-2xl">
               <i class="fa-solid fa-crown text-xl text-yellow-950"></i><div class="text-xs font-black tracking-tighter mt-1">✨ 팬싸인회 골든 응모권 당첨! ✨</div>
@@ -1513,7 +1556,7 @@
 
       if (allPhotocards.length === 0) {
         allPhotocards = [
-          { id: "mock_1", name: "Y2K 오프닝 스트리트 스냅", rarity: "Normal", member: "션린위", imageUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500" }
+          { id: "mock_1", name: "Y2K 오프닝 스냅", rarity: "Normal", member: "션린위", imageUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500" }
         ];
         localStorage.setItem("local_photocards_v2", JSON.stringify(allPhotocards));
       }
@@ -1581,7 +1624,17 @@
     }
 
     window.handleAdminSubmit = async function() {
-      const idInput = document.getElementById("admin-card-id").value; const rawName = document.getElementById("admin-card-name").value.trim(); const nameInput = rawName || "[미공개] 새 포토카드"; const raritySelect = document.getElementById("admin-card-rarity").value; const memberSelect = document.getElementById("admin-card-member").value; const fileInput = document.getElementById("admin-card-file"); const btn = document.getElementById("admin-btn-submit");
+      const idInput = document.getElementById("admin-card-id").value; 
+      const rawName = document.getElementById("admin-card-name").value.trim(); 
+      const cardTypeSelect = document.getElementById("admin-card-type").value;
+      
+      // 🛠 1. 명칭 미설정(공백) 시 종류 박스에서 고른 한글 태그 명칭이 그대로 배정됨 (앞에 미공개 안 붙음)
+      const nameInput = rawName || cardTypeSelect; 
+      
+      const raritySelect = document.getElementById("admin-card-rarity").value; 
+      const memberSelect = document.getElementById("admin-card-member").value; 
+      const fileInput = document.getElementById("admin-card-file"); 
+      const btn = document.getElementById("admin-btn-submit");
       
       if(!idInput && fileInput.files.length === 0) { alert("파일을 첨부해 주세요."); return; }
       btn.disabled = true; btn.innerText = "데이터 고속 연동 중...";
@@ -1611,11 +1664,11 @@
 
     window.prepareEditCard = function(id) {
       const card = allPhotocards.find(c => c.id === id); if(!card) return;
-      document.getElementById("admin-form-title").innerText = "포토카드 정보 수정 모드 ✏️"; document.getElementById("admin-card-id").value = card.id; document.getElementById("admin-card-name").value = card.name === "[미공개] 새 포토카드" ? "" : card.name; document.getElementById("admin-card-rarity").value = card.rarity; document.getElementById("admin-card-member").value = card.member || "션린위"; document.getElementById("admin-btn-cancel").classList.remove("hidden"); document.getElementById("admin-card-name").focus();
+      document.getElementById("admin-form-title").innerText = "포토카드 정보 수정 모드 ✏️"; document.getElementById("admin-card-id").value = card.id; document.getElementById("admin-card-name").value = card.name; document.getElementById("admin-card-rarity").value = card.rarity; document.getElementById("admin-card-member").value = card.member || "션린위"; document.getElementById("admin-btn-cancel").classList.remove("hidden"); document.getElementById("admin-card-name").focus();
     };
 
     window.resetAdminForm = function() {
-      document.getElementById("admin-form-title").innerText = "새 포토카드 등록"; document.getElementById("admin-card-id").value = ""; document.getElementById("admin-card-name").value = ""; document.getElementById("admin-card-rarity").value = "Normal"; document.getElementById("admin-card-member").value = "션린위"; document.getElementById("admin-card-file").value = ""; document.getElementById("admin-btn-cancel").classList.add("hidden");
+      document.getElementById("admin-form-title").innerText = "새 포토카드 등록"; document.getElementById("admin-card-id").value = ""; document.getElementById("admin-card-name").value = ""; document.getElementById("admin-card-rarity").value = "Normal"; document.getElementById("admin-card-type").value = "앨범"; document.getElementById("admin-card-member").value = "션린위"; document.getElementById("admin-card-file").value = ""; document.getElementById("admin-btn-cancel").classList.add("hidden");
     };
 
     window.deleteCard = async function(id) {
