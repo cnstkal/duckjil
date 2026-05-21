@@ -48,7 +48,7 @@
 
     /* 가차 럭키 카드 3D 회전 등장 모션 효과 */
     @keyframes cardReveal {
-      0 { transform: scale(0.5) rotateY(-90deg); opacity: 0; }
+      0% { transform: scale(0.5) rotateY(-90deg); opacity: 0; }
       100% { transform: scale(1) rotateY(0deg); opacity: 1; }
     }
     .animate-card-reveal {
@@ -653,6 +653,72 @@
       Mythic: { ko: "시크릿 미스틱 👑", color: "bg-gradient-to-r from-pink-600 to-yellow-500", score: 5, sellValue: 400 }
     };
 
+    // ⚙️ [추가 완료] 뽑기 가중치 랜덤 분배 함수
+    function getWeightedRandomCard() {
+      if (allPhotocards.length === 0) return null;
+      const weights = { Normal: 50, Rare: 30, SuperRare: 13, UltraRare: 6, Mythic: 1 };
+      let totalWeight = 0;
+      allPhotocards.forEach(c => totalWeight += (weights[c.rarity] || 10));
+      let random = Math.random() * totalWeight;
+      for (const card of allPhotocards) {
+        random -= (weights[card.rarity] || 10);
+        if (random <= 0) return card;
+      }
+      return allPhotocards[Math.floor(Math.random() * allPhotocards.length)];
+    }
+
+    // ⚙️ [추가 완료] 미니게임 결과 정산 공통 핸들러
+    function finishGameEngine() {
+      clearInterval(gameTimerInterval);
+      clearInterval(gameLoopInterval);
+      clearTimeout(gameLoopInterval);
+      let earnedPoints = currentScore;
+      if (isInfiniteCheatActive) earnedPoints = 0;
+      userPoints += earnedPoints;
+      alert(`게임 종료! 🎮\n획득한 하트: +${earnedPoints} 🤍`);
+      syncUserToServer();
+      syncMainUI();
+      switchView('game-select');
+    }
+
+    // ⚙️ [추가 완료] 채팅 전용 내부 가시화 렌더러
+    function renderChatBox() {
+      const box = document.getElementById("chat-box");
+      if(!box) return;
+      box.innerHTML = "";
+      chatHistory.forEach(msg => {
+        const isIdol = msg.type === "idol";
+        box.innerHTML += `
+          <div class="flex ${isIdol ? 'justify-start' : 'justify-end'}">
+            <div class="${isIdol ? 'bg-purple-950/60 border border-purple-900 text-purple-200' : 'bg-pink-600 text-white'} max-w-[80%] p-2.5 rounded-xl">
+              ${msg.text}
+            </div>
+          </div>`;
+      });
+      box.scrollTop = box.scrollHeight;
+    }
+
+    // ⚙️ [추가 완료] 메신저 편지 전송 로직 바인딩
+    window.sendLetter = async function() {
+      const input = document.getElementById("chat-input");
+      if(!input) return;
+      const text = input.value.trim();
+      if(!text) return;
+      chatHistory.push({ type: "user", text: text });
+      input.value = "";
+      letterCount++;
+      renderChatBox();
+      document.getElementById("chat-heart-count").innerText = letterCount;
+      if(letterCount % 3 === 0) {
+        setTimeout(() => {
+          chatHistory.push({ type: "idol", text: "정성스러운 편지 고마워! 언제나 응원해줘서 내게 너무 큰 힘이 돼 🤍" });
+          renderChatBox();
+          syncUserToServer();
+        }, 1000);
+      }
+      await syncUserToServer();
+    };
+
     window.switchView = function(viewId) {
       clearInterval(gameTimerInterval); clearInterval(gameLoopInterval); clearTimeout(gameLoopInterval);
       document.querySelectorAll(".view-section").forEach(sec => sec.classList.add("hidden"));
@@ -760,7 +826,7 @@
           </div>`;
       });
 
-      const todayStr = getRouletteDateKey();
+      const todayStr = (new Date()).toISOString().slice(0,10);
       document.getElementById("payment-limit-msg").innerText = (lastPaymentDate === todayStr) ? "⚠️ 오늘의 가상 충전 한도가 소모되었습니다 (내일 리셋)." : "💡 각 패키지는 하루에 한 번만 가상 현질 승인이 허용됩니다.";
     }
 
@@ -789,7 +855,7 @@
     };
 
     window.openPaymentPopup = function(points, name, priceLabel) {
-      const todayStr = getRouletteDateKey();
+      const todayStr = (new Date()).toISOString().slice(0,10);
       if(lastPaymentDate === todayStr) { alert("⚠️ 하루 일일 제한 규칙: 오늘은 이미 가상 충전을 이용하셨습니다."); return; }
       
       pendingVirtualPoints = points;
@@ -804,7 +870,7 @@
 
     window.executeVirtualPayment = async function() {
       userPoints += pendingVirtualPoints;
-      lastPaymentDate = getRouletteDateKey();
+      lastPaymentDate = (new Date()).toISOString().slice(0,10);
       closeVirtualPayment();
       await syncUserToServer();
       syncMainUI();
@@ -942,7 +1008,7 @@
       if (allPhotocards.length === 0) return null;
       const highPool = allPhotocards.filter(c => c.rarity === "UltraRare" || c.rarity === "Mythic");
       if (highPool.length === 0) return allPhotocards[0];
-      const todayStr = getRouletteDateKey();
+      const todayStr = (new Date()).toISOString().slice(0,10);
       const dateSeed = parseInt(todayStr.replace(/-/g, '')) || 20260101;
       return highPool[dateSeed % highPool.length];
     }
@@ -1002,10 +1068,8 @@
           return scoreA - scoreB;
         });
 
-        let renderedCount = 0;
         sortedPhotocards.forEach(card => {
           if(currentMemberFilter !== "All" && card.member !== currentMemberFilter) return;
-          renderedCount++;
 
           const duplicateAmount = unlockedCards.filter(id => id === card.id).length;
           const isOwn = duplicateAmount > 0;
@@ -1296,7 +1360,6 @@
       // 📱 2. 초고속 티켓팅 예매 (단 1회 단발 기회 및 모바일 터치 오작동 강제 잠금 디스크 수정)
       } else if (gameId === 7) {
         document.getElementById("game-title").innerText = "초고속 티켓팅 예매 🎫 (순발력)";
-        document.getElementById("ticket-timer-display").className = "font-logo text-3xl font-black text-yellow-400 tracking-wider bg-purple-950/60 border border-purple-900 px-4 py-2 rounded-xl min-w-[170px] shadow-inner";
         
         canvas.innerHTML = `
           <div class="text-center space-y-4 px-2 w-full h-full flex flex-col items-center justify-center text-white">
@@ -1306,6 +1369,9 @@
               <button id="grape-booking-btn" disabled class="w-28 h-28 bg-gray-800 border-4 border-gray-700 text-gray-500 font-black text-sm rounded-3xl opacity-40 cursor-not-allowed flex items-center justify-center transition-all duration-200">대기 중</button>
             </div>
           </div>`;
+          
+        // 🛠️ [위치 수정완료] HTML 주입 직후 클래스 세팅을 진행하여 순서로 인한 널 오류 원천 차단
+        document.getElementById("ticket-timer-display").className = "font-logo text-3xl font-black text-yellow-400 tracking-wider bg-purple-950/60 border border-purple-900 px-4 py-2 rounded-xl min-w-[170px] shadow-inner";
         
         let countdownDuration = 1.3 + Math.random() * 2.2; 
         let gameStartTimestamp = Date.now();
@@ -1380,7 +1446,7 @@
       }
 
       if(!isInfiniteCheatActive && !isUsingFreeTicket && userPoints < requiredPoints) { alert(`하트 포인트가 부족합니다! 필요 하트: ${requiredPoints} 🤍`); return; }
-      if(allPhotocards.length === 0) { alert("등록된 카드가 없습니다."); return; }
+      if(allPhotocards.length === 0) { alert("등록된 카드가 없습니다. 관리자 메뉴에서 카드를 먼저 생성해주세요!"); return; }
 
       if(!isInfiniteCheatActive) {
         if(isUsingFreeTicket) { freeDrawTickets--; } 
