@@ -10,7 +10,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style id="dynamic-theme-style">
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght=500;700;900&family=Noto+Sans+KR:wght=400;500;700&display=swap');
-    
     * {
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
@@ -69,7 +68,8 @@
       box-shadow: 0 0 20px rgba(255, 0, 127, 0.6);
     }
     .grade-Mythic::before {
-      content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+      content: '';
+      position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
       background: linear-gradient(45deg, rgba(255,0,132,0.3), rgba(0,255,255,0.3), rgba(255,255,0,0.3), rgba(255,0,132,0.3));
       animation: holoRotate 4s linear infinite; z-index: 1; pointer-events: none;
     }
@@ -563,6 +563,35 @@
     const CLOUDINARY_CLOUD = 'dbljkloal';
     const CLOUDINARY_PRESET = 'clowofficial';
 
+    // ⚡ [해결 완료] 에러 나던 문제의 압축 함수를 여기에 미리 구현해 두었습니다!
+    function resizeAndCompressImage(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+          const img = new Image();
+          img.src = event.target.result;
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
+            const max_size = 800;
+            if (width > height) {
+              if (width > max_size) { height *= max_size / width; width = max_size; }
+            } else {
+              if (height > max_size) { width *= max_size / height; height = max_size; }
+            }
+            canvas.width = width; canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            canvas.toBlob((blob) => { if(blob) resolve(blob); else reject(new Error('압축 실패')); }, 'image/jpeg', 0.7);
+          };
+          img.onerror = (e) => reject(e);
+        };
+        reader.onerror = (e) => reject(e);
+      });
+    }
+
     const firebaseConfig = {
       apiKey: "AIzaSyAA6mbdYfLrrgCJjN47PX91_mU7I53RiBs",
       authDomain: "site-c67b4.firebaseapp.com",
@@ -571,26 +600,28 @@
       messagingSenderId: "744761377245",
       appId: "1:744761377245:web:3ddaee14f184716eeef634"
     };
-
-    let db = null; let userId = ""; let userPoints = 300; let unlockedCards = []; let allPhotocards = []; let letterCount = 0;
+    let db = null; let userId = ""; let userPoints = 300; let unlockedCards = []; let allPhotocards = [];
+    let letterCount = 0;
     let gameLoopInterval = null; let gameTimerInterval = null;
-    let currentScore = 0; let currentTimer = 0; let currentMemberFilter = "All"; let lastRouletteDate = ""; let newlyUnlockedCards = []; 
-    let favoritedCards = []; let isInfiniteCheatActive = false; let lastPaymentDate = ""; let pendingVirtualPoints = 0; 
-    let userFansignTickets = 0; let freeDrawTickets = 0; let shippingCartList = []; let simulatedTradesPool = [];
+    let currentScore = 0; let currentTimer = 0;
+    let currentMemberFilter = "All"; let lastRouletteDate = ""; let newlyUnlockedCards = []; 
+    let favoritedCards = []; let isInfiniteCheatActive = false;
+    let lastPaymentDate = ""; let pendingVirtualPoints = 0; 
+    let userFansignTickets = 0; let freeDrawTickets = 0; let shippingCartList = [];
+    let simulatedTradesPool = [];
     let currentTheme = "default"; let unlockedThemes = ["default"];
-
     const themeMetadata = {
       default: { 
         name: "오리지널 사이버 다크", cost: 0, bodyBg: "#09070f", headerBg: "rgba(15, 11, 28, 0.6)", navBg: "rgba(9, 7, 15, 0.95)", textColor: "#ffffff", borderColor: "#2e1f4d", boxBg: "rgba(124, 58, 237, 0.15)", borderStyle: "1px solid rgba(168, 85, 247, 0.3)", shadowStyle: "0 0 10px rgba(168, 85, 247, 0.1)"
       },
       theme_y2k: { 
-        name: "🛸 Y2K 메탈릭 사이버 크롬", cost: 200, bodyBg: "#111625", headerBg: "#161e33", navBg: "#0f1322", textColor: "#e2e8f0", borderColor: "#1e293b", boxBg: "rgba(34, 211, 238, 0.05)", borderStyle: "2px solid #22d3ee", shadowStyle: "0 0 15px rgba(34, 211, 238, 0.2)"
+        name: "🛸 Y2K 메탈릭 사이버 크롬", cost: 200, bodyBg: "#111625", headerBg: "#161e33", navBg: "#0f1322", textColor: "#e2e8f0", borderColor: "#1e293b", 
+        boxBg: "rgba(34, 211, 238, 0.05)", borderStyle: "2px solid #22d3ee", shadowStyle: "0 0 15px rgba(34, 211, 238, 0.2)"
       },
       theme_pastel: { 
         name: "🍭 마카롱 솜사탕 파스텔 푸딩", cost: 300, bodyBg: "#1f1424", headerBg: "#291930", navBg: "#1a101f", textColor: "#fce7f3", borderColor: "#4c2a5c", boxBg: "rgba(244, 114, 182, 0.05)", borderStyle: "2px solid #f472b6", shadowStyle: "0 0 12px rgba(244, 114, 182, 0.15)"
       }
     };
-
     const rarityMeta = {
       Normal: { ko: "일반", color: "bg-slate-700", score: 1, sellValue: 10 },
       Rare: { ko: "레어 ✨", color: "bg-cyan-600", score: 2, sellValue: 30 },
@@ -599,29 +630,35 @@
       Mythic: { ko: "시크릿 미스틱 👑", color: "bg-gradient-to-r from-pink-600 to-yellow-500", score: 5, sellValue: 400 },
       Legendary: { ko: "레전더리 🏆", color: "bg-amber-500", score: 6, sellValue: 1000 }
     };
-
     function playBeepSound(type) {
       try {
         const AudioContext = window.AudioContext || window.webkitAudioContext; if (!AudioContext) return;
         const ctx = new AudioContext(); let now = ctx.currentTime;
         if (type === 'UltraRare') {
-          let osc1 = ctx.createOscillator(); let gain = ctx.createGain();
+          let osc1 = ctx.createOscillator();
+          let gain = ctx.createGain();
           osc1.type = 'triangle'; osc1.frequency.setValueAtTime(587.33, now); osc1.frequency.exponentialRampToValueAtTime(1174.66, now + 0.4);
           gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0.001, now + 0.4);
-          osc1.connect(gain); gain.connect(ctx.destination); osc1.start(now); osc1.stop(now + 0.4);
+          osc1.connect(gain);
+          gain.connect(ctx.destination); osc1.start(now); osc1.stop(now + 0.4);
         } else if (type === 'Mythic') {
           for(let i=0; i<3; i++) {
-            let osc = ctx.createOscillator(); let gain = ctx.createGain();
-            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(329.63 * (i + 1), now + (i * 0.1)); osc.frequency.exponentialRampToValueAtTime(880, now + (i * 0.1) + 0.3);
-            gain.gain.setValueAtTime(0.15, now + (i * 0.1)); gain.gain.linearRampToValueAtTime(0.001, now + (i * 0.1) + 0.3);
-            osc.connect(gain); gain.connect(ctx.destination); osc.start(now + (i * 0.1)); osc.stop(now + (i * 0.1) + 0.3);
+            let osc = ctx.createOscillator();
+            let gain = ctx.createGain();
+            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(329.63 * (i + 1), now + (i * 0.1));
+            osc.frequency.exponentialRampToValueAtTime(880, now + (i * 0.1) + 0.3);
+            gain.gain.setValueAtTime(0.15, now + (i * 0.1));
+            gain.gain.linearRampToValueAtTime(0.001, now + (i * 0.1) + 0.3);
+            osc.connect(gain); gain.connect(ctx.destination); osc.start(now + (i * 0.1));
+            osc.stop(now + (i * 0.1) + 0.3);
           }
         }
       } catch(e) {}
     }
 
     function getWeightedRandomCard() {
-      const standardPool = allPhotocards.filter(c => c.rarity !== "Legendary"); if (standardPool.length === 0) return null;
+      const standardPool = allPhotocards.filter(c => c.rarity !== "Legendary");
+      if (standardPool.length === 0) return null;
       const weights = { Normal: 50, Rare: 30, SuperRare: 13, UltraRare: 6, Mythic: 1 };
       let totalWeight = 0; standardPool.forEach(c => totalWeight += (weights[c.rarity] || 10));
       let random = Math.random() * totalWeight;
@@ -636,7 +673,6 @@
       
       sessionStorage.setItem("saved_view_tab", viewId);
       document.getElementById('app-main-container').scrollTop = 0;
-
       document.querySelectorAll(".nav-tab").forEach(tab => {
         if (tab.getAttribute("data-view") === viewId || (viewId.startsWith('game') && tab.getAttribute("data-view") === 'game-select')) {
           tab.classList.add("text-pink-500"); tab.classList.remove("text-gray-400");
@@ -652,7 +688,6 @@
       if(viewId === 'chat') { renderExchangeBoard(); }
       if(viewId === 'themes') { renderThemesMarket(); }
     };
-
     function applyGlobalThemeStyle(themeId) {
       const meta = themeMetadata[themeId] || themeMetadata["default"];
       document.body.style.background = meta.bodyBg;
@@ -669,7 +704,8 @@
     }
 
     function renderThemesMarket() {
-      const container = document.getElementById("themes-market-list"); if(!container) return;
+      const container = document.getElementById("themes-market-list");
+      if(!container) return;
       container.innerHTML = "";
       Object.keys(themeMetadata).forEach(tId => {
         const item = themeMetadata[tId]; const isUnlocked = unlockedThemes.includes(tId); const isActive = currentTheme === tId;
@@ -692,7 +728,6 @@
     }
 
     window.activateTheme = async function(themeId) { currentTheme = themeId; applyGlobalThemeStyle(themeId); renderThemesMarket(); await syncUserToServer(); };
-
     window.buyTheme = async function(themeId) {
       const item = themeMetadata[themeId]; if (!item) return;
       if (!isInfiniteCheatActive && userPoints < item.cost) { alert(`하트 포인트가 부족합니다!`); return; }
@@ -701,20 +736,18 @@
         unlockedThemes.push(themeId); currentTheme = themeId; applyGlobalThemeStyle(themeId); syncMainUI(); renderThemesMarket(); await syncUserToServer();
       }
     };
-
     window.openFansignPanel = function() {
       if(userFansignTickets < 1) { alert("보유하고 계신 '팬싸인회 골든 응모 당첨권'이 없습니다. 드로우 드롭을 통해 먼저 획득하세요!"); return; }
       document.getElementById("fansign-application-modal").classList.remove("hidden");
     };
     window.closeFansignModal = function() { document.getElementById("fansign-application-modal").classList.add("hidden"); };
-    
     window.submitFansignApplication = async function() {
-      const name = document.getElementById("fan-name").value.trim(); const birth = document.getElementById("fan-birth").value.trim(); const phone = document.getElementById("fan-phone").value.trim(); const email = document.getElementById("fan-email").value.trim();
+      const name = document.getElementById("fan-name").value.trim(); const birth = document.getElementById("fan-birth").value.trim();
+      const phone = document.getElementById("fan-phone").value.trim(); const email = document.getElementById("fan-email").value.trim();
       if(!name || !birth || !phone || !email) { alert("모든 항목 양식을 입력하셔야 합니다."); return; }
       
       userFansignTickets = 0; closeFansignModal(); syncMainUI();
       alert("명부 데이터 가속 전송 완료! 1분 이내로 답신 스케줄 메일이 화면에 자동 인입됩니다. 잠시만 대기해 주세요...");
-
       setTimeout(async () => {
         const randomDaysOffset = Math.floor(Math.random() * (90 - 14 + 1)) + 14; const eventDate = new Date(); eventDate.setDate(eventDate.getDate() + randomDaysOffset);
         const dateString = `${eventDate.getFullYear()}년 ${eventDate.getMonth() + 1}월 ${eventDate.getDate()}일`;
@@ -739,21 +772,21 @@
     };
 
     window.claimLegendaryCard = async function() {
-      const standardPool = allPhotocards.filter(c => c.rarity !== "Legendary"); const legendaryPool = allPhotocards.filter(c => c.rarity === "Legendary");
+      const standardPool = allPhotocards.filter(c => c.rarity !== "Legendary");
+      const legendaryPool = allPhotocards.filter(c => c.rarity === "Legendary");
       if(legendaryPool.length === 0) { alert("레전더리 마스터 카드가 존재하지 않습니다."); return; }
       const uniqueOwnedStandard = [...new Set(unlockedCards.filter(id => { let card = allPhotocards.find(c => c.id === id); return card && card.rarity !== "Legendary"; }))];
       if(uniqueOwnedStandard.length < standardPool.length) { alert("아직 모든 카드를 다 모으지 못했습니다!"); return; }
       
-      const prizeCard = legendaryPool[Math.floor(Math.random() * legendaryPool.length)]; unlockedCards.push(prizeCard.id); newlyUnlockedCards = [prizeCard.id];
+      const prizeCard = legendaryPool[Math.floor(Math.random() * legendaryPool.length)]; unlockedCards.push(prizeCard.id);
+      newlyUnlockedCards = [prizeCard.id];
       alert(`🏆 [LEGENDARY UNLOCKED] 마스터 특전 전설 카드 [${prizeCard.name}] 무작위 1종 해금 완료!`); await syncUserToServer(); syncMainUI();
     };
 
-    // 🛠 1. 교환소 시뮬레이션 매물 다양화 생성 로직 정밀 개조 보완
     function generateSimulatedTrades() {
-      if(allPhotocards.length < 2) return; simulatedTradesPool = [];
+      if(allPhotocards.length < 2) return;
+      simulatedTradesPool = [];
       const users = ["포카교환꾼", "션린위진심남", "KPOP수집러", "포카컬렉터", "하트콜렉터", "덕질대장", "매칭전문가"];
-      
-      // 서로 다른 카드로 구성되도록 유도
       for(let i=0; i<Math.min(7, allPhotocards.length - 1); i++) {
         let giveCard = allPhotocards[i % allPhotocards.length];
         let receiveCard = allPhotocards[(i + 1) % allPhotocards.length];
@@ -761,13 +794,12 @@
       }
     }
 
-    // 🛠 1. 교환하기 활성화 조건 버그 해결 및 멤버 표시 수정 완료
     function renderExchangeBoard() {
-      const board = document.getElementById("exchange-board-list"); if(!board) return; board.innerHTML = "";
+      const board = document.getElementById("exchange-board-list");
+      if(!board) return; board.innerHTML = "";
       if(simulatedTradesPool.length === 0) generateSimulatedTrades();
       
       simulatedTradesPool.slice(0, 7).forEach(post => {
-        // 상대가 원하는 카드(receiveCard)를 내가 보유했는지 여부에 따라 실시간 버튼 킬 클래스 스위칭 구조 교정
         const canTrade = unlockedCards.includes(post.receiveCard.id) || post.isUserPost;
         const btnColor = post.isUserPost ? "bg-red-900/60 text-red-300" : (canTrade ? "bg-emerald-600 text-white" : "bg-gray-800 text-gray-500 cursor-not-allowed");
         const btnText = post.isUserPost ? "철회하기" : "교환하기";
@@ -792,7 +824,6 @@
       });
     }
 
-    // 🛠 1. 교환소 업데이트 주기를 10분(600000ms) 간격으로 쾌적하게 딜레이 하향 연동 세팅
     setInterval(() => {
       if(simulatedTradesPool.length > 0 && allPhotocards.length >= 2) {
         if(simulatedTradesPool.length >= 7) simulatedTradesPool.pop();
@@ -804,8 +835,10 @@
           let userPost = simulatedTradesPool[userPostIndex];
           if (unlockedCards.includes(userPost.giveCard.id)) {
             let gIdx = unlockedCards.indexOf(userPost.giveCard.id); if(gIdx > -1) unlockedCards.splice(gIdx, 1);
-            unlockedCards.push(userPost.receiveCard.id); newlyUnlockedCards = [userPost.receiveCard.id]; simulatedTradesPool.splice(userPostIndex, 1);
-            alert(`♻️ [교환] 내가 보낸 제안 매물이 타 유저와 상호 성립되어 자동 맞체결 처리완료 되었습니다!`); syncUserToServer(); syncMainUI();
+            unlockedCards.push(userPost.receiveCard.id);
+            newlyUnlockedCards = [userPost.receiveCard.id]; simulatedTradesPool.splice(userPostIndex, 1);
+            alert(`♻️ [교환] 내가 보낸 제안 매물이 타 유저와 상호 성립되어 자동 맞체결 처리완료 되었습니다!`); syncUserToServer();
+            syncMainUI();
           }
         }
         if (sessionStorage.getItem("saved_view_tab") === 'chat') { renderExchangeBoard(); }
@@ -814,7 +847,8 @@
 
     window.openCreateTradeModal = function() {
       const giveSelect = document.getElementById("trade-give-card-select"); const receiveSelect = document.getElementById("trade-receive-card-select");
-      giveSelect.innerHTML = ""; receiveSelect.innerHTML = ""; const counts = {}; unlockedCards.forEach(id => counts[id] = (counts[id] || 0) + 1);
+      giveSelect.innerHTML = "";
+      receiveSelect.innerHTML = ""; const counts = {}; unlockedCards.forEach(id => counts[id] = (counts[id] || 0) + 1);
       const validTradeIds = Object.keys(counts).filter(id => counts[id] >= 6);
       if(validTradeIds.length === 0) { alert("기본 소장 1장을 제외하고 여분 중복본이 5장 이상(총 보유 6장 이상)인 카드가 존재해야 합니다!"); return; }
       
@@ -824,25 +858,28 @@
     };
 
     window.closeTradeModal = function() { document.getElementById("create-trade-modal").classList.add("hidden"); };
-
     window.submitTradeOffer = function() {
       const giveId = document.getElementById("trade-give-card-select").value; const receiveId = document.getElementById("trade-receive-card-select").value;
       if(giveId === receiveId) { alert("동일한 카드끼리는 교환이 불가합니다!"); return; }
-      let giveCard = allPhotocards.find(c => c.id === giveId); let receiveCard = allPhotocards.find(c => c.id === receiveId);
+      let giveCard = allPhotocards.find(c => c.id === giveId);
+      let receiveCard = allPhotocards.find(c => c.id === receiveId);
       simulatedTradesPool.unshift({ id: "tr_user_" + Date.now(), userName: "나 (보낸 제안)", giveCard: giveCard, receiveCard: receiveCard, isUserPost: true });
       closeTradeModal(); renderExchangeBoard(); alert("물물교환 매물이 거래소 보드에 정상 업로드되었습니다!");
     };
 
     window.executeCardTrade = async function(tradeId) {
-      let index = simulatedTradesPool.findIndex(t => t.id === tradeId); if(index === -1) return;
+      let index = simulatedTradesPool.findIndex(t => t.id === tradeId);
+      if(index === -1) return;
       let post = simulatedTradesPool[index];
       if(post.isUserPost) { if(confirm("제안글을 철회하시겠습니까?")) { simulatedTradesPool.splice(index, 1); renderExchangeBoard(); } return; }
       if(!unlockedCards.includes(post.receiveCard.id)) { alert("상대방이 요구하는 희망 카드를 보유하고 있지 않습니다."); return; }
       
       if(confirm(`[교환 확정] 진행하시겠습니까?`)) {
-        let rIndex = unlockedCards.indexOf(post.receiveCard.id); if(rIndex > -1) unlockedCards.splice(rIndex, 1);
+        let rIndex = unlockedCards.indexOf(post.receiveCard.id);
+        if(rIndex > -1) unlockedCards.splice(rIndex, 1);
         unlockedCards.push(post.giveCard.id); newlyUnlockedCards = [post.giveCard.id]; simulatedTradesPool.splice(index, 1);
-        await syncUserToServer(); syncMainUI(); renderExchangeBoard(); alert(`♻️ 교환 완수! 카드가 신규 입고되었습니다!`);
+        await syncUserToServer(); syncMainUI(); renderExchangeBoard();
+        alert(`♻️ 교환 완수! 카드가 신규 입고되었습니다!`);
       }
     };
 
@@ -861,7 +898,6 @@
               <span class="text-xs text-pink-400 font-bold">보유량: ${duplicateAmount}장</span>
             </div>
             <h3 class="text-sm font-bold truncate mt-1">${name}</h3>`;
-
       if(matchedCard && duplicateAmount > 1) {
         const maxRemovable = duplicateAmount - 1;
         innerMarkup += `
@@ -878,16 +914,17 @@
       innerMarkup += `</div></div>`;
       const modal = document.getElementById("photo-detail-modal"); modal.innerHTML = innerMarkup; modal.classList.remove("hidden");
     };
-
     window.closeCardModal = function() { document.getElementById("photo-detail-modal").classList.add("hidden"); };
 
     function triggerSpecialEffect(rarity) {
-      const flashLayer = document.getElementById("jackpot-flash-screen"); flashLayer.className = "fixed inset-0 pointer-events-none z-50 special-jackpot-flash";
+      const flashLayer = document.getElementById("jackpot-flash-screen");
+      flashLayer.className = "fixed inset-0 pointer-events-none z-50 special-jackpot-flash";
       setTimeout(() => { flashLayer.className = "fixed inset-0 pointer-events-none z-50 opacity-0"; }, 850); playBeepSound(rarity);
     }
 
     function triggerFansignWhiteFlash() {
-      const flashLayer = document.getElementById("jackpot-flash-screen"); flashLayer.className = "fixed inset-0 pointer-events-none z-50 fansign-white-flash";
+      const flashLayer = document.getElementById("jackpot-flash-screen");
+      flashLayer.className = "fixed inset-0 pointer-events-none z-50 fansign-white-flash";
       setTimeout(() => { flashLayer.className = "fixed inset-0 pointer-events-none z-50 opacity-0"; }, 1200);
     }
 
@@ -901,41 +938,47 @@
     };
 
     window.openPaymentPopup = function(points, name, priceLabel) {
-      const todayStr = (new Date()).toISOString().slice(0,10); if(lastPaymentDate === todayStr) { alert("⚠️ 가상 충전은 하루 1회만 가능합니다."); return; }
-      pendingVirtualPoints = points; document.getElementById("pay-modal-package-name").innerText = name; document.getElementById("pay-modal-price").innerText = priceLabel;
+      const todayStr = (new Date()).toISOString().slice(0,10);
+      if(lastPaymentDate === todayStr) { alert("⚠️ 가상 충전은 하루 1회만 가능합니다."); return; }
+      pendingVirtualPoints = points;
+      document.getElementById("pay-modal-package-name").innerText = name; document.getElementById("pay-modal-price").innerText = priceLabel;
       document.getElementById("virtual-payment-modal").classList.remove("hidden");
     };
     window.closeVirtualPayment = function() { document.getElementById("virtual-payment-modal").classList.add("hidden"); };
-
     window.executeVirtualPayment = async function() {
       userPoints += pendingVirtualPoints; lastPaymentDate = (new Date()).toISOString().slice(0,10);
-      closeVirtualPayment(); await syncUserToServer(); syncMainUI(); renderThemesMarket(); alert(`🎉 가상 충전 완료!`);
+      closeVirtualPayment(); await syncUserToServer();
+      syncMainUI(); renderThemesMarket(); alert(`🎉 가상 충전 완료!`);
     };
 
     window.toggleInfiniteCheat = function(elem) { isInfiniteCheatActive = elem.checked; userPoints = isInfiniteCheatActive ? 999999 : 300; syncMainUI(); syncUserToServer(); };
 
     window.openShippingCartModal = function() {
-      const checkboxes = document.querySelectorAll(".shipping-selector-check:checked"); if(checkboxes.length === 0) { alert("출고할 카드를 체크박스로 선택해 주세요!"); return; }
+      const checkboxes = document.querySelectorAll(".shipping-selector-check:checked");
+      if(checkboxes.length === 0) { alert("출고할 카드를 체크박스로 선택해 주세요!"); return; }
       shippingCartList = Array.from(checkboxes).map(box => box.dataset.id); const costAmount = shippingCartList.length * 500;
-      document.getElementById("ship-modal-qty").innerText = `${shippingCartList.length}장`; document.getElementById("ship-modal-cost").innerText = `${costAmount.toLocaleString()}원`;
+      document.getElementById("ship-modal-qty").innerText = `${shippingCartList.length}장`;
+      document.getElementById("ship-modal-cost").innerText = `${costAmount.toLocaleString()}원`;
       document.getElementById("physical-shipping-modal").classList.remove("hidden");
     };
     window.closeShippingModal = function() { document.getElementById("physical-shipping-modal").classList.add("hidden"); };
-
     window.submitPhysicalShippingOrder = function() {
-      const name = document.getElementById("ship-name").value.trim(); const address = document.getElementById("ship-address").value.trim(); if(!name || !address) { alert("정보를 정확히 입력해 주세요."); return; }
-      alert(`[출고 접수 완료] 성명: ${name}`); closeShippingModal(); document.querySelectorAll(".shipping-selector-check").forEach(box => box.checked = false); shippingCartList = [];
+      const name = document.getElementById("ship-name").value.trim(); const address = document.getElementById("ship-address").value.trim();
+      if(!name || !address) { alert("정보를 정확히 입력해 주세요."); return; }
+      alert(`[출고 접수 완료] 성명: ${name}`);
+      closeShippingModal(); document.querySelectorAll(".shipping-selector-check").forEach(box => box.checked = false); shippingCartList = [];
     };
-
     function updateFreeTicketBannerUI() {
       const banner = document.getElementById("free-ticket-usable-banner"); if(banner) { if(freeDrawTickets > 0) { banner.classList.remove("hidden"); } else { banner.classList.add("hidden"); } }
     }
 
     window.sellDuplicateCard = async function(cardId, maxSellable, valueEach, event) {
-      if(event) event.stopPropagation(); const inputQty = matchedQtyFromInput(cardId); if(inputQty < 1 || inputQty > maxSellable) { alert(`범위를 초과했습니다.`); return; }
+      if(event) event.stopPropagation();
+      const inputQty = matchedQtyFromInput(cardId); if(inputQty < 1 || inputQty > maxSellable) { alert(`범위를 초과했습니다.`); return; }
       const totalEarned = inputQty * valueEach;
       if(confirm(`중복 포토카드 ${inputQty}장 매도를 확정하시겠습니까?`)) {
-        let itemsRemoved = 0; unlockedCards = unlockedCards.filter(id => { if(id === cardId && itemsRemoved < inputQty) { itemsRemoved++; return false; } return true; });
+        let itemsRemoved = 0;
+        unlockedCards = unlockedCards.filter(id => { if(id === cardId && itemsRemoved < inputQty) { itemsRemoved++; return false; } return true; });
         userPoints += totalEarned; await syncUserToServer(); syncMainUI();
       }
     };
@@ -951,20 +994,24 @@
         if (totalQty > 1 && cardMeta) { const sellableQty = totalQty - 1; const priceEach = rarityMeta[cardMeta.rarity]?.sellValue || 10; totalEarnedValue += (sellableQty * priceEach); totalSoldUnits += sellableQty; }
       });
       if(totalSoldUnits === 0) { alert("환전 가능한 중복 수량 카드가 없습니다!"); return; }
-      if(confirm(`중복본 총 ${totalSoldUnits}장을 청산하시겠습니까?\n하트 충전: +${totalEarnedValue} 🤍`)) { unlockedCards = cleanKeptPool; userPoints += totalEarnedValue; await syncUserToServer(); syncMainUI(); }
+      if(confirm(`중복본 총 ${totalSoldUnits}장을 청산하시겠습니까?\n하트 충전: +${totalEarnedValue} 🤍`)) { unlockedCards = cleanKeptPool; userPoints += totalEarnedValue;
+      await syncUserToServer(); syncMainUI(); }
     };
 
     window.exchangeDuplicates = async function(cardId, event) {
-      if(event) event.stopPropagation(); const originCard = allPhotocards.find(c => c.id === cardId); if(!originCard) return;
-      const sameRarityPool = allPhotocards.filter(c => c.rarity === originCard.rarity); if (sameRarityPool.length <= 1) { alert("동일 등급 풀에 대체 카드가 없습니다."); return; }
+      if(event) event.stopPropagation();
+      const originCard = allPhotocards.find(c => c.id === cardId); if(!originCard) return;
+      const sameRarityPool = allPhotocards.filter(c => c.rarity === originCard.rarity);
+      if (sameRarityPool.length <= 1) { alert("동일 등급 풀에 대체 카드가 없습니다."); return; }
       if (confirm(`중복 본 수량 5개를 파기하고 무작위 교환하시겠습니까?`)) {
-        let matchCount = 0; unlockedCards = unlockedCards.filter(id => { if (id === cardId && matchCount < 5) { matchCount++; return false; } return true; });
+        let matchCount = 0;
+        unlockedCards = unlockedCards.filter(id => { if (id === cardId && matchCount < 5) { matchCount++; return false; } return true; });
         const alternativePool = sameRarityPool.filter(c => c.id !== cardId); const rolledExchangeCard = alternativePool[Math.floor(Math.random() * alternativePool.length)];
-        unlockedCards.push(rolledExchangeCard.id); newlyUnlockedCards = [rolledExchangeCard.id]; await syncUserToServer(); syncMainUI();
+        unlockedCards.push(rolledExchangeCard.id); newlyUnlockedCards = [rolledExchangeCard.id]; await syncUserToServer();
+        syncMainUI();
       }
     };
 
-    // 픽업 카드 고정 로직 
     function getDailyLimitedFeaturedCard() {
       if (allPhotocards.length === 0) return null;
       const highPool = allPhotocards.filter(c => c.rarity === "UltraRare" || c.rarity === "Mythic");
@@ -972,12 +1019,15 @@
     }
 
     function checkDailyLimitedFeaturedCard() {
-      const banner = document.getElementById("daily-limited-banner"); const text = document.getElementById("daily-limited-card-name"); const featured = getDailyLimitedFeaturedCard();
-      if(featured) { banner.classList.remove("hidden"); text.innerText = `[오늘의 픽업] [${featured.rarity}] ${featured.member ? '['+featured.member+'] ' : ''}${featured.name} 🌟`; } else { banner.classList.add("hidden"); }
+      const banner = document.getElementById("daily-limited-banner"); const text = document.getElementById("daily-limited-card-name");
+      const featured = getDailyLimitedFeaturedCard();
+      if(featured) { banner.classList.remove("hidden"); text.innerText = `[오늘의 픽업] [${featured.rarity}] ${featured.member ? '['+featured.member+'] ' : ''}${featured.name} 🌟`;
+      } else { banner.classList.add("hidden"); }
     }
 
     function renderAdminList() {
-      const list = document.getElementById("admin-cards-list"); if(!list) return; list.innerHTML = "";
+      const list = document.getElementById("admin-cards-list");
+      if(!list) return; list.innerHTML = "";
       if (allPhotocards.length === 0) { list.innerHTML = `<div class="text-center py-4 text-gray-500 text-[11px]">등록된 데이터가 없습니다.</div>`; return; }
       allPhotocards.forEach(card => {
         list.innerHTML += `
@@ -1002,13 +1052,16 @@
       switchView('roulette'); const todayStr = (new Date()).toISOString().slice(0,10);
       document.getElementById("roulette-status-msg").innerText = (lastRouletteDate === todayStr) ? "❌ 오늘의 찬스를 이미 완료했습니다." : "🎁 보너스 하트 기회가 대기 중입니다!";
     };
-
     window.spinRoulette = async function() {
       const todayStr = (new Date()).toISOString().slice(0,10);
       if(lastRouletteDate === todayStr) { alert("오늘의 기회를 이미 소모하셨습니다!"); return; }
-      const btn = document.getElementById("roulette-spin-btn"); btn.disabled = true;
+      const btn = document.getElementById("roulette-spin-btn");
+      btn.disabled = true;
       const prizes = [
-        { text: "하트 +150개", action: () => { userPoints += 150; } }, { text: "무료뽑기권 +2장", action: () => { freeDrawTickets += 2; } }, { text: "하트 +500개", action: () => { userPoints += 500; } }, { text: "팬싸응모권 +1장", action: () => { userFansignTickets = 1; } }
+        { text: "하트 +150개", action: () => { userPoints += 150; } }, 
+        { text: "무료뽑기권 +2장", action: () => { freeDrawTickets += 2; } }, 
+        { text: "하트 +500개", action: () => { userPoints += 500; } }, 
+        { text: "팬싸응모권 +1장", action: () => { userFansignTickets = 1; } }
       ];
       const randomIndex = Math.floor(Math.random() * prizes.length); const selectedPrize = prizes[randomIndex];
       const wheel = document.getElementById("roulette-wheel-display"); wheel.style.transform = `rotate(${1440 + (randomIndex * 90)}deg)`;
@@ -1025,37 +1078,37 @@
     function syncMainUI() {
       document.getElementById("global-points").innerText = userPoints; document.getElementById("header-ticket-count").innerText = userFansignTickets; document.getElementById("header-free-count").innerText = freeDrawTickets;
       const uniqueOwnedCount = [...new Set(unlockedCards)].length; document.getElementById("collection-progress").innerText = `${uniqueOwnedCount}/${allPhotocards.length}`; document.getElementById("collection-count").innerText = `보유 종류: ${uniqueOwnedCount}종`;
-
       const standardPool = allPhotocards.filter(c => c.rarity !== "Legendary");
       const uniqueOwnedStandard = [...new Set(unlockedCards.filter(id => { let card = allPhotocards.find(c => c.id === id); return card && card.rarity !== "Legendary"; }))];
       const lRewardPanel = document.getElementById("legendary-reward-panel");
       if(lRewardPanel) {
-        if(standardPool.length > 0 && uniqueOwnedStandard.length >= standardPool.length) { lRewardPanel.className = "bg-gradient-to-r from-yellow-600 via-amber-500 to-amber-700 p-3 rounded-xl border border-yellow-400 text-black flex justify-between items-center animate-pulse mb-3"; } 
-        else { lRewardPanel.className = "hidden"; }
+        if(standardPool.length > 0 && uniqueOwnedStandard.length >= standardPool.length) { lRewardPanel.className = "bg-gradient-to-r from-yellow-600 via-amber-500 to-amber-700 p-3 rounded-xl border border-yellow-400 text-black flex justify-between items-center animate-pulse mb-3";
+        } else { lRewardPanel.className = "hidden"; }
       }
 
       renderAdminList();
 
-      const recentBox = document.getElementById("lobby-recent-cards"); if(recentBox) {
+      const recentBox = document.getElementById("lobby-recent-cards");
+      if(recentBox) {
         recentBox.innerHTML = ""; const recentIds = [...new Set(unlockedCards)].reverse().slice(0, 3);
-        if(recentIds.length === 0) { recentBox.innerHTML = `<div class="col-span-3 text-center py-4 text-[11px] text-gray-500">도감을 채워보세요!</div>`; } 
-        else {
+        if(recentIds.length === 0) { recentBox.innerHTML = `<div class="col-span-3 text-center py-4 text-[11px] text-gray-500">도감을 채워보세요!</div>`;
+        } else {
           recentIds.forEach(id => {
             const card = allPhotocards.find(c => c.id === id); if (card) { recentBox.innerHTML += `<div class="bg-purple-950/30 border border-purple-900/40 rounded-lg p-1 text-center text-white"><img src="${card.imageUrl}" class="w-full h-20 object-cover rounded"><p class="text-[9px] truncate mt-1 text-purple-200">${card.name}</p></div>`; }
           });
         }
       }
 
-      const grid = document.getElementById("collection-grid"); if(grid) {
-        grid.innerHTML = ""; if(allPhotocards.length === 0) { grid.innerHTML = `<div class="col-span-2 text-center py-10 text-xs text-gray-500">카드를 등록해 주세요.</div>`; } 
-        else {
-          // 🛠 2. 일반(1) -> 레어(2) -> SR(3) -> UR(4) -> 미스틱(5) -> 레전더리(6) 오름차순 수직 등급 강제 정렬 공식 빌드
+      const grid = document.getElementById("collection-grid");
+      if(grid) {
+        grid.innerHTML = "";
+        if(allPhotocards.length === 0) { grid.innerHTML = `<div class="col-span-2 text-center py-10 text-xs text-gray-500">카드를 등록해 주세요.</div>`;
+        } else {
           const explicitlySorted = [...allPhotocards].sort((a, b) => {
             const weightA = rarityMeta[a.rarity]?.score || 0;
             const weightB = rarityMeta[b.rarity]?.score || 0;
             return weightA - weightB;
           });
-
           explicitlySorted.forEach(card => {
             if(currentMemberFilter !== "All" && card.member !== currentMemberFilter) return;
             const duplicateAmount = unlockedCards.filter(id => id === card.id).length; const isOwn = duplicateAmount > 0; const meta = rarityMeta[card.rarity] || { ko: card.rarity, color: "bg-gray-600", sellValue: 10 }; const displayMember = card.member ? `[${card.member}] ` : '';
@@ -1064,7 +1117,6 @@
               const isNewCard = newlyUnlockedCards.includes(card.id); const newTagMarkup = isNewCard ? `<span class="absolute top-0 right-0 bg-red-600 text-white font-bold text-[8px] px-1.5 py-0.5 rounded-bl-lg shadow-md z-30">NEW</span>` : '';
               const shipCheckMarkup = `<label class="absolute top-2.5 left-2.5 bg-black/60 p-1.5 rounded-md z-30 flex items-center justify-center border border-white/20" onclick="event.stopPropagation()"><input type="checkbox" class="shipping-selector-check accent-pink-500 w-3.5 h-3.5" data-id="${card.id}"></label>`;
               const exchangeBtnMarkup = duplicateAmount >= 6 ? `<button onclick="exchangeDuplicates('${card.id}', event)" class="mt-1 w-full bg-gradient-to-r from-purple-800 to-pink-700 text-white font-black text-[9px] py-1.5 rounded z-20 relative">중복 5개 무작위 교환 ♻️</button>` : '';
-
               grid.innerHTML += `
                 <div class="clickable-card bg-gradient-to-b from-purple-950 to-black p-1.5 rounded-xl border border-purple-900 grade-${card.rarity} flex flex-col justify-between cursor-pointer active:scale-95 transition-all relative animate-card-reveal" onclick="openCardModal('${card.imageUrl}', '${displayMember}${card.name}', '${card.rarity}')">
                   ${newTagMarkup} ${shipCheckMarkup}
@@ -1109,44 +1161,54 @@
           let earnedPoints = currentScore; if (isInfiniteCheatActive) earnedPoints = 0;
           userPoints += earnedPoints; syncUserToServer(); syncMainUI();
           const remAct = (e) => { e.preventDefault(); initGame(gameId); }; const exAct = (e) => { e.preventDefault(); switchView('game-select'); };
-          document.getElementById("rematch-game-btn").addEventListener('mousedown', remAct); document.getElementById("rematch-game-btn").addEventListener('touchstart', remAct);
+          document.getElementById("rematch-game-btn").addEventListener('mousedown', remAct);
+          document.getElementById("rematch-game-btn").addEventListener('touchstart', remAct);
           document.getElementById("exit-game-btn").addEventListener('mousedown', exAct); document.getElementById("exit-game-btn").addEventListener('touchstart', exAct);
         };
 
         if (gameId === 1) {
-          document.getElementById("game-title").innerText = "하트 캐칭 피버 💓"; currentTimer = 10;
+          document.getElementById("game-title").innerText = "하트 캐칭 피버 💓";
+          currentTimer = 10;
           document.getElementById("game-timer").innerText = currentTimer + "s";
           gameTimerInterval = setInterval(() => { currentTimer--; document.getElementById("game-timer").innerText = currentTimer + "s"; if(currentTimer <= 0) showGameEndMenu(); }, 1000);
           function spawnLoop() {
-            if (currentTimer <= 0) return; const target = document.createElement("div"); target.className = "absolute text-pink-500 text-4xl cursor-pointer p-4 heart-pop flex items-center justify-center animate-pulse"; target.innerHTML = `<i class="fa-solid fa-heart filter drop-shadow-[0_0_8px_#ff007f]"></i>`;
-            let canvasWidth = canvas.clientWidth || 350; let canvasHeight = canvas.clientHeight || 380; target.style.left = Math.random() * (canvasWidth - 70) + "px"; target.style.top = Math.random() * (canvasHeight - 70) + "px";
+            if (currentTimer <= 0) return;
+            const target = document.createElement("div"); target.className = "absolute text-pink-500 text-4xl cursor-pointer p-4 heart-pop flex items-center justify-center animate-pulse";
+            target.innerHTML = `<i class="fa-solid fa-heart filter drop-shadow-[0_0_8px_#ff007f]"></i>`;
+            let canvasWidth = canvas.clientWidth || 350; let canvasHeight = canvas.clientHeight || 380;
+            target.style.left = Math.random() * (canvasWidth - 70) + "px"; target.style.top = Math.random() * (canvasHeight - 70) + "px";
             const hit = (e) => { e.preventDefault(); currentScore += 20; document.getElementById("game-score").innerText = currentScore; target.remove(); };
             target.addEventListener('touchstart', hit); target.addEventListener('mousedown', hit); canvas.appendChild(target);
             gameLoopInterval = setTimeout(spawnLoop, currentTimer <= 4 ? 320 : 500);
           } spawnLoop();
         } else if (gameId === 2) {
-          document.getElementById("game-title").innerText = "응원봉 타이밍 탭 ⚡"; currentTimer = 3;
+          document.getElementById("game-title").innerText = "응원봉 타이밍 탭 ⚡";
+          currentTimer = 3;
           document.getElementById("game-timer").innerText = `기회: ${currentTimer}회`;
           canvas.innerHTML = `<div class="w-full text-center space-y-4 flex flex-col items-center text-white"><div class="w-full max-w-[280px] h-6 bg-gray-800 rounded-full relative overflow-hidden border border-purple-900"><div class="absolute left-[44%] right-[44%] h-full bg-emerald-500"></div><div id="timing-bar" class="absolute left-0 top-0 w-3 h-full bg-pink-500 shadow-lg"></div></div><button id="hit-btn" class="w-32 bg-cyan-600 py-3 rounded-xl font-black text-xs mt-4 active:scale-95 transition border-0">HIT !</button></div>`;
           let barPos = 0; let direction = 1; gameLoopInterval = setInterval(() => { barPos += (4 * direction); if(barPos >= 96 || barPos <= 0) direction *= -1; const bar = document.getElementById("timing-bar"); if(bar) bar.style.left = barPos + "%"; }, 16);
           const hitAct = (e) => { e.preventDefault(); if(barPos >= 40 && barPos <= 60) { currentScore += 40; alert("PERFECT!"); } currentTimer--; document.getElementById("game-score").innerText = currentScore; document.getElementById("game-timer").innerText = `기회: ${currentTimer}회`; if(currentTimer <= 0) showGameEndMenu(); };
           document.getElementById("hit-btn").addEventListener('mousedown', hitAct); document.getElementById("hit-btn").addEventListener('touchstart', hitAct);
         } else if (gameId === 3) {
-          document.getElementById("game-title").innerText = "기억력 카드 매칭 🃏"; currentTimer = 15;
+          document.getElementById("game-title").innerText = "기억력 카드 매칭 🃏";
+          currentTimer = 15;
           document.getElementById("game-timer").innerText = currentTimer + "s";
           gameTimerInterval = setInterval(() => { currentTimer--; document.getElementById("game-timer").innerText = currentTimer + "s"; if(currentTimer <= 0) showGameEndMenu(); }, 1000);
-          const items = ['⭐', '🍒', '🤍', '🔮', '🎵', '👑', '⭐', '🍒', '🤍', '🔮', '🎵', '👑'].sort(() => Math.random() - 0.5); canvas.innerHTML = `<div class="grid grid-cols-4 gap-2 w-full max-w-[280px]" id="card-holder"></div>`;
-          let choice = []; items.forEach(icon => {
+          const items = ['⭐', '🍒', '🤍', '🔮', '🎵', '👑', '⭐', '🍒', '🤍', '🔮', '🎵', '👑'].sort(() => Math.random() - 0.5);
+          canvas.innerHTML = `<div class="grid grid-cols-4 gap-2 w-full max-w-[280px]" id="card-holder"></div>`;
+          let choice = [];
+          items.forEach(icon => {
             const card = document.createElement("div"); card.className = "w-full h-14 bg-purple-900 rounded-lg flex items-center justify-center text-xl text-white select-none transition-all"; card.innerHTML = `<i class="fa-solid fa-question text-purple-400"></i>`;
-            const flip = (e) => { e.preventDefault(); if(choice.length < 2 && card.innerHTML.includes("question")) { card.innerHTML = `<span>${icon}</span>`; card.className = "w-full h-14 bg-pink-600 rounded-lg flex items-center justify-center text-xl text-white select-none font-bold"; choice.push(card); if(choice.length === 2) { if(choice[0].innerText === choice[1].innerText) { currentScore += 80; document.getElementById("game-score").innerText = currentScore; choice = []; if(canvas.querySelectorAll(".bg-purple-900").length === 0) showGameEndMenu(); } else { setTimeout(() => { choice.forEach(c => { c.className = "w-full h-14 bg-purple-900 rounded-lg flex items-center justify-center text-xl text-white select-none"; c.innerHTML = `<i class="fa-solid fa-question text-purple-400"></i>`; }); choice = []; }, 600); } } } };
-            card.addEventListener('mousedown', flip); card.addEventListener('touchstart', flip); document.getElementById("card-holder").appendChild(card);
+            const flip = (e) => { e.preventDefault(); if(choice.length < 2 && card.innerHTML.includes("question")) { card.innerHTML = `<span>${icon}</span>`; card.className = "w-full h-14 bg-pink-600 rounded-lg flex items-center justify-center text-xl text-white select-none font-bold"; choice.push(card); if(choice.length === 2) { if(choice[0].innerText === choice[1].innerText) { currentScore += 80; document.getElementById("game-score").innerText = currentScore; choice = []; if(canvas.querySelectorAll(".bg-purple-900").length === 0) showGameEndMenu(); } 
+            else { setTimeout(() => { choice.forEach(c => { c.className = "w-full h-14 bg-purple-900 rounded-lg flex items-center justify-center text-xl text-white select-none"; c.innerHTML = `<i class="fa-solid fa-question text-purple-400"></i>`; }); choice = []; }, 600); } } } };
+            card.addEventListener('mousedown', flip); card.addEventListener('touchstart', flip);
+            document.getElementById("card-holder").appendChild(card);
           });
         } else if (gameId === 4) {
-          // 숫자 퍼즐 (10초)
-          document.getElementById("game-title").innerText = "간단한 숫자 퍼즐 🧩"; currentTimer = 10;
+          document.getElementById("game-title").innerText = "간단한 숫자 퍼즐 🧩";
+          currentTimer = 10;
           document.getElementById("game-timer").innerText = currentTimer + "s";
           gameTimerInterval = setInterval(() => { currentTimer--; document.getElementById("game-timer").innerText = currentTimer + "s"; if(currentTimer <= 0) showGameEndMenu(); }, 1000);
-          
           canvas.innerHTML = `<div class="text-center space-y-2 w-full flex flex-col items-center text-white"><div class="text-xs text-pink-400 font-bold mb-1">타깃: <span id="puzzle-next-num" class="text-sm font-black text-white bg-pink-600 px-2.5 py-0.5 rounded-full">1</span></div><div class="grid grid-cols-3 gap-2 w-full max-w-[240px]" id="puzzle-grid-holder"></div></div>`;
           const pGrid = document.getElementById("puzzle-grid-holder"); const nums = [1,2,3,4,5,6,7,8,9].sort(() => Math.random() - 0.5);
           let nextExpected = 1;
@@ -1156,24 +1218,26 @@
             btn.addEventListener('mousedown', tapPuzzle); btn.addEventListener('touchstart', tapPuzzle); pGrid.appendChild(btn);
           });
         } else if (gameId === 5) {
-          document.getElementById("game-title").innerText = "대기실 가위바위보 ✊"; currentTimer = 3;
+          document.getElementById("game-title").innerText = "대기실 가위바위보 ✊";
+          currentTimer = 3;
           document.getElementById("game-timer").innerText = `남은판: ${currentTimer}판`;
           canvas.innerHTML = `<div class="text-center space-y-4 text-white"><div class="text-5xl text-pink-500 animate-pulse" id="ai-status"><i class="fa-solid fa-user-astronaut"></i></div><div class="flex space-x-2 justify-center mt-4"><button id="rps-r-btn" class="bg-purple-900 border border-purple-700 px-3 py-2.5 rounded-xl text-xs font-bold border-0">✊ 주먹</button><button id="rps-p-btn" class="bg-purple-900 border border-purple-700 px-3 py-2.5 rounded-xl text-xs font-bold border-0">✋ 보</button><button id="rps-s-btn" class="bg-purple-900 border border-purple-700 px-3 py-2.5 rounded-xl text-xs font-bold border-0">✌️ 가위</button></div></div>`;
           const runRPS = (userPick) => {
-            const rpsArr = ['✊', '✋', '✌️']; const aiPick = rpsArr[Math.floor(Math.random() * rpsArr.length)];
+            const rpsArr = ['✊', '✋', '✌️'];
+            const aiPick = rpsArr[Math.floor(Math.random() * rpsArr.length)];
             if(userPick === aiPick) { currentScore += 10; alert(`무승부!`); }
             else if((userPick==='✊'&&aiPick==='✌️') || (userPick==='✋'&&aiPick==='✊') || (userPick==='✌️'&&aiPick==='✋')) { currentScore += 30; alert(`단독 승리! 🎉`); }
             else { alert(`패배..`); }
-            currentTimer--; document.getElementById("game-score").innerText = currentScore; document.getElementById("game-timer").innerText = `남은판: ${currentTimer}판`; if(currentTimer <= 0) showGameEndMenu();
+            currentTimer--; document.getElementById("game-score").innerText = currentScore; document.getElementById("game-timer").innerText = `남은판: ${currentTimer}판`;
+            if(currentTimer <= 0) showGameEndMenu();
           };
           document.getElementById("rps-r-btn").addEventListener('mousedown', () => runRPS('✊')); document.getElementById("rps-r-btn").addEventListener('touchstart', (e) => { e.preventDefault(); runRPS('✊'); });
-          document.getElementById("rps-p-btn").addEventListener('mousedown', () => runRPS('✋')); document.getElementById("rps-p-btn").addEventListener('touchstart', (e) => { e.preventDefault(); runRPS('✋'); });
+          document.getElementById("rps-p-btn").addEventListener('mousedown', () => runRPS('✋'));
+          document.getElementById("rps-p-btn").addEventListener('touchstart', (e) => { e.preventDefault(); runRPS('✋'); });
           document.getElementById("rps-s-btn").addEventListener('mousedown', () => runRPS('✌️')); document.getElementById("rps-s-btn").addEventListener('touchstart', (e) => { e.preventDefault(); runRPS('✌️'); });
         } else if (gameId === 6) {
-          // 티켓팅 예매 (시간제한 무제한, 1.5초 이내만 성공 판정)
           document.getElementById("game-title").innerText = "초고속 티켓팅 예매 🎫";
           canvas.innerHTML = `<div class="text-center space-y-4 w-full flex flex-col items-center justify-center text-white"><div id="ticket-countdown-panel" class="text-2xl font-logo font-black text-pink-500 animate-pulse">READY...</div><div id="ticket-timer-display" class="font-logo text-3xl font-black text-yellow-500 bg-purple-950 px-4 py-1.5 rounded-xl border border-purple-900 hidden">0.000s</div><div id="ticket-action-slot" class="w-full max-w-[180px] h-32 flex items-center justify-center relative mt-2"><button id="grape-booking-btn" class="w-28 h-28 bg-gray-800 text-gray-500 font-black text-xs rounded-full flex items-center justify-center cursor-not-allowed border-0 shadow-inner" disabled>대기 중</button></div></div>`;
-          
           let preCount = 3; 
           let preInterval = setInterval(() => {
             preCount--;
@@ -1185,20 +1249,18 @@
               grapeBtn.innerText = "예매하기";
             } else { document.getElementById("ticket-countdown-panel").innerText = `${preCount}...`; }
           }, 1000);
-
           let targetActivated = false; let buttonOpenTime = 0; let singleChanceLocked = false;
           const grapeBtn = document.getElementById("grape-booking-btn");
-          
           function handleTicketClick(e) { 
-            e.preventDefault(); if (singleChanceLocked || !targetActivated) return; 
+            e.preventDefault();
+            if (singleChanceLocked || !targetActivated) return; 
             const clickInterval = (Date.now() - buttonOpenTime) / 1000;
-            
             if (clickInterval > 1.5) { singleChanceLocked = true; clearInterval(gameLoopInterval); currentScore = 0; alert("😭 아차! 매진되었습니다!"); showGameEndMenu(); return; }
-            singleChanceLocked = true; clearInterval(gameLoopInterval); currentScore = clickInterval < 0.35 ? 200 : 70; document.getElementById("game-score").innerText = currentScore;
-            alert(clickInterval < 0.35 ? `🥳 대성공! VIP 석 확보!` : `👍 일반 지정석 예매 성공!`); showGameEndMenu(); 
+            singleChanceLocked = true; clearInterval(gameLoopInterval);
+            currentScore = clickInterval < 0.35 ? 200 : 70; document.getElementById("game-score").innerText = currentScore;
+            alert(clickInterval < 0.35 ? `🥳 대성공! VIP 석 확보!` : `👍 일반 지정석 예매 성공!`); showGameEndMenu();
           }
           grapeBtn.addEventListener('touchstart', handleTicketClick); grapeBtn.addEventListener('mousedown', handleTicketClick);
-          
           gameLoopInterval = setInterval(() => {
             if (!targetActivated) return;
             let reactionDuration = (Date.now() - buttonOpenTime) / 1000;
@@ -1211,7 +1273,9 @@
         } else if (gameId === 7) {
           document.getElementById("game-title").innerText = "전액 올인! 인생은 한방 🎰";
           canvas.innerHTML = `<div class="text-center space-y-5 px-4 w-full flex flex-col items-center justify-center text-white"><div id="gamble-view-slot" class="font-logo font-black text-xl text-yellow-400 py-2">BETTING STATUS: READY</div><div id="gambling-panel" class="w-full max-w-[240px] mt-2"><button id="allin-gamble-btn" class="w-full bg-gradient-to-r from-red-600 to-purple-600 py-3.5 rounded-xl text-xs font-black shadow-lg border-0">50% 확률 올인하기</button></div></div>`;
-          const runAllIn = (e) => { e.preventDefault(); document.getElementById("allin-gamble-btn").disabled = true; const slotText = document.getElementById("gamble-view-slot"); slotText.innerHTML = "🎰 SPINNING SLOT... 🎰"; setTimeout(() => { const isWin = Math.random() < 0.5; userPoints = isWin ? userPoints * 2 : 0; syncUserToServer(); syncMainUI(); switchView('game-select'); alert(isWin ? "올인 대박 성공!" : "몰수 실패.."); }, 1500); };
+          const runAllIn = (e) => { e.preventDefault(); document.getElementById("allin-gamble-btn").disabled = true; const slotText = document.getElementById("gamble-view-slot"); slotText.innerHTML = "🎰 SPINNING SLOT... 🎰";
+            setTimeout(() => { const isWin = Math.random() < 0.5; userPoints = isWin ? userPoints * 2 : 0; syncUserToServer(); syncMainUI(); switchView('game-select'); alert(isWin ? "올인 대박 성공!" : "몰수 실패.."); }, 1500);
+          };
           document.getElementById("allin-gamble-btn").addEventListener('mousedown', runAllIn); document.getElementById("allin-gamble-btn").addEventListener('touchstart', runAllIn);
         }
       }, 50);
@@ -1224,7 +1288,6 @@
 
       let freeTicketsToUse = (!isDailyPickMode && freeDrawTickets > 0) ? Math.min(freeDrawTickets, amount) : 0;
       let finalCostPoints = (amount - freeTicketsToUse) * (isDailyPickMode ? 200 : 100);
-
       if(!isInfiniteCheatActive && userPoints < finalCostPoints) { alert(`하트 포인트가 부족합니다!`); return; }
       if(allPhotocards.length === 0) { alert("포토카드가 없습니다."); return; }
 
@@ -1234,7 +1297,6 @@
       const def = document.getElementById("gacha-display-default"); const resContainer = document.getElementById("gacha-display-result"); const container = document.getElementById("gacha-card-container");
       def.innerHTML = `<i class="fa-solid fa-compact-disc text-pink-500 text-4xl animate-spin"></i>`;
       resContainer.classList.add("hidden"); def.classList.remove("hidden"); container.classList.add("scale-95");
-
       setTimeout(async () => {
         def.classList.add("hidden"); resContainer.classList.remove("hidden"); container.classList.remove("scale-95");
         const colsClass = amount === 1 ? "grid-cols-1" : (amount <= 5 ? "grid-cols-2" : "grid-cols-3");
@@ -1251,7 +1313,8 @@
 
         const drawnResultsPool = [];
         for (let i = 0; i < actualCardDrawCount; i++) {
-          const pickedCard = getWeightedRandomCard(); if(pickedCard) { drawnResultsPool.push(pickedCard); if (pickedCard.rarity === "UltraRare" || pickedCard.rarity === "Mythic") containsOriginalSSR = true; }
+          const pickedCard = getWeightedRandomCard();
+          if(pickedCard) { drawnResultsPool.push(pickedCard); if (pickedCard.rarity === "UltraRare" || pickedCard.rarity === "Mythic") containsOriginalSSR = true; }
         }
 
         for (const pickedCard of drawnResultsPool) {
@@ -1259,7 +1322,7 @@
           const isBrandNewGacha = !unlockedCards.includes(pickedCard.id);
           const newGachaLabelMarkup = isBrandNewGacha ? `<span class="absolute top-0 right-0 bg-red-600 text-white font-bold text-[7px] px-1 py-0.5 rounded-bl shadow z-30">NEW</span>` : '';
 
-          unlockedCards.push(pickedCard.id); newlyUnlockedCards.push(pickedCard.id); 
+          unlockedCards.push(pickedCard.id); newlyUnlockedCards.push(pickedCard.id);
           const meta = rarityMeta[pickedCard.rarity] || { ko: pickedCard.rarity, color: "bg-gray-600" };
           const displayMember = pickedCard.member ? `[${pickedCard.member}] ` : '';
           const currentDupInOwn = unlockedCards.filter(id => id === pickedCard.id).length;
@@ -1267,9 +1330,7 @@
           const isSSR = pickedCard.rarity === "UltraRare" || pickedCard.rarity === "Mythic";
           const cardFrameClass = isSSR ? "polaroid-frame-style" : `bg-purple-950/70 border border-purple-800/60 p-1 grade-${pickedCard.rarity}`;
           const textTitleColor = isSSR ? "text-gray-900" : "text-gray-200";
-
           let imgHeightClass = amount === 1 ? "h-64" : (amount === 5 ? "h-28" : "h-20");
-
           resContainer.innerHTML += `
             <div class="${cardFrameClass} rounded-lg text-center flex flex-col justify-between items-center animate-card-reveal relative" style="animation-delay: ${staggerDelay}ms; min-height: 100px;">
               ${newGachaLabelMarkup}
@@ -1283,8 +1344,12 @@
           staggerDelay += 80;
         }
 
-        if(wonFansignTicketThisTurn) { userFansignTickets = 1; triggerFansignWhiteFlash(); resContainer.innerHTML += `<div class="bg-gradient-to-r from-yellow-500 via-amber-400 to-yellow-600 text-black border-2 border-yellow-300 p-2 rounded-xl text-center flex flex-col justify-center items-center font-logo col-span-full mt-2 shadow-2xl">👑 팬싸인회 골든 응모권 당첨!</div>`; }
-        if(wonFreeDrawTicketThisTurn) { freeDrawTickets++; resContainer.innerHTML += `<div class="bg-gradient-to-r from-cyan-600 to-blue-600 text-white border border-cyan-300 p-1.5 rounded-lg text-center flex items-center justify-center space-x-1.5 col-span-full mt-1 text-[10px] font-bold">🎫 무료 드로우 쿠폰 +1장 당첨!</div>`; }
+        if(wonFansignTicketThisTurn) { userFansignTickets = 1; triggerFansignWhiteFlash();
+          resContainer.innerHTML += `<div class="bg-gradient-to-r from-yellow-500 via-amber-400 to-yellow-600 text-black border-2 border-yellow-300 p-2 rounded-xl text-center flex flex-col justify-center items-center font-logo col-span-full mt-2 shadow-2xl">👑 팬싸인회 골든 응모권 당첨!</div>`;
+        }
+        if(wonFreeDrawTicketThisTurn) { freeDrawTickets++;
+          resContainer.innerHTML += `<div class="bg-gradient-to-r from-cyan-600 to-blue-600 text-white border border-cyan-300 p-1.5 rounded-lg text-center flex items-center justify-center space-x-1.5 col-span-full mt-1 text-[10px] font-bold">🎫 무료 드로우 쿠폰 +1장 당첨!</div>`;
+        }
         updateFreeTicketBannerUI(); await syncUserToServer(); syncMainUI();
       }, 1200);
     };
@@ -1307,23 +1372,28 @@
 
       try { unlockedCards = JSON.parse(localStorage.getItem(`cards_v2_${userId}`)) || []; } catch(e) { unlockedCards = []; }
       allPhotocards = JSON.parse(localStorage.getItem("local_photocards_v2")) || [];
-
       if (allPhotocards.length === 0) {
         allPhotocards = [
           { id: "mock_1", name: "Y2K 오프닝 스냅", rarity: "Normal", type: "앨범", member: "션린위", imageUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500" },
           { id: "mock_l1", name: "🏆 마스터 레전더리 특전 한정판", rarity: "Legendary", type: "MD 특전", member: "션린위", imageUrl: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=500" }
-        ]; localStorage.setItem("local_photocards_v2", JSON.stringify(allPhotocards));
+        ];
+        localStorage.setItem("local_photocards_v2", JSON.stringify(allPhotocards));
       }
 
       generateSimulatedTrades();
 
       try {
-        const app = initializeApp(firebaseConfig); db = getFirestore(app);
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
         const uSnap = await getDoc(doc(db, "users_v2", userId));
         if (uSnap.exists()) {
-          const d = uSnap.data(); userPoints = d.points !== undefined ? d.points : userPoints; unlockedCards = d.unlockedCards || unlockedCards; lastRouletteDate = d.lastRouletteDate || lastRouletteDate; favoritedCards = d.favoritedCards || favoritedCards; isInfiniteCheatActive = d.isInfiniteCheatActive || isInfiniteCheatActive; lastPaymentDate = d.lastPaymentDate || lastPaymentDate; userFansignTickets = d.userFansignTickets !== undefined ? d.userFansignTickets : userFansignTickets; freeDrawTickets = d.freeDrawTickets !== undefined ? d.freeDrawTickets : freeDrawTickets;
+          const d = uSnap.data();
+          userPoints = d.points !== undefined ? d.points : userPoints; unlockedCards = d.unlockedCards || unlockedCards; lastRouletteDate = d.lastRouletteDate || lastRouletteDate;
+          favoritedCards = d.favoritedCards || favoritedCards; isInfiniteCheatActive = d.isInfiniteCheatActive || isInfiniteCheatActive; lastPaymentDate = d.lastPaymentDate || lastPaymentDate;
+          userFansignTickets = d.userFansignTickets !== undefined ? d.userFansignTickets : userFansignTickets; freeDrawTickets = d.freeDrawTickets !== undefined ? d.freeDrawTickets : freeDrawTickets;
         }
-        const snapshot = await getDocs(collection(db, "photocards_v2")); const temp = []; snapshot.forEach(doc => temp.push({ id: doc.id, ...doc.data() }));
+        const snapshot = await getDocs(collection(db, "photocards_v2")); const temp = [];
+        snapshot.forEach(doc => temp.push({ id: doc.id, ...doc.data() }));
         if(temp.length > 0) { allPhotocards = temp; localStorage.setItem("local_photocards_v2", JSON.stringify(allPhotocards)); }
       } catch(err) {}
       
@@ -1332,29 +1402,36 @@
     }
 
     async function syncUserToServer() {
-      localStorage.setItem(`pts_v2_${userId}`, userPoints); localStorage.setItem(`cards_v2_${userId}`, JSON.stringify(unlockedCards)); localStorage.setItem(`roulette_date_v2_${userId}`, lastRouletteDate); localStorage.setItem(`pay_date_v2_${userId}`, lastPaymentDate); localStorage.setItem(`cheat_inf_v2_${userId}`, isInfiniteCheatActive); localStorage.setItem(`fav_cards_v2_${userId}`, JSON.stringify(favoritedCards)); localStorage.setItem(`fansign_tk_v2_${userId}`, userFansignTickets); localStorage.setItem(`free_draw_tk_v2_${userId}`, freeDrawTickets);
+      localStorage.setItem(`pts_v2_${userId}`, userPoints); localStorage.setItem(`cards_v2_${userId}`, JSON.stringify(unlockedCards));
+      localStorage.setItem(`roulette_date_v2_${userId}`, lastRouletteDate); localStorage.setItem(`pay_date_v2_${userId}`, lastPaymentDate); localStorage.setItem(`cheat_inf_v2_${userId}`, isInfiniteCheatActive); localStorage.setItem(`fav_cards_v2_${userId}`, JSON.stringify(favoritedCards)); localStorage.setItem(`fansign_tk_v2_${userId}`, userFansignTickets); localStorage.setItem(`free_draw_tk_v2_${userId}`, freeDrawTickets);
       if(db) { try { await setDoc(doc(db, "users_v2", userId), { points: userPoints, unlockedCards: unlockedCards, lastRouletteDate: lastRouletteDate, favoritedCards: favoritedCards, isInfiniteCheatActive: isInfiniteCheatActive, lastPaymentDate: lastPaymentDate, userFansignTickets: userFansignTickets, freeDrawTickets: freeDrawTickets }, {merge: true}); } catch(e){} }
     }
 
     window.resetCollection = async function() { if(!confirm("도감 목록을 완전히 리셋하시겠습니까?")) return; unlockedCards = []; favoritedCards = []; newlyUnlockedCards = []; await syncUserToServer(); syncMainUI(); };
-
     window.handleAdminSubmit = async function() {
-      const idInput = document.getElementById("admin-card-id").value; const rawName = document.getElementById("admin-card-name").value.trim(); const cardTypeSelect = document.getElementById("admin-card-type").value; const nameInput = rawName || cardTypeSelect; const raritySelect = document.getElementById("admin-card-rarity").value; const memberSelect = document.getElementById("admin-card-member").value; const fileInput = document.getElementById("admin-card-file"); const btn = document.getElementById("admin-btn-submit");
+      const idInput = document.getElementById("admin-card-id").value; const rawName = document.getElementById("admin-card-name").value.trim();
+      const cardTypeSelect = document.getElementById("admin-card-type").value; const nameInput = rawName || cardTypeSelect; const raritySelect = document.getElementById("admin-card-rarity").value; const memberSelect = document.getElementById("admin-card-member").value;
+      const fileInput = document.getElementById("admin-card-file"); const btn = document.getElementById("admin-btn-submit");
       if(!idInput && fileInput.files.length === 0) { alert("파일을 첨부해 주세요."); return; }
       btn.disabled = true; btn.innerText = "데이터 고속 연동 중...";
       try {
-        let imageUrl = ""; if(idInput) { const old = allPhotocards.find(c => c.id === idInput); if(old) imageUrl = old.imageUrl; }
+        let imageUrl = "";
+        if(idInput) { const old = allPhotocards.find(c => c.id === idInput); if(old) imageUrl = old.imageUrl; }
         if(fileInput.files.length > 0) {
-          const compressedBlob = await resizeAndCompressImage(fileInput.files[0]); const formData = new FormData(); formData.append("file", compressedBlob, "photo.jpg"); formData.append("upload_preset", CLOUDINARY_PRESET);
+          const compressedBlob = await resizeAndCompressImage(fileInput.files[0]);
+          const formData = new FormData(); formData.append("file", compressedBlob, "photo.jpg"); formData.append("upload_preset", CLOUDINARY_PRESET);
           const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, { method: "POST", body: formData });
-          if(!res.ok) throw new Error("업로드 실패"); const resData = await res.json(); imageUrl = resData.secure_url;
+          if(!res.ok) throw new Error("업로드 실패");
+          const resData = await res.json(); imageUrl = resData.secure_url;
         }
         if(!imageUrl) { throw new Error("사진 이미지를 등록해야 합니다."); }
         if(idInput) {
           if(db) { await setDoc(doc(db, "photocards_v2", idInput), { name: nameInput, rarity: raritySelect, member: memberSelect, type: cardTypeSelect, imageUrl: imageUrl }, {merge: true}); }
-          const targetIndex = allPhotocards.findIndex(c => c.id === idInput); if(targetIndex > -1) { allPhotocards[targetIndex].name = nameInput; allPhotocards[targetIndex].rarity = raritySelect; allPhotocards[targetIndex].member = memberSelect; allPhotocards[targetIndex].type = cardTypeSelect; allPhotocards[targetIndex].imageUrl = imageUrl; }
+          const targetIndex = allPhotocards.findIndex(c => c.id === idInput);
+          if(targetIndex > -1) { allPhotocards[targetIndex].name = nameInput; allPhotocards[targetIndex].rarity = raritySelect; allPhotocards[targetIndex].member = memberSelect; allPhotocards[targetIndex].type = cardTypeSelect; allPhotocards[targetIndex].imageUrl = imageUrl; }
         } else {
-          const newDocData = { name: nameInput, rarity: raritySelect, member: memberSelect, type: cardTypeSelect, imageUrl: imageUrl, createdAt: new Date().toISOString() }; let generatedId = "c_" + Date.now();
+          const newDocData = { name: nameInput, rarity: raritySelect, member: memberSelect, type: cardTypeSelect, imageUrl: imageUrl, createdAt: new Date().toISOString() };
+          let generatedId = "c_" + Date.now();
           if(db) { const docRef = await addDoc(collection(db, "photocards_v2"), newDocData); generatedId = docRef.id; }
           allPhotocards.push({ id: generatedId, ...newDocData });
         }
@@ -1363,15 +1440,23 @@
     };
 
     window.prepareEditCard = function(id) {
-      const card = allPhotocards.find(c => c.id === id); if(!card) return;
-      document.getElementById("admin-form-title").innerText = "포토카드 정보 수정 모드 ✏️"; document.getElementById("admin-card-id").value = card.id; document.getElementById("admin-card-name").value = card.name; document.getElementById("admin-card-rarity").value = card.rarity; document.getElementById("admin-card-type").value = card.type || "앨범"; document.getElementById("admin-card-member").value = card.member || "션린위"; document.getElementById("admin-btn-cancel").classList.remove("hidden"); document.getElementById("admin-card-name").focus();
+      const card = allPhotocards.find(c => c.id === id);
+      if(!card) return;
+      document.getElementById("admin-form-title").innerText = "포토카드 정보 수정 모드 ✏️"; document.getElementById("admin-card-id").value = card.id; document.getElementById("admin-card-name").value = card.name; document.getElementById("admin-card-rarity").value = card.rarity;
+      document.getElementById("admin-card-type").value = card.type || "앨범"; document.getElementById("admin-card-member").value = card.member || "션린위"; document.getElementById("admin-btn-cancel").classList.remove("hidden"); document.getElementById("admin-card-name").focus();
     };
-
-    window.resetAdminForm = function() { document.getElementById("admin-form-title").innerText = "새 포토카드 등록"; document.getElementById("admin-card-id").value = ""; document.getElementById("admin-card-name").value = ""; document.getElementById("admin-card-rarity").value = "Normal"; document.getElementById("admin-card-type").value = "앨범"; document.getElementById("admin-card-member").value = "션린위"; document.getElementById("admin-card-file").value = ""; document.getElementById("admin-btn-cancel").classList.add("hidden"); };
-    window.deleteCard = async function(id) { if(!confirm("영구 삭제하시겠습니까?")) return; try { if(db) { await deleteDoc(doc(db, "photocards_v2", id)); } allPhotocards = allPhotocards.filter(c => c.id !== id); unlockedCards = unlockedCards.filter(cId => cId !== id); localStorage.setItem("local_photocards_v2", JSON.stringify(allPhotocards)); await syncUserToServer(); syncMainUI(); } catch(e) { alert("삭제 실패: " + e.message); } };
+    window.resetAdminForm = function() { document.getElementById("admin-form-title").innerText = "새 포토카드 등록"; document.getElementById("admin-card-id").value = ""; document.getElementById("admin-card-name").value = ""; document.getElementById("admin-card-rarity").value = "Normal";
+      document.getElementById("admin-card-type").value = "앨범"; document.getElementById("admin-card-member").value = "션린위"; document.getElementById("admin-card-file").value = ""; document.getElementById("admin-btn-cancel").classList.add("hidden"); };
+    window.deleteCard = async function(id) { if(!confirm("영구 삭제하시겠습니까?")) return;
+      try { if(db) { await deleteDoc(doc(db, "photocards_v2", id)); } allPhotocards = allPhotocards.filter(c => c.id !== id);
+        unlockedCards = unlockedCards.filter(cId => cId !== id); localStorage.setItem("local_photocards_v2", JSON.stringify(allPhotocards)); await syncUserToServer(); syncMainUI(); } catch(e) { alert("삭제 실패: " + e.message); } };
     window.toggleSelectAllAdminCards = function(m) { document.querySelectorAll(".admin-card-checkbox").forEach(box => box.checked = m.checked); };
-    window.deleteSelectedCards = async function() { const checkedBoxes = document.querySelectorAll(".admin-card-checkbox:checked"); if(checkedBoxes.length === 0) return; if(!confirm("삭제하시겠습니까?")) return; const ids = Array.from(checkedBoxes).map(b => b.dataset.id); for(const id of ids) { try { if(db) await deleteDoc(doc(db, "photocards_v2", id)); }catch(e){} allPhotocards = allPhotocards.filter(c => c.id !== id); unlockedCards = unlockedCards.filter(cId => cId !== id); } localStorage.setItem("local_photocards_v2", JSON.stringify(allPhotocards)); document.getElementById("admin-select-all").checked = false; await syncUserToServer(); syncMainUI(); };
-    window.deleteAllCards = async function() { if(!confirm("전체 삭제하시겠습니까?")) return; for(const c of allPhotocards) { try { if(db) await deleteDoc(doc(db, "photocards_v2", c.id)); }catch(e){} } allPhotocards = []; unlockedCards = []; localStorage.setItem("local_photocards_v2", JSON.stringify(allPhotocards)); await syncUserToServer(); syncMainUI(); };
+    window.deleteSelectedCards = async function() { const checkedBoxes = document.querySelectorAll(".admin-card-checkbox:checked"); if(checkedBoxes.length === 0) return; if(!confirm("삭제하시겠습니까?")) return;
+      const ids = Array.from(checkedBoxes).map(b => b.dataset.id); for(const id of ids) { try { if(db) await deleteDoc(doc(db, "photocards_v2", id)); }catch(e){} allPhotocards = allPhotocards.filter(c => c.id !== id); unlockedCards = unlockedCards.filter(cId => cId !== id); } localStorage.setItem("local_photocards_v2", JSON.stringify(allPhotocards));
+      document.getElementById("admin-select-all").checked = false; await syncUserToServer(); syncMainUI(); };
+    window.deleteAllCards = async function() { if(!confirm("전체 삭제하시겠습니까?")) return;
+      for(const c of allPhotocards) { try { if(db) await deleteDoc(doc(db, "photocards_v2", c.id)); }catch(e){} } allPhotocards = []; unlockedCards = [];
+      allPhotocards = []; unlockedCards = []; localStorage.setItem("local_photocards_v2", JSON.stringify(allPhotocards)); await syncUserToServer(); syncMainUI(); };
 
     window.closeVirtualPayment = function() { document.getElementById("virtual-payment-modal").classList.add("hidden"); };
     window.toggleFavoriteCard = function(id, e) { if(e) e.stopPropagation(); if(favoritedCards.includes(id)) { favoritedCards = favoritedCards.filter(i => i !== id); } else { favoritedCards.push(id); } syncUserToServer(); syncMainUI(); };
