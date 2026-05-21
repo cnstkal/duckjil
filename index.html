@@ -1,16 +1,3 @@
-즐찾 지우고 거기에 뉴 표시 넣어. 애니메션 넣지말고
-
-포카 뽑앗는데 글자가 안뜨는 거 고쳐
-
-포카 이미지랑 글자 사이에 공백이 너무많아 글자좀올려줘
-
-10연속 5연속 뽑기는 한 번에 다 뜨게해줘 작아져도되니까
-
-출석룰렛 작동하게해줘
-
-
-아래 코드에서 내가 말한 부분만 수정해서 풀버전 줘
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -24,7 +11,6 @@
   <style id="dynamic-theme-style">
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght=500;700;900&family=Noto+Sans+KR:wght=400;500;700&display=swap');
     
-    /* 📱 6. 광클 연타 시 확대 원천 차단 및 터치 딜레이 완벽 제거 */
     * {
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
@@ -35,7 +21,7 @@
       color: #ffffff;
       -webkit-text-size-adjust: none;
       transition: all 0.4s ease;
-      overscroll-behavior-y: none; /* 당겨서 새로고침 방지 */
+      overscroll-behavior-y: none;
     }
     .font-logo { font-family: 'Orbitron', sans-serif; }
     
@@ -60,11 +46,11 @@
     .heart-pop { animation: gentlePop 1.3s ease-out forwards; }
 
     @keyframes cardReveal {
-      0% { transform: scale(0.5) rotateY(-90deg); opacity: 0; }
-      100% { transform: scale(1) rotateY(0deg); opacity: 1; }
+      0% { transform: scale(0.85); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
     }
     .animate-card-reveal {
-      animation: cardReveal 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+      animation: cardReveal 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
     }
 
     @keyframes screenFlashEffect {
@@ -113,11 +99,10 @@
     .polaroid-frame-style {
       background: #ffffff !important;
       color: #111111 !important;
-      padding: 8px 8px 24px 8px !important;
-      border-radius: 4px !important;
-      box-shadow: 0 12px 28px rgba(0,0,0,0.6) !important;
+      padding: 6px 6px 14px 6px !important;
+      border-radius: 6px !important;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.5) !important;
       border: 1px solid #dddddd !important;
-      transform: rotate(-1.5deg);
     }
 
     .theme-custom-box { transition: all 0.4s ease; }
@@ -360,7 +345,7 @@
     <section id="view-roulette" class="view-section hidden text-center space-y-5">
       <div>
         <h2 class="text-xl font-black bg-gradient-to-r from-yellow-300 via-amber-400 to-orange-500 bg-clip-text text-transparent">출석체크 행운 룰렛 🎁</h2>
-        <p class="text-[11px] text-gray-400">매일 밤 00시 자동 초기화! 하루에 한 번 돌릴 수 있습니다.</p>
+        <p class="text-[11px] text-gray-400">하루에 한 번 돌릴 수 있습니다.</p>
       </div>
       <div class="w-full max-w-[260px] h-[260px] mx-auto bg-purple-950/40 border border-purple-900 rounded-full flex items-center justify-center relative shadow-2xl overflow-hidden">
         <div id="roulette-wheel-display" class="w-36 h-36 rounded-full bg-gradient-to-br from-pink-600 to-purple-800 flex flex-col items-center justify-center border-4 border-purple-500/60 p-2 shadow-inner transition-transform duration-[2500ms] ease-out">
@@ -397,9 +382,9 @@
         </select>
       </div>
 
-      <div id="gacha-outer-frame" class="relative w-full max-w-[320px] h-[360px] mx-auto bg-gradient-to-b from-purple-600 to-pink-600 rounded-2xl p-1 shadow-2xl flex items-center justify-center overflow-hidden">
-        <div id="gacha-card-container" class="w-full h-full bg-[#110e1c] rounded-xl flex flex-col items-center justify-center p-1 transition-all duration-300">
-          <div id="gacha-display-default" class="space-y-2 text-center pt-32">
+      <div id="gacha-outer-frame" class="relative w-full max-w-[320px] min-h-[360px] mx-auto bg-gradient-to-b from-purple-600 to-pink-600 rounded-2xl p-1 shadow-2xl flex items-center justify-center overflow-hidden">
+        <div id="gacha-card-container" class="w-full h-full min-h-[352px] bg-[#110e1c] rounded-xl flex flex-col items-center justify-center p-2 transition-all duration-300">
+          <div id="gacha-display-default" class="space-y-2 text-center py-20">
             <i class="fa-solid fa-box-open text-pink-500 text-4xl animate-bounce"></i>
             <p class="font-logo text-xs tracking-widest text-purple-400">UNOPENED PACK</p>
           </div>
@@ -448,7 +433,7 @@
 
     <section id="view-chat" class="view-section hidden space-y-3 flex flex-col h-[480px]">
       <div class="bg-purple-950/40 p-3 rounded-xl flex justify-between items-center border border-purple-900/40">
-        <div><h2 class="text-xs font-bold text-white">✨ 최애 프라이빗 메신저</h2><p class="text-[10px] text-gray-400">대화가 영구 보존됩니다! 3회 발송마다 새로운 답장 발송!</p></div>
+        <div><h2 class="text-xs font-bold text-white">✨ 최애 프라이빗 메신저</h2><p class="text-[10px] text-gray-400">대화가 보존됩니다.</p></div>
         <div class="flex items-center space-x-1.5 flex-shrink-0">
           <span class="text-[10px] bg-pink-600/20 text-pink-400 px-1.5 py-0.5 rounded-full font-bold">💌 <span id="chat-heart-count">0</span></span>
           <button onclick="resetChatHistory()" class="text-[9px] bg-purple-900 border border-purple-700 text-purple-200 px-2 py-0.5 rounded hover:bg-purple-800 transition">대화초기화</button>
@@ -462,12 +447,11 @@
     </section>
 
     <section id="view-admin" class="view-section hidden space-y-4">
-      <div class="bg-purple-950/30 border border-purple-900 p-4 rounded-xl"><h2 class="font-bold text-pink-400 text-xs"><i class="fa-solid fa-sliders mr-1"></i> 관리자 데이터 수집 제어 센터 (CRUD)</h2></div>
+      <div class="bg-purple-950/30 border border-purple-900 p-4 rounded-xl"><h2 class="font-bold text-pink-400 text-xs"><i class="fa-solid fa-sliders mr-1"></i> 관리자 데이터 제어 센터 (CRUD)</h2></div>
       
       <div class="bg-cyan-950/50 border border-cyan-800 p-3 rounded-xl flex justify-between items-center text-xs">
         <div>
-          <span class="font-bold text-cyan-400 block">⚙️ 디버깅 전용: 포인트 무한 모드 (Infinite Stars)</span>
-          <p class="text-[10px] text-gray-400 mt-0.5">활성화 시 하트 999k 고정 및 모든 가챠/상점 차감 해제</p>
+          <span class="font-bold text-cyan-400 block">⚙️ 디버깅 전용: 포인트 무한 모드</span>
         </div>
         <label class="relative inline-flex items-center cursor-pointer select-none">
           <input type="checkbox" id="admin-infinite-cheat-toggle" onclick="toggleInfiniteCheat(this)" class="sr-only peer">
@@ -515,7 +499,7 @@
         </div>
 
         <div class="bg-purple-950/40 p-3 rounded-xl border border-purple-900 text-xs space-y-2 mt-1">
-          <span class="font-bold text-cyan-400 block"><i class="fa-solid fa-layer-group mr-1"></i> 선택 항목 조건 일괄 변경 (Batch Edit)</span>
+          <span class="font-bold text-cyan-400 block"><i class="fa-solid fa-layer-group mr-1"></i> 선택 항목 조건 일괄 변경</span>
           <div class="grid grid-cols-2 gap-2">
             <div>
               <label class="block text-[10px] text-gray-400 mb-0.5">일괄 적용할 타이틀 제목</label>
@@ -562,7 +546,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, setDoc, collection, addDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const CLOUDINARY_CLOUD = 'dbljkloal';
     const CLOUDINARY_PRESET = 'clowofficial';
@@ -935,9 +919,9 @@
       else { banner.classList.add("hidden"); }
     }
 
-    // 🛠 1. 리스트가 텅 비어서 안나왔던 관리자 목록을 출력해주는 함수 추가
     function renderAdminList() {
       const list = document.getElementById("admin-cards-list");
+      if(!list) return;
       list.innerHTML = "";
       if (allPhotocards.length === 0) {
         list.innerHTML = `<div class="text-center py-4 text-gray-500 text-[11px]">등록된 데이터가 없습니다.</div>`;
@@ -963,6 +947,48 @@
       });
     }
 
+    window.openRouletteView = function() {
+      switchView('roulette');
+      document.getElementById("roulette-status-msg").innerText = "행운 보너스 재화 찬스 장전 완료!";
+    };
+
+    window.spinRoulette = async function() {
+      const todayStr = (new Date()).toISOString().slice(0,10);
+      if(lastRouletteDate === todayStr) {
+        alert("오늘의 행운 룰렛 기회를 이미 소모하셨습니다. 매일 밤 00시에 충전됩니다!");
+        return;
+      }
+      const btn = document.getElementById("roulette-spin-btn");
+      btn.disabled = true;
+      
+      const prizes = [
+        { text: "하트 +150개", action: () => { userPoints += 150; } },
+        { text: "무료뽑기권 +2장", action: () => { freeDrawTickets += 2; } },
+        { text: "하트 +500개", action: () => { userPoints += 500; } },
+        { text: "팬싸응모권 +1장", action: () => { userFansignTickets += 1; } },
+        { text: "대박 보너스 +1000개", action: () => { userPoints += 1000; } }
+      ];
+      
+      const randomIndex = Math.floor(Math.random() * prizes.length);
+      const selectedPrize = prizes[randomIndex];
+      
+      const wheel = document.getElementById("roulette-wheel-display");
+      const currentRotation = 1440 + (randomIndex * (360 / prizes.length));
+      wheel.style.transform = `rotate(${currentRotation}deg)`;
+      
+      document.getElementById("roulette-prize-text").innerHTML = "두구두구...<br>행운 매칭 중!";
+      
+      setTimeout(async () => {
+        selectedPrize.action();
+        lastRouletteDate = todayStr;
+        document.getElementById("roulette-prize-text").innerHTML = `🎉 당첨! 🎉<br>${selectedPrize.text}`;
+        alert(`출석 보너스 수령 완료!\n\n보상 내역: ${selectedPrize.text}`);
+        btn.disabled = false;
+        await syncUserToServer();
+        syncMainUI();
+      }, 2500);
+    };
+
     function syncMainUI() {
       document.getElementById("admin-infinite-cheat-toggle").checked = isInfiniteCheatActive;
       if (isInfiniteCheatActive) userPoints = 999999;
@@ -976,7 +1002,7 @@
       document.getElementById("collection-count").innerText = `보유 종류: ${uniqueOwnedCount}종`;
       document.getElementById("chat-heart-count").innerText = letterCount;
 
-      renderAdminList(); // 🛠 1. 추가된 관리자 목록 렌더링 호출
+      renderAdminList();
 
       const recentBox = document.getElementById("lobby-recent-cards"); recentBox.innerHTML = "";
       const recentIds = [...new Set(unlockedCards)].reverse().slice(0, 3);
@@ -1018,14 +1044,12 @@
 
           if(isOwn) {
             const isNewCard = newlyUnlockedCards.includes(card.id);
-            // 🛠 7. NEW 뱃지 애니메이션 제거 및 우측 상단 모서리로 깔끔하게 고정
             const newTagMarkup = isNewCard ? `<span class="absolute top-0 right-0 bg-red-600 text-white font-bold text-[8px] px-1.5 py-0.5 rounded-bl-lg shadow-md z-30">NEW</span>` : '';
             
             const isFav = favoritedCards.includes(card.id);
             const favStarClass = isFav ? "fa-solid fa-star text-yellow-400" : "fa-regular fa-star text-gray-400";
             const favButtonMarkup = `<button onclick="toggleFavoriteCard('${card.id}', event)" class="absolute top-2.5 left-2.5 bg-black/60 p-1.5 rounded-full z-30 transition hover:scale-110"><i class="${favStarClass} text-xs"></i></button>`;
 
-            // 🛠 4. 체크박스 위치를 완전히 오른쪽 끝으로 밀어 넣음 (right-2.5)
             const shipCheckMarkup = `<label class="absolute top-2.5 right-2.5 bg-black/60 p-1.5 rounded-md z-30 flex items-center justify-center border border-white/20" onclick="event.stopPropagation()"><input type="checkbox" class="shipping-selector-check accent-pink-500 w-3.5 h-3.5" data-id="${card.id}"></label>`;
 
             const duplicateBadge = duplicateAmount > 1 ? `<span class="absolute bottom-2.5 left-2.5 bg-black/80 border border-pink-500/40 text-pink-400 font-bold text-[9px] px-1.5 py-0.5 rounded z-20">보유: ${duplicateAmount}개</span>` : '';
@@ -1043,7 +1067,6 @@
                 </div>`;
             }
 
-            // 🛠 5. 리스트 상태에서도 즉시 판매 가격이 보이게 카드 정보 레이아웃에 추가
             grid.innerHTML += `
               <div class="clickable-card bg-gradient-to-b from-purple-950 to-black p-1.5 rounded-xl border border-purple-900 grade-${card.rarity} flex flex-col justify-between cursor-pointer active:scale-95 transition-all relative" onclick="openCardModal('${card.imageUrl}', '${displayMember}${card.name}', '${card.rarity}')">
                 ${newTagMarkup}
@@ -1053,12 +1076,12 @@
                   <img src="${card.imageUrl}" class="w-full h-full object-cover z-10 relative pointer-events-none">
                   ${duplicateBadge}
                 </div>
-                <div class="mt-2 p-1 z-10 relative text-white">
+                <div class="mt-1.5 p-0.5 z-10 relative text-white">
                   <div class="flex justify-between items-center">
-                    <span class="text-[8px] text-white px-2 py-0.5 rounded-full font-bold ${meta.color}">${meta.ko}</span>
+                    <span class="text-[8px] text-white px-1.5 py-0.5 rounded font-bold ${meta.color}">${meta.ko}</span>
                     <span class="text-[9px] text-amber-300 font-bold tracking-tight"><i class="fa-solid fa-coins"></i> ${meta.sellValue}</span>
                   </div>
-                  <p class="text-xs font-bold truncate mt-1.5">${displayMember}${card.name}</p>
+                  <p class="text-xs font-bold truncate mt-1">${displayMember}${card.name}</p>
                   ${exchangeBtnMarkup}
                   ${sellSectionMarkup}
                 </div>
@@ -1125,7 +1148,6 @@
             let canvasWidth = canvas.clientWidth || 350; let canvasHeight = canvas.clientHeight || 380;
             target.style.left = Math.random() * (canvasWidth - 70) + "px"; target.style.top = Math.random() * (canvasHeight - 70) + "px";
             
-            // 🛠 6. 터치 딜레이 제로화
             target.addEventListener('touchstart', (e) => {
               e.stopPropagation(); e.preventDefault(); currentScore += 20; document.getElementById("game-score").innerText = currentScore;
               target.className = "absolute text-yellow-400 font-bold font-logo text-2xl tracking-tight z-40 animate-ping"; target.innerHTML = "+20"; setTimeout(() => target.remove(), 400);
@@ -1285,7 +1307,7 @@
           canvas.innerHTML = `
             <div class="text-center space-y-4 px-2 w-full h-full flex flex-col items-center justify-center text-white">
               <div id="ticket-timer-display" class="font-logo text-3xl font-black text-yellow-400 tracking-wider bg-purple-950/60 border border-purple-900 px-4 py-2 rounded-xl min-w-[170px] shadow-inner">0.000s</div>
-              <h3 id="ticket-prompt-text" class="text-xs font-bold text-gray-300 leading-relaxed">네트워크 정밀 신호 동기화 중...<br><span class="text-purple-400 text-[10px]">타이머가 0.000s가 되는 순간 버튼이 켜지니 광클하세요!</span></h3>
+              <h3 id="ticket-prompt-text" class="text-xs font-bold text-gray-300 leading-relaxed">네트워크 정밀 신호 동기화 중...<br><span class="text-purple-400 text-[10px]">타이머가 0.000s가 되는 순간 버튼이 켜집니다!</span></h3>
               <div id="ticket-action-slot" class="w-full max-w-[180px] h-32 flex items-center justify-center relative mt-2">
                 <button id="grape-booking-btn" class="w-28 h-28 bg-gray-800 border-4 border-gray-700 text-gray-500 font-black text-sm rounded-3xl flex items-center justify-center transition-all duration-200 touch-none">대기 중</button>
               </div>
@@ -1299,10 +1321,9 @@
           
           const grapeBtn = document.getElementById("grape-booking-btn");
 
-          // 🛠 6. 미친듯한 광클(연타) 및 누르고 있기 허용을 위한 0ms 지연 터치 액션 세팅
           function handleTicketClick(e) {
             e.preventDefault(); e.stopPropagation();
-            if (singleChanceLocked || !targetActivated) return; // 활성화되기 전에 누른건 쿨하게 무시
+            if (singleChanceLocked || !targetActivated) return;
             
             singleChanceLocked = true;
             grapeBtn.style.pointerEvents = "none"; 
@@ -1343,7 +1364,7 @@
               
               if (reactionDuration > 1.3 && !singleChanceLocked) {
                 singleChanceLocked = true; clearInterval(gameLoopInterval); currentScore = 0;
-                alert("😭 아차! 예매 제한 시간(1.3초) 초과로 매진되었습니다! 기회 종료."); finishGameEngine();
+                alert("😭 아차! 예매 제한 시간 초과로 매진되었습니다! 기회 종료."); finishGameEngine();
               }
             }
           }, 30); 
@@ -1412,7 +1433,6 @@
         
         for(let k=0; k<amount; k++) {
           if(Math.random() < 0.015) wonFansignTicketThisTurn = true; 
-          // 🛠 2. 무료 뽑기권 확률 기존 8%에서 -> 1% 로 하향 조정 (100번 중 1번 등장)
           if(Math.random() < 0.01) wonFreeDrawTicketThisTurn = true; 
         }
 
@@ -1433,8 +1453,8 @@
           const textTitleColor = isSSR ? "text-gray-900" : "text-gray-200";
 
           resContainer.innerHTML += `
-            <div class="${cardFrameClass} rounded-lg text-center flex flex-col justify-between items-center animate-card-reveal" style="animation-delay: ${staggerDelay}ms">
-              <img src="${pickedCard.imageUrl}" class="${amount === 1 ? 'h-48' : 'h-24'} w-full object-cover rounded shadow-md pointer-events-none">
+            <div class="${cardFrameClass} rounded-lg text-center flex flex-col justify-between items-center animate-card-reveal" style="animation-delay: ${staggerDelay}ms; min-height: ${amount === 1 ? '240px' : '140px'}">
+              <img src="${pickedCard.imageUrl}" class="${amount === 1 ? 'h-44' : 'h-24'} w-full object-cover rounded shadow-md pointer-events-none">
               <div class="mt-1 w-full truncate text-left px-0.5">
                 <span class="text-[7px] text-white px-1 py-0.5 rounded font-bold ${meta.color}">${meta.ko}</span>
                 <p class="text-[10px] font-bold ${textTitleColor} truncate mt-0.5">${displayMember}${pickedCard.name}</p>
@@ -1488,7 +1508,7 @@
         localStorage.setItem("local_photocards_v2", JSON.stringify(allPhotocards));
       }
 
-      try { chatHistory = JSON.parse(localStorage.getItem(`chat_history_v2_${userId}`)) || [{ type: "idol", text: "안녕 가이드 유저님! 보고 싶었어 🤍 편지 남겨주면 나도 꼭 답장할게!" }]; } catch(e) { chatHistory = [{ type: "idol", text: "안녕 가이드 유저님! 보고 싶었어 🤍" }]; }
+      try { chatHistory = JSON.parse(localStorage.getItem(`chat_history_v2_${userId}`)) || [{ type: "idol", text: "안녕 가이드 유저님! 보고 싶었어 🤍" }]; } catch(e) { chatHistory = [{ type: "idol", text: "안녕 가이드 유저님! 보고 싶었어 🤍" }]; }
       renderChatBox();
 
       try {
