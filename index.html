@@ -400,8 +400,8 @@
             <i class="fa-solid fa-box-open text-pink-500 text-4xl animate-bounce"></i>
             <p class="font-logo text-xs tracking-widest text-purple-400">UNOPENED PACK</p>
           </div>
-          <!-- 📱 4. 절대 가려지지 않도록 미출력 방지용 스타일 강제 조율 -->
-          <div id="gacha-display-result" class="hidden w-full h-full overflow-y-auto grid gap-3 p-1 text-white block z-40 relative"></div>
+          <!-- 🛠️ [클래스 수정완료] 레이아웃 왜곡을 일으키는 무분별한 block 클래스를 제거하고 깨끗한 grid 배치를 유지 -->
+          <div id="gacha-display-result" class="hidden w-full h-full overflow-y-auto grid gap-3 p-1 text-white z-40 relative"></div>
         </div>
       </div>
       <div class="max-w-xs mx-auto space-y-1">
@@ -653,7 +653,7 @@
       Mythic: { ko: "시크릿 미스틱 👑", color: "bg-gradient-to-r from-pink-600 to-yellow-500", score: 5, sellValue: 400 }
     };
 
-    // ⚙️ [추가 완료] 뽑기 가중치 랜덤 분배 함수
+    // ⚙️ 뽑기 가중치 랜덤 분배 함수
     function getWeightedRandomCard() {
       if (allPhotocards.length === 0) return null;
       const weights = { Normal: 50, Rare: 30, SuperRare: 13, UltraRare: 6, Mythic: 1 };
@@ -667,7 +667,7 @@
       return allPhotocards[Math.floor(Math.random() * allPhotocards.length)];
     }
 
-    // ⚙️ [추가 완료] 미니게임 결과 정산 공통 핸들러
+    // ⚙️ 미니게임 결과 정산 공통 핸들러
     function finishGameEngine() {
       clearInterval(gameTimerInterval);
       clearInterval(gameLoopInterval);
@@ -681,7 +681,7 @@
       switchView('game-select');
     }
 
-    // ⚙️ [추가 완료] 채팅 전용 내부 가시화 렌더러
+    // ⚙️ 채팅 전용 내부 가시화 렌더러
     function renderChatBox() {
       const box = document.getElementById("chat-box");
       if(!box) return;
@@ -698,7 +698,7 @@
       box.scrollTop = box.scrollHeight;
     }
 
-    // ⚙️ [추가 완료] 메신저 편지 전송 로직 바인딩
+    // ⚙️ 메신저 편지 전송 로직 바인딩
     window.sendLetter = async function() {
       const input = document.getElementById("chat-input");
       if(!input) return;
@@ -777,7 +777,7 @@
       syncMainUI();
     };
 
-    // 🎨 1. 테마 전체 공간 오버라이드 렌더러 탑재
+    // 🎨 1. 전면 유닛 색감 강제 스무스 치환 메타 세팅
     function applyGlobalThemeStyle(themeId) {
       const meta = themeMetadata[themeId] || themeMetadata["default"];
       document.body.style.background = meta.bodyBg;
@@ -1162,285 +1162,283 @@
     window.initGame = function(gameId) {
       if (gameId === 6 && userPoints < 100) { alert(`올인 게임은 최소 100하트 이상 보유 시 가능합니다!`); return; }
       switchView('game-play');
-      const canvas = document.getElementById("game-canvas"); canvas.innerHTML = ""; 
       
-      // 📱 3. 게임방 렌더링 즉시 강제 뷰 스크롤 복구 트리거 연사
-      document.getElementById('app-main-container').scrollTop = 0;
-      window.scrollTo(0,0);
-
-      currentScore = 0; document.getElementById("game-score").innerText = currentScore;
-
-      // 1. 하트 캐칭 피버
-      if (gameId === 1) {
-        document.getElementById("game-title").innerText = "하트 캐칭 피버 💓 (난이도: 10초 가속)";
-        currentTimer = 10; document.getElementById("game-timer").innerText = currentTimer + "s";
-        gameTimerInterval = setInterval(() => {
-          currentTimer--; document.getElementById("game-timer").innerText = currentTimer + "s";
-          if(currentTimer <= 0) finishGameEngine();
-        }, 1000);
-
-        function spawnHeartFeverLoop() {
-          if (currentTimer <= 0) return;
-          const target = document.createElement("div");
-          target.className = "absolute text-pink-500 text-4xl cursor-pointer p-4 heart-pop select-none z-30 flex items-center justify-center";
-          target.innerHTML = `<i class="fa-solid fa-heart filter drop-shadow-[0_0_6px_#ff007f]"></i>`;
-          
-          let canvasWidth = canvas.clientWidth || 350; let canvasHeight = canvas.clientHeight || 380;
-          target.style.left = Math.random() * (canvasWidth - 70) + "px"; target.style.top = Math.random() * (canvasHeight - 70) + "px";
-          
-          target.addEventListener('pointerdown', (e) => {
-            e.stopPropagation(); e.preventDefault(); currentScore += 20;
-            document.getElementById("game-score").innerText = currentScore;
-            target.className = "absolute text-yellow-400 font-bold font-logo text-2xl tracking-tight z-40 animate-ping";
-            target.innerHTML = "+20"; setTimeout(() => target.remove(), 400);
-          });
-          canvas.appendChild(target);
-          setTimeout(() => { if(target && target.parentNode) target.remove(); }, 1000);
-          
-          let nextSpawnDelay = currentTimer <= 3 ? 200 : (currentTimer <= 6 ? 350 : 550);
-          gameLoopInterval = setTimeout(spawnHeartFeverLoop, nextSpawnDelay);
-        }
-        spawnHeartFeverLoop();
-
-      // 2. 응원봉 타이밍 탭
-      } else if (gameId === 2) {
-        document.getElementById("game-title").innerText = "응원봉 타이밍 탭 ⚡ (난이도: 보통)";
-        currentTimer = 5; document.getElementById("game-timer").innerText = `기회: ${currentTimer}회`;
-        canvas.innerHTML = `
-          <div class="w-full text-center space-y-4 px-4 flex flex-col items-center text-white">
-            <p class="text-xs text-gray-400">움직이는 바가 연두색 세이프 존 중앙에 올 때 정확하게 탭하세요!</p>
-            <div class="w-full max-w-[280px] h-6 bg-gray-800 rounded-full relative overflow-hidden border border-purple-900 mt-2">
-              <div class="absolute left-[42%] right-[42%] h-full bg-emerald-500"></div>
-              <div id="timing-bar" class="absolute left-0 top-0 w-3 h-full bg-pink-500 shadow-md"></div>
-            </div>
-            <button id="hit-btn" class="w-32 bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 rounded-xl text-xs active:scale-95 shadow-md mt-4">HIT !</button>
-          </div>`;
-        let barPos = 0; let direction = 1;
-        gameLoopInterval = setInterval(() => {
-          barPos += (3.5 * direction); if(barPos >= 95 || barPos <= 0) direction *= -1;
-          const bar = document.getElementById("timing-bar"); if(bar) bar.style.left = barPos + "%";
-        }, 16);
-        document.getElementById("hit-btn").addEventListener('pointerdown', () => {
-          if(barPos >= 40 && barPos <= 60) { currentScore += 40; alert("PERFECT!! +40점 🥳"); }
-          else { alert("MISS! 타이밍 실패 😢"); }
-          currentTimer--; document.getElementById("game-score").innerText = currentScore;
-          document.getElementById("game-timer").innerText = `기회: ${currentTimer}회`;
-          if(currentTimer <= 0) finishGameEngine();
-        });
-
-      // 3. 기억력 카드 매칭
-      } else if (gameId === 3) {
-        document.getElementById("game-title").innerText = "기억력 카드 매칭 🃏 (난이도: 최상)";
-        currentTimer = 15; document.getElementById("game-timer").innerText = currentTimer + "s";
-        gameTimerInterval = setInterval(() => {
-          currentTimer--; document.getElementById("game-timer").innerText = currentTimer + "s";
-          if(currentTimer <= 0) finishGameEngine();
-        }, 1000);
-
-        const items = ['⭐', '🍒', '🤍', '🔮', '🎵', '👑', '⭐', '🍒', '🤍', '🔮', '🎵', '👑'].sort(() => Math.random() - 0.5);
-        canvas.innerHTML = `<div class="grid grid-cols-4 gap-2 w-full max-w-[280px]" id="card-holder"></div>`;
-        const holder = document.getElementById("card-holder");
+      // 🛠️ [타이밍 지연 대수술] 뷰 전환 완료 후 브라우저가 공간 크기를 제대로 계산할 수 있도록 50ms 대기 시퀀스 생성
+      setTimeout(() => {
+        const canvas = document.getElementById("game-canvas"); canvas.innerHTML = ""; 
         
-        let choice = [];
-        items.forEach((icon) => {
-          const card = document.createElement("div");
-          card.className = "w-full h-16 bg-purple-900 border border-purple-600 rounded-lg flex items-center justify-center text-xl font-bold cursor-pointer transition-all duration-300 select-none transform text-white";
-          card.innerHTML = `<span class="hidden">${icon}</span><i class="fa-solid fa-question text-purple-400 text-sm"></i>`;
-          card.dataset.icon = icon; card.dataset.flipped = "false"; card.dataset.matched = "false";
+        document.getElementById('app-main-container').scrollTop = 0;
+        window.scrollTo(0,0);
+
+        currentScore = 0; document.getElementById("game-score").innerText = currentScore;
+
+        // 1. 하트 캐칭 피버
+        if (gameId === 1) {
+          document.getElementById("game-title").innerText = "하트 캐칭 피버 💓 (난이도: 10초 가속)";
+          currentTimer = 10; document.getElementById("game-timer").innerText = currentTimer + "s";
+          gameTimerInterval = setInterval(() => {
+            currentTimer--; document.getElementById("game-timer").innerText = currentTimer + "s";
+            if(currentTimer <= 0) finishGameEngine();
+          }, 1000);
+
+          function spawnHeartFeverLoop() {
+            if (currentTimer <= 0) return;
+            const target = document.createElement("div");
+            target.className = "absolute text-pink-500 text-4xl cursor-pointer p-4 heart-pop select-none z-30 flex items-center justify-center";
+            target.innerHTML = `<i class="fa-solid fa-heart filter drop-shadow-[0_0_6px_#ff007f]"></i>`;
+            
+            let canvasWidth = canvas.clientWidth || 350; let canvasHeight = canvas.clientHeight || 380;
+            target.style.left = Math.random() * (canvasWidth - 70) + "px"; target.style.top = Math.random() * (canvasHeight - 70) + "px";
+            
+            target.addEventListener('pointerdown', (e) => {
+              e.stopPropagation(); e.preventDefault(); currentScore += 20;
+              document.getElementById("game-score").innerText = currentScore;
+              target.className = "absolute text-yellow-400 font-bold font-logo text-2xl tracking-tight z-40 animate-ping";
+              target.innerHTML = "+20"; setTimeout(() => target.remove(), 400);
+            });
+            canvas.appendChild(target);
+            setTimeout(() => { if(target && target.parentNode) target.remove(); }, 1000);
+            
+            let nextSpawnDelay = currentTimer <= 3 ? 200 : (currentTimer <= 6 ? 350 : 550);
+            gameLoopInterval = setTimeout(spawnHeartFeverLoop, nextSpawnDelay);
+          }
+          spawnHeartFeverLoop();
+
+        // 2. 응원봉 타이밍 탭
+        } else if (gameId === 2) {
+          document.getElementById("game-title").innerText = "응원봉 타이밍 탭 ⚡ (난이도: 보통)";
+          currentTimer = 5; document.getElementById("game-timer").innerText = `기회: ${currentTimer}회`;
+          canvas.innerHTML = `
+            <div class="w-full text-center space-y-4 px-4 flex flex-col items-center text-white">
+              <p class="text-xs text-gray-400">움직이는 바가 연두색 세이프 존 중앙에 올 때 정확하게 탭하세요!</p>
+              <div class="w-full max-w-[280px] h-6 bg-gray-800 rounded-full relative overflow-hidden border border-purple-900 mt-2">
+                <div class="absolute left-[42%] right-[42%] h-full bg-emerald-500"></div>
+                <div id="timing-bar" class="absolute left-0 top-0 w-3 h-full bg-pink-500 shadow-md"></div>
+              </div>
+              <button id="hit-btn" class="w-32 bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 rounded-xl text-xs active:scale-95 shadow-md mt-4">HIT !</button>
+            </div>`;
+          let barPos = 0; let direction = 1;
+          gameLoopInterval = setInterval(() => {
+            barPos += (3.5 * direction); if(barPos >= 95 || barPos <= 0) direction *= -1;
+            const bar = document.getElementById("timing-bar"); if(bar) bar.style.left = barPos + "%";
+          }, 16);
+          document.getElementById("hit-btn").addEventListener('pointerdown', () => {
+            if(barPos >= 40 && barPos <= 60) { currentScore += 40; alert("PERFECT!! +40점 🥳"); }
+            else { alert("MISS! 타이밍 실패 😢"); }
+            currentTimer--; document.getElementById("game-score").innerText = currentScore;
+            document.getElementById("game-timer").innerText = `기회: ${currentTimer}회`;
+            if(currentTimer <= 0) finishGameEngine();
+          });
+
+        // 3. 기억력 카드 매칭
+        } else if (gameId === 3) {
+          document.getElementById("game-title").innerText = "기억력 카드 매칭 🃏 (난이도: 최상)";
+          currentTimer = 15; document.getElementById("game-timer").innerText = currentTimer + "s";
+          gameTimerInterval = setInterval(() => {
+            currentTimer--; document.getElementById("game-timer").innerText = currentTimer + "s";
+            if(currentTimer <= 0) finishGameEngine();
+          }, 1000);
+
+          const items = ['⭐', '🍒', '🤍', '🔮', '🎵', '👑', '⭐', '🍒', '🤍', '🔮', '🎵', '👑'].sort(() => Math.random() - 0.5);
+          canvas.innerHTML = `<div class="grid grid-cols-4 gap-2 w-full max-w-[280px]" id="card-holder"></div>`;
+          const holder = document.getElementById("card-holder");
           
-          card.addEventListener('pointerdown', () => {
-            if (choice.length < 2 && card.dataset.flipped === "false" && card.dataset.matched === "false") {
-              card.dataset.flipped = "true"; card.classList.remove("bg-purple-900"); card.classList.add("bg-pink-600");
-              card.querySelector("span").classList.remove("hidden"); card.querySelector("i").classList.add("hidden");
-              choice.push(card);
-              
-              if (choice.length === 2) {
-                const c1 = choice[0]; const c2 = choice[1];
-                if (c1.dataset.icon === c2.dataset.icon) {
-                  c1.dataset.matched = "true"; c2.dataset.matched = "true";
-                  currentScore += 80; document.getElementById("game-score").innerText = currentScore; choice = [];
-                  if (holder.querySelectorAll('[data-matched="false"]').length === 0) { setTimeout(() => finishGameEngine(), 500); }
-                } else {
-                  setTimeout(() => {
-                    c1.dataset.flipped = "false"; c2.dataset.flipped = "false";
-                    c1.classList.add("bg-purple-900"); c1.classList.remove("bg-pink-600");
-                    c1.querySelector("span").classList.add("hidden"); c1.querySelector("i").className = "fa-solid fa-question text-purple-400 text-sm";
-                    c2.classList.add("bg-purple-900"); c2.classList.remove("bg-pink-600");
-                    c2.querySelector("span").classList.add("hidden"); c2.querySelector("i").className = "fa-solid fa-question text-purple-400 text-sm";
-                    choice = [];
-                  }, 700);
+          let choice = [];
+          items.forEach((icon) => {
+            const card = document.createElement("div");
+            card.className = "w-full h-16 bg-purple-900 border border-purple-600 rounded-lg flex items-center justify-center text-xl font-bold cursor-pointer transition-all duration-300 select-none transform text-white";
+            card.innerHTML = `<span class="hidden">${icon}</span><i class="fa-solid fa-question text-purple-400 text-sm"></i>`;
+            card.dataset.icon = icon; card.dataset.flipped = "false"; card.dataset.matched = "false";
+            
+            card.addEventListener('pointerdown', () => {
+              if (choice.length < 2 && card.dataset.flipped === "false" && card.dataset.matched === "false") {
+                card.dataset.flipped = "true"; card.classList.remove("bg-purple-900"); card.classList.add("bg-pink-600");
+                card.querySelector("span").classList.remove("hidden"); card.querySelector("i").classList.add("hidden");
+                choice.push(card);
+                
+                if (choice.length === 2) {
+                  const c1 = choice[0]; const c2 = choice[1];
+                  if (c1.dataset.icon === c2.dataset.icon) {
+                    c1.dataset.matched = "true"; c2.dataset.matched = "true";
+                    currentScore += 80; document.getElementById("game-score").innerText = currentScore; choice = [];
+                    if (holder.querySelectorAll('[data-matched="false"]').length === 0) { setTimeout(() => finishGameEngine(), 500); }
+                  } else {
+                    setTimeout(() => {
+                      c1.dataset.flipped = "false"; c2.dataset.flipped = "false";
+                      c1.classList.add("bg-purple-900"); c1.classList.remove("bg-pink-600");
+                      c1.querySelector("span").classList.add("hidden"); c1.querySelector("i").className = "fa-solid fa-question text-purple-400 text-sm";
+                      c2.classList.add("bg-purple-900"); c2.classList.remove("bg-pink-600");
+                      c2.querySelector("span").classList.add("hidden"); c2.querySelector("i").className = "fa-solid fa-question text-purple-400 text-sm";
+                      choice = [];
+                    }, 700);
+                  }
                 }
               }
-            }
-          });
-          holder.appendChild(card);
-        });
-
-      // 4. 간단한 숫자 퍼즐
-      } else if (gameId === 4) {
-        document.getElementById("game-title").innerText = "간단한 숫자 퍼즐 🧩 (난이도: 타임어택)";
-        currentTimer = 12; document.getElementById("game-timer").innerText = currentTimer + "s";
-        gameTimerInterval = setInterval(() => {
-          currentTimer--; document.getElementById("game-timer").innerText = currentTimer + "s";
-          if(currentTimer <= 0) finishGameEngine();
-        }, 1000);
-
-        canvas.innerHTML = `
-          <div class="text-center space-y-2 w-full flex flex-col items-center text-white">
-            <p class="text-[11px] text-gray-400">1부터 9까지 랜덤 배치된 숫자를 순서대로 터치하세요!</p>
-            <div class="text-xs text-pink-400 font-bold">다음 타깃: <span id="puzzle-next-num" class="text-sm font-black text-white bg-pink-600 px-2 py-0.5 rounded-full">1</span></div>
-            <div class="grid grid-cols-3 gap-2 w-full max-w-[240px] mt-2" id="puzzle-grid-holder"></div>
-          </div>`;
-        const pGrid = document.getElementById("puzzle-grid-holder"); const nums = [1,2,3,4,5,6,7,8,9].sort(() => Math.random() - 0.5);
-        let nextExpected = 1;
-        nums.forEach(n => {
-          const btn = document.createElement("button");
-          btn.className = "w-full h-14 bg-purple-900 border border-purple-700 text-white font-bold text-base rounded-xl flex items-center justify-center"; btn.innerText = n;
-          btn.addEventListener('pointerdown', () => {
-            if (n === nextExpected) {
-              btn.className = "w-full h-14 bg-emerald-600/40 border border-emerald-500 text-emerald-300 font-bold text-base rounded-xl opacity-50 flex items-center justify-center cursor-not-allowed";
-              nextExpected++;
-              if (nextExpected > 9) { currentScore = 60; clearInterval(gameTimerInterval); finishGameEngine(); } 
-              else { document.getElementById("puzzle-next-num").innerText = nextExpected; }
-            }
-          });
-          pGrid.appendChild(btn);
-        });
-
-      // 5. 대기실 가위바위보
-      } else if (gameId === 5) {
-        document.getElementById("game-title").innerText = "대기실 가위바위보 ✊ (난이도: 쉬움)";
-        currentTimer = 3; document.getElementById("game-timer").innerText = `남은판: ${currentTimer}판`;
-        canvas.innerHTML = `
-          <div class="text-center space-y-4 text-white">
-            <p class="text-xs text-gray-400">컴백 대기실 멤버의 심리를 맞춰보세요!</p>
-            <div class="text-4xl text-pink-500 animate-bounce" id="ai-status"><i class="fa-solid fa-user-astronaut"></i></div>
-            <div class="flex space-x-2 justify-center mt-4">
-              <button onclick="playRPS('✊')" class="bg-purple-900 border border-purple-600 px-3 py-2 rounded-lg text-sm active:scale-95">✊ 주먹</button>
-              <button onclick="playRPS('✋')" class="bg-purple-900 border border-purple-600 px-3 py-2 rounded-lg text-sm active:scale-95">✋ 보</button>
-              <button onclick="playRPS('✌️')" class="bg-purple-900 border border-purple-600 px-3 py-2 rounded-lg text-sm active:scale-95">✌️ 가위</button>
-            </div>
-          </div>`;
-        window.playRPS = function(userPick) {
-          const rpsArr = ['✊', '✋', '✌️']; const aiPick = rpsArr[Math.floor(Math.random() * rpsArr.length)];
-          if(userPick === aiPick) { currentScore += 10; alert("무승부! 비겼습니다! (+10점)"); }
-          else if((userPick==='✊'&&aiPick==='✌️') || (userPick==='✋'&&aiPick==='✊') || (userPick==='✌️'&&aiPick==='✋')) { currentScore += 30; alert(`아이돌은 [${aiPick}]! 단독 승리! (+30점) 🎉`); }
-          else { alert(`아이돌은 [${aiPick}]! 패배했습니다.. (0점)`); }
-          currentTimer--; document.getElementById("game-score").innerText = currentScore;
-          document.getElementById("game-timer").innerText = `남은판: ${currentTimer}판`;
-          if(currentTimer <= 0) finishGameEngine();
-        };
-
-      // 6. 리얼 올인 도박
-      } else if (gameId === 6) {
-        document.getElementById("game-title").innerText = "전액 올인! 인생역전 대박 🎰";
-        document.getElementById("game-timer").innerText = "ALL-IN";
-        canvas.innerHTML = `
-          <div class="text-center space-y-5 px-4 w-full flex flex-col items-center text-white">
-            <div class="w-16 h-16 bg-red-600/10 border border-red-500/30 rounded-full flex items-center justify-center text-2xl text-red-500 animate-pulse"><i class="fa-solid fa-skull-crossbones"></i></div>
-            <div class="mt-2">
-              <h3 class="text-md font-bold text-red-400">🔥 리얼 하트 올인 소집령 🔥</h3>
-              <p class="text-[11px] text-gray-400 mt-1 leading-relaxed">성공 시 보상은 정확히 <b>2배 복사 (x2)</b>!<br>실패 시 보유 포인트는 즉시 <b>0개 (완전 몰수)</b>!</p>
-            </div>
-            <div id="gambling-panel" class="w-full max-w-[240px] mt-4"><button onclick="executeAllInGamble()" class="w-full bg-gradient-to-r from-red-600 to-purple-600 text-white font-bold py-3.5 rounded-xl text-xs active:scale-95 transition">인생은 한방! 50% 확률 올인하기</button></div>
-          </div>`;
-
-        window.executeAllInGamble = function() {
-          const panel = document.getElementById("gambling-panel");
-          panel.innerHTML = `<div class="space-y-2 text-center py-2"><i class="fa-solid fa-spinner text-pink-500 text-3xl animate-spin"></i><p class="text-[10px] text-pink-400 font-mono animate-pulse">BETTING COIN FLIPPING...</p></div>`;
-          setTimeout(async () => {
-            const isWin = Math.random() < 0.5;
-            if (isWin) { userPoints = userPoints * 2; canvas.innerHTML = `<div class="text-center space-y-4 px-4 flex flex-col items-center text-white"><i class="fa-solid fa-champagne-glasses text-yellow-400 text-5xl animate-bounce"></i><h3 class="text-lg font-black text-green-400 mt-2">🎉 올인 대박 2배 성공! 🎉</h3><button onclick="switchView('game-select')" class="bg-gray-800 border border-purple-900 px-4 py-2 text-[11px] rounded-lg mt-2">퇴장</button></div>`; } 
-            else { userPoints = 0; canvas.innerHTML = `<div class="text-center space-y-4 px-4 flex flex-col items-center text-white"><i class="fa-solid fa-heart-crack text-gray-600 text-5xl"></i><h3 class="text-lg font-black text-red-500 mt-2">😭 올인 실패.. 전액 몰수 😭</h3><button onclick="switchView('game-select')" class="bg-gray-800 border border-purple-900 px-4 py-2 text-[11px] rounded-lg mt-2">다시 충전하기</button></div>`; }
-            document.getElementById("game-score").innerText = userPoints;
-            await syncUserToServer(); syncMainUI();
-          }, 1500);
-        };
-
-      // 📱 2. 초고속 티켓팅 예매 (단 1회 단발 기회 및 모바일 터치 오작동 강제 잠금 디스크 수정)
-      } else if (gameId === 7) {
-        document.getElementById("game-title").innerText = "초고속 티켓팅 예매 🎫 (순발력)";
-        
-        canvas.innerHTML = `
-          <div class="text-center space-y-4 px-2 w-full h-full flex flex-col items-center justify-center text-white">
-            <div id="ticket-timer-display" class="font-logo text-3xl font-black text-yellow-400 tracking-wider bg-purple-950/60 border border-purple-900 px-4 py-2 rounded-xl min-w-[170px] shadow-inner">0.000s</div>
-            <h3 id="ticket-prompt-text" class="text-xs font-bold text-gray-300 leading-relaxed">네트워크 정밀 신호 동기화 중...<br><span class="text-purple-400 text-[10px]">타이머가 0.000s가 되는 순간 버튼이 강제 활성화됩니다!</span></h3>
-            <div id="ticket-action-slot" class="w-full max-w-[180px] h-32 flex items-center justify-center relative mt-2">
-              <button id="grape-booking-btn" disabled class="w-28 h-28 bg-gray-800 border-4 border-gray-700 text-gray-500 font-black text-sm rounded-3xl opacity-40 cursor-not-allowed flex items-center justify-center transition-all duration-200">대기 중</button>
-            </div>
-          </div>`;
-          
-        // 🛠️ [위치 수정완료] HTML 주입 직후 클래스 세팅을 진행하여 순서로 인한 널 오류 원천 차단
-        document.getElementById("ticket-timer-display").className = "font-logo text-3xl font-black text-yellow-400 tracking-wider bg-purple-950/60 border border-purple-900 px-4 py-2 rounded-xl min-w-[170px] shadow-inner";
-        
-        let countdownDuration = 1.3 + Math.random() * 2.2; 
-        let gameStartTimestamp = Date.now();
-        let targetActivated = false; let buttonOpenTime = 0; let singleChanceLocked = false;
-        
-        gameLoopInterval = setInterval(() => {
-          let timeElapsed = (Date.now() - gameStartTimestamp) / 1000;
-          let timeRemaining = countdownDuration - timeElapsed;
-          
-          if (timeRemaining > 0 && !targetActivated) {
-            document.getElementById("ticket-timer-display").innerText = timeRemaining.toFixed(3) + "s";
-          } else if (!targetActivated) {
-            targetActivated = true; buttonOpenTime = Date.now();
-            
-            document.getElementById("ticket-timer-display").className = "font-logo text-3xl font-black text-emerald-400 tracking-wider bg-emerald-950/40 border border-emerald-500 px-4 py-2 rounded-xl min-w-[170px]";
-            document.getElementById("ticket-prompt-text").innerHTML = "<b class='text-emerald-400 text-sm font-black animate-pulse'>🍇 포도알 오픈!!! 지금 터치!!! 🍇</b>";
-            
-            const grapeBtn = document.getElementById("grape-booking-btn");
-            grapeBtn.disabled = false;
-            grapeBtn.className = "w-28 h-28 bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-black text-sm rounded-3xl border-4 border-fuchsia-400 shadow-2xl flex items-center justify-center animate-bounce z-40";
-            grapeBtn.innerText = "예매하기";
-            
-            // 📱 2. 터치 씹힘 원천 가로채기를 위한 pointerdown 바인딩 및 즉시 기회 차단(단발성 보장)
-            grapeBtn.addEventListener('pointerdown', (e) => {
-              e.preventDefault(); e.stopPropagation();
-              if (singleChanceLocked) return; // 연타 원천 차단
-              singleChanceLocked = true;
-              grapeBtn.disabled = true; grapeBtn.style.pointerEvents = "none"; // 버튼 비활성화로 다중 클릭 완전 제어
-              
-              clearInterval(gameLoopInterval); // 타이머 폭파 
-              const clickInterval = (Date.now() - buttonOpenTime) / 1000;
-              let finalReward = 0; let logMsg = "";
-              
-              if (clickInterval > 1.3) { finalReward = 0; logMsg = `😭 예매 실패! 좌석 이선좌! (기록: ${clickInterval.toFixed(3)}초)`; } 
-              else if (clickInterval < 0.2) { finalReward = 200; logMsg = `🥳 매크로급 신의 손! 플로어 1열 중앙 사수! (+200하트 / ${clickInterval.toFixed(3)}초)`; } 
-              else if (clickInterval < 0.5) { finalReward = 100; logMsg = `🔥 VIP 구역 선점 성공! (+100하트 / ${clickInterval.toFixed(3)}초)`; } 
-              else if (clickInterval < 1.0) { finalReward = 50; logMsg = `👍 성공! 일반 지정석 확보! (+50하트 / ${clickInterval.toFixed(3)}초)`; } 
-              else { finalReward = 10; logMsg = `🎯 성공! 간신히 시야제한석 턱걸이! (+10하트 / ${clickInterval.toFixed(3)}초)`; }
-              
-              currentScore = finalReward;
-              alert(logMsg);
-              finishGameEngine();
             });
-          } else {
-            let reactionDuration = (Date.now() - buttonOpenTime) / 1000;
-            document.getElementById("ticket-timer-display").innerText = reactionDuration.toFixed(3) + "s";
+            holder.appendChild(card);
+          });
+
+        // 4. 간단한 숫자 퍼즐
+        } else if (gameId === 4) {
+          document.getElementById("game-title").innerText = "간단한 숫자 퍼즐 🧩 (난이도: 타임어택)";
+          currentTimer = 12; document.getElementById("game-timer").innerText = currentTimer + "s";
+          gameTimerInterval = setInterval(() => {
+            currentTimer--; document.getElementById("game-timer").innerText = currentTimer + "s";
+            if(currentTimer <= 0) finishGameEngine();
+          }, 1000);
+
+          canvas.innerHTML = `
+            <div class="text-center space-y-2 w-full flex flex-col items-center text-white">
+              <p class="text-[11px] text-gray-400">1부터 9까지 랜덤 배치된 숫자를 순서대로 터치하세요!</p>
+              <div class="text-xs text-pink-400 font-bold">다음 타깃: <span id="puzzle-next-num" class="text-sm font-black text-white bg-pink-600 px-2 py-0.5 rounded-full">1</span></div>
+              <div class="grid grid-cols-3 gap-2 w-full max-w-[240px] mt-2" id="puzzle-grid-holder"></div>
+            </div>`;
+          const pGrid = document.getElementById("puzzle-grid-holder"); const nums = [1,2,3,4,5,6,7,8,9].sort(() => Math.random() - 0.5);
+          let nextExpected = 1;
+          nums.forEach(n => {
+            const btn = document.createElement("button");
+            btn.className = "w-full h-14 bg-purple-900 border border-purple-700 text-white font-bold text-base rounded-xl flex items-center justify-center"; btn.innerText = n;
+            btn.addEventListener('pointerdown', () => {
+              if (n === nextExpected) {
+                btn.className = "w-full h-14 bg-emerald-600/40 border border-emerald-500 text-emerald-300 font-bold text-base rounded-xl opacity-50 flex items-center justify-center cursor-not-allowed";
+                nextExpected++;
+                if (nextExpected > 9) { currentScore = 60; clearInterval(gameTimerInterval); finishGameEngine(); } 
+                else { document.getElementById("puzzle-next-num").innerText = nextExpected; }
+              }
+            });
+            pGrid.appendChild(btn);
+          });
+
+        // 5. 대기실 가위바위보
+        } else if (gameId === 5) {
+          document.getElementById("game-title").innerText = "대기실 가위바위보 ✊ (난이도: 쉬움)";
+          currentTimer = 3; document.getElementById("game-timer").innerText = `남은판: ${currentTimer}판`;
+          canvas.innerHTML = `
+            <div class="text-center space-y-4 text-white">
+              <p class="text-xs text-gray-400">컴백 대기실 멤버의 심리를 맞춰보세요!</p>
+              <div class="text-4xl text-pink-500 animate-bounce" id="ai-status"><i class="fa-solid fa-user-astronaut"></i></div>
+              <div class="flex space-x-2 justify-center mt-4">
+                <button onclick="playRPS('✊')" class="bg-purple-900 border border-purple-600 px-3 py-2 rounded-lg text-sm active:scale-95">✊ 주먹</button>
+                <button onclick="playRPS('✋')" class="bg-purple-900 border border-purple-600 px-3 py-2 rounded-lg text-sm active:scale-95">✋ 보</button>
+                <button onclick="playRPS('✌️')" class="bg-purple-900 border border-purple-600 px-3 py-2 rounded-lg text-sm active:scale-95">✌️ 가위</button>
+              </div>
+            </div>`;
+          window.playRPS = function(userPick) {
+            const rpsArr = ['✊', '✋', '✌️']; const aiPick = rpsArr[Math.floor(Math.random() * rpsArr.length)];
+            if(userPick === aiPick) { currentScore += 10; alert("무승부! 비겼습니다! (+10점)"); }
+            else if((userPick==='✊'&&aiPick==='✌️') || (userPick==='✋'&&aiPick==='✊') || (userPick==='✌️'&&aiPick==='✋')) { currentScore += 30; alert(`아이돌은 [${aiPick}]! 단독 승리! (+30점) 🎉`); }
+            else { alert(`아이돌은 [${aiPick}]! 패배했습니다.. (0점)`); }
+            currentTimer--; document.getElementById("game-score").innerText = currentScore;
+            document.getElementById("game-timer").innerText = `남은판: ${currentTimer}판`;
+            if(currentTimer <= 0) finishGameEngine();
+          };
+
+        // 6. 리얼 올인 도박
+        } else if (gameId === 6) {
+          document.getElementById("game-title").innerText = "전액 올인! 인생역전 대박 🎰";
+          document.getElementById("game-timer").innerText = "ALL-IN";
+          canvas.innerHTML = `
+            <div class="text-center space-y-5 px-4 w-full flex flex-col items-center text-white">
+              <div class="w-16 h-16 bg-red-600/10 border border-red-500/30 rounded-full flex items-center justify-center text-2xl text-red-500 animate-pulse"><i class="fa-solid fa-skull-crossbones"></i></div>
+              <div class="mt-2">
+                <h3 class="text-md font-bold text-red-400">🔥 리얼 하트 올인 소집령 🔥</h3>
+                <p class="text-[11px] text-gray-400 mt-1 leading-relaxed">성공 시 보상은 정확히 <b>2배 복사 (x2)</b>!<br>실패 시 보유 포인트는 즉시 <b>0개 (완전 몰수)</b>!</p>
+              </div>
+              <div id="gambling-panel" class="w-full max-w-[240px] mt-4"><button onclick="executeAllInGamble()" class="w-full bg-gradient-to-r from-red-600 to-purple-600 text-white font-bold py-3.5 rounded-xl text-xs active:scale-95 transition">인생은 한방! 50% 확률 올인하기</button></div>
+            </div>`;
+
+          window.executeAllInGamble = function() {
+            const panel = document.getElementById("gambling-panel");
+            panel.innerHTML = `<div class="space-y-2 text-center py-2"><i class="fa-solid fa-spinner text-pink-500 text-3xl animate-spin"></i><p class="text-[10px] text-pink-400 font-mono animate-pulse">BETTING COIN FLIPPING...</p></div>`;
+            setTimeout(async () => {
+              const isWin = Math.random() < 0.5;
+              if (isWin) { userPoints = userPoints * 2; canvas.innerHTML = `<div class="text-center space-y-4 px-4 flex flex-col items-center text-white"><i class="fa-solid fa-champagne-glasses text-yellow-400 text-5xl animate-bounce"></i><h3 class="text-lg font-black text-green-400 mt-2">🎉 올인 대박 2배 성공! 🎉</h3><button onclick="switchView('game-select')" class="bg-gray-800 border border-purple-900 px-4 py-2 text-[11px] rounded-lg mt-2">퇴장</button></div>`; } 
+              else { userPoints = 0; canvas.innerHTML = `<div class="text-center space-y-4 px-4 flex flex-col items-center text-white"><i class="fa-solid fa-heart-crack text-gray-600 text-5xl"></i><h3 class="text-lg font-black text-red-500 mt-2">😭 올인 실패.. 전액 몰수 😭</h3><button onclick="switchView('game-select')" class="bg-gray-800 border border-purple-900 px-4 py-2 text-[11px] rounded-lg mt-2">다시 충전하기</button></div>`; }
+              document.getElementById("game-score").innerText = userPoints;
+              await syncUserToServer(); syncMainUI();
+            }, 1500);
+          };
+
+        // 📱 2. 초고속 티켓팅 예매 (단 1회 단발 기회 및 모바일 터치 오작동 강제 잠금 디스크 수정)
+        } else if (gameId === 7) {
+          document.getElementById("game-title").innerText = "초고속 티켓팅 예매 🎫 (순발력)";
+          
+          canvas.innerHTML = `
+            <div class="text-center space-y-4 px-2 w-full h-full flex flex-col items-center justify-center text-white">
+              <div id="ticket-timer-display" class="font-logo text-3xl font-black text-yellow-400 tracking-wider bg-purple-950/60 border border-purple-900 px-4 py-2 rounded-xl min-w-[170px] shadow-inner">0.000s</div>
+              <h3 id="ticket-prompt-text" class="text-xs font-bold text-gray-300 leading-relaxed">네트워크 정밀 신호 동기화 중...<br><span class="text-purple-400 text-[10px]">타이머가 0.000s가 되는 순간 버튼이 강제 활성화됩니다!</span></h3>
+              <div id="ticket-action-slot" class="w-full max-w-[180px] h-32 flex items-center justify-center relative mt-2">
+                <button id="grape-booking-btn" disabled class="w-28 h-28 bg-gray-800 border-4 border-gray-700 text-gray-500 font-black text-sm rounded-3xl opacity-40 cursor-not-allowed flex items-center justify-center transition-all duration-200">대기 중</button>
+              </div>
+            </div>`;
             
-            // 1.3초 타임아웃 오버 시 즉시 단발 자동 탈락 시퀀스
-            if (reactionDuration > 1.3 && !singleChanceLocked) {
-              singleChanceLocked = true;
-              clearInterval(gameLoopInterval);
-              currentScore = 0;
-              alert("😭 아차! 예매 제한 시간(1.3초) 초과로 매진되었습니다! 기회 종료.");
-              finishGameEngine();
+          document.getElementById("ticket-timer-display").className = "font-logo text-3xl font-black text-yellow-400 tracking-wider bg-purple-950/60 border border-purple-900 px-4 py-2 rounded-xl min-w-[170px] shadow-inner";
+          
+          let countdownDuration = 1.3 + Math.random() * 2.2; 
+          let gameStartTimestamp = Date.now();
+          let targetActivated = false; let buttonOpenTime = 0; let singleChanceLocked = false;
+          
+          gameLoopInterval = setInterval(() => {
+            let timeElapsed = (Date.now() - gameStartTimestamp) / 1000;
+            let timeRemaining = countdownDuration - timeElapsed;
+            
+            if (timeRemaining > 0 && !targetActivated) {
+              document.getElementById("ticket-timer-display").innerText = timeRemaining.toFixed(3) + "s";
+            } else if (!targetActivated) {
+              targetActivated = true; buttonOpenTime = Date.now();
+              
+              document.getElementById("ticket-timer-display").className = "font-logo text-3xl font-black text-emerald-400 tracking-wider bg-emerald-950/40 border border-emerald-500 px-4 py-2 rounded-xl min-w-[170px]";
+              document.getElementById("ticket-prompt-text").innerHTML = "<b class='text-emerald-400 text-sm font-black animate-pulse'>🍇 포도알 오픈!!! 지금 터치!!! 🍇</b>";
+              
+              const grapeBtn = document.getElementById("grape-booking-btn");
+              grapeBtn.disabled = false;
+              grapeBtn.className = "w-28 h-28 bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-black text-sm rounded-3xl border-4 border-fuchsia-400 shadow-2xl flex items-center justify-center animate-bounce z-40";
+              grapeBtn.innerText = "예매하기";
+              
+              grapeBtn.addEventListener('pointerdown', (e) => {
+                e.preventDefault(); e.stopPropagation();
+                if (singleChanceLocked) return; 
+                singleChanceLocked = true;
+                grapeBtn.disabled = true; grapeBtn.style.pointerEvents = "none"; 
+                
+                clearInterval(gameLoopInterval); 
+                const clickInterval = (Date.now() - buttonOpenTime) / 1000;
+                let finalReward = 0; let logMsg = "";
+                
+                if (clickInterval > 1.3) { finalReward = 0; logMsg = `😭 예매 실패! 좌석 이선좌! (기록: ${clickInterval.toFixed(3)}초)`; } 
+                else if (clickInterval < 0.2) { finalReward = 200; logMsg = `🥳 매크로급 신의 손! 플로어 1열 중앙 사수! (+200하트 / ${clickInterval.toFixed(3)}초)`; } 
+                else if (clickInterval < 0.5) { finalReward = 100; logMsg = `🔥 VIP 구역 선점 성공! (+100하트 / ${clickInterval.toFixed(3)}초)`; } 
+                else if (clickInterval < 1.0) { finalReward = 50; logMsg = `👍 성공! 일반 지정석 확보! (+50하트 / ${clickInterval.toFixed(3)}초)`; } 
+                else { finalReward = 10; logMsg = `🎯 성공! 간신히 시야제한석 턱걸이! (+10하트 / ${clickInterval.toFixed(3)}초)`; }
+                
+                currentScore = finalReward;
+                alert(logMsg);
+                finishGameEngine();
+              });
+            } else {
+              let reactionDuration = (Date.now() - buttonOpenTime) / 1000;
+              document.getElementById("ticket-timer-display").innerText = reactionDuration.toFixed(3) + "s";
+              
+              if (reactionDuration > 1.3 && !singleChanceLocked) {
+                singleChanceLocked = true;
+                clearInterval(gameLoopInterval);
+                currentScore = 0;
+                alert("😭 아차! 예매 제한 시간(1.3초) 초과로 매진되었습니다! 기회 종료.");
+                finishGameEngine();
+              }
             }
-          }
-        }, 30); 
-      }
+          }, 30); 
+        }
+      }, 50);
     };
 
     window.drawCard = async function() {
       const gachaModeStr = document.getElementById("gacha-amount").value;
       let amount = 1; let requiredPoints = 100; let isDailyPickMode = false; let isUsingFreeTicket = false;
 
-      // 🎫 8. 무료 쿠폰 자동 매칭 공제 우선순위 계산 기믹 처리
       if(freeDrawTickets > 0 && gachaModeStr !== "daily_limited") {
         isUsingFreeTicket = true; amount = 1; requiredPoints = 0;
       } else {
-        // 📱 5. 1개 / 5개 / 10개 확장 분기 처리 바인딩 완수
         if (gachaModeStr === "daily_limited") { amount = 1; requiredPoints = 200; isDailyPickMode = true; } 
         else { amount = parseInt(gachaModeStr) || 1; requiredPoints = amount * 100; }
       }
@@ -1462,14 +1460,13 @@
       resContainer.classList.add("hidden"); def.classList.remove("hidden"); container.classList.add("scale-95", "rotate-3");
 
       setTimeout(async () => {
-        // 📱 4. 절대 가려지지 않도록 디스플레이 클래스 완전 개방 대수술 완수
         def.classList.add("hidden"); 
         resContainer.classList.remove("hidden");
-        resContainer.style.display = "grid"; // 강제 블록 개방
-        container.classList.remove("scale-95", "rotate-3");
+        resContainer.style.display = "grid"; 
         
         const colsClass = amount === 1 ? "grid-cols-1" : (amount <= 5 ? "grid-cols-2" : "grid-cols-3");
-        resContainer.className = `w-full h-full overflow-y-auto grid ${colsClass} gap-2 p-1 text-white block z-40 relative`;
+        // 🛠️ block 제거하여 레이아웃 무너짐 완전 방지
+        resContainer.className = `w-full h-full overflow-y-auto grid ${colsClass} gap-2 p-1 text-white z-40 relative`;
         resContainer.innerHTML = "";
         
         let staggerDelay = 0; let triggeredJackpot = false; let containsOriginalSSR = false;
@@ -1498,14 +1495,12 @@
           setTimeout(() => { appContainer.classList.remove("ssr-shake-active"); outerFrame.classList.remove("ssr-glitch-active"); }, 1100);
         }
 
-        // 🎟️ 6. 8. 특수 스페셜 아이템 드롭 주입 시퀀스 확률 검사 연동
         let wonFansignTicketThisTurn = false;
         let wonFreeDrawTicketThisTurn = false;
         
-        // 장당 개별 계산 확률 분기
         for(let k=0; k<amount; k++) {
-          if(Math.random() < 0.015) wonFansignTicketThisTurn = true; // 1.5% 팬싸 주입
-          if(Math.random() < 0.08) wonFreeDrawTicketThisTurn = true; // 8% 무료티켓 보너스 주입
+          if(Math.random() < 0.015) wonFansignTicketThisTurn = true; 
+          if(Math.random() < 0.08) wonFreeDrawTicketThisTurn = true; 
         }
 
         if(wonFansignTicketThisTurn) { userFansignTickets++; }
@@ -1539,7 +1534,6 @@
           staggerDelay += 120;
         }
 
-        // 🎟️ 6. 팬싸 응모권 당첨 특수 배너 카드 레이아웃 결과 그리드 하단 추가 삽입
         if(wonFansignTicketThisTurn) {
           resContainer.innerHTML += `
             <div class="bg-gradient-to-r from-yellow-500 via-amber-400 to-yellow-600 text-black border-2 border-yellow-300 p-2 rounded-xl text-center flex flex-col justify-center items-center font-logo animate-pulse col-span-full mt-2 shadow-2xl">
@@ -1549,7 +1543,6 @@
             </div>`;
         }
         
-        // 🎟️ 8. 무료 뽑기 보너스 드롭 알람 카드 추가
         if(wonFreeDrawTicketThisTurn) {
           resContainer.innerHTML += `
             <div class="bg-gradient-to-r from-cyan-600 to-blue-600 text-white border border-cyan-300 p-1.5 rounded-lg text-center flex items-center justify-center space-x-1.5 col-span-full mt-1 text-[10px] font-bold">
@@ -1578,7 +1571,6 @@
       isInfiniteCheatActive = localStorage.getItem(`cheat_inf_v2_${userId}`) === "true";
       try { favoritedCards = JSON.parse(localStorage.getItem(`fav_cards_v2_${userId}`)) || []; } catch(e) { favoritedCards = []; }
 
-      // 🎟️ 6. 8. 특수 유닛 변수 로컬스토리지 복원 바인딩
       userFansignTickets = parseInt(localStorage.getItem(`fansign_tk_v2_${userId}`)) || 0;
       freeDrawTickets = parseInt(localStorage.getItem(`free_draw_tk_v2_${userId}`)) || 0;
 
@@ -1588,6 +1580,18 @@
 
       try { unlockedCards = JSON.parse(localStorage.getItem(`cards_v2_${userId}`)) || []; } catch(e) { unlockedCards = []; }
       allPhotocards = JSON.parse(localStorage.getItem("local_photocards_v2")) || [];
+
+      // 🛠️ [기본 샘플 데이터 주입 인쇄] 파이어베이스 로드 전 최초 실행 시 도감이 텅 비어 뽑기 크래시가 발생하는 것을 원천 복구하는 디폴트 팩 세팅
+      if (allPhotocards.length === 0) {
+        allPhotocards = [
+          { id: "mock_1", name: "Y2K 오프닝 스트리트 스냅", rarity: "Normal", member: "션린위", imageUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500" },
+          { id: "mock_2", name: "K-pop 컴백 무대 백스테이지", rarity: "Rare", member: "해인", imageUrl: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=500" },
+          { id: "mock_3", name: "시부야 가야루 스페셜 한정 팩", rarity: "SuperRare", member: "로아", imageUrl: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=500" },
+          { id: "mock_4", name: "은하수 사이버 크롬 레전드", rarity: "UltraRare", member: "남해주", imageUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500" },
+          { id: "mock_5", name: "시크릿 판타지 미공개 재킷", rarity: "Mythic", member: "로은", imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500" }
+        ];
+        localStorage.setItem("local_photocards_v2", JSON.stringify(allPhotocards));
+      }
 
       try {
         chatHistory = JSON.parse(localStorage.getItem(`chat_history_v2_${userId}`)) || [
